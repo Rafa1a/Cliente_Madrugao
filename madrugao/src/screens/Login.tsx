@@ -110,7 +110,7 @@ const LoginScreen = (props: any) => {
   }
   add_and_navegation();
   }, [props.user_on])
-
+///////////////////////////////////////reanimated///////////////////////////
   const config = {
     duration: 300,
     easing: Easing.bezier(0.5, 0.01, 0, 1),
@@ -120,7 +120,7 @@ const LoginScreen = (props: any) => {
     stiffness: 200,
     damping: 7,
   };
-  
+///////////////////////////////////////reanimated///////////////////////////
   const position = useSharedValue(0);
 
   const style2 = useAnimatedStyle(() => {
@@ -132,19 +132,14 @@ const LoginScreen = (props: any) => {
   const onPress = () => {
     position.value =  Dimensions.get('window').width / 2;
   };
-
+  const onPress2 = () => {
+    position.value =  - Dimensions.get('window').width / 2;
+  };
   const MyAnimatedImage = Animated.createAnimatedComponent(Image);
   return (
     <SafeAreaView style={styles.container}>
-      
-      <MyAnimatedImage 
-        source={require('../../assets/Home_2_p_t.png')} 
-        style={[styles.box,style2]}
-        resizeMode="contain"
-      />
-       
       <View style={styles.contentContainer}>
-      <TouchableOpacity style={styles.button} onPress={()=>onPress()}>
+        <TouchableOpacity style={styles.button} onPress={()=>onPress2()}>
           <FontAwesome name="google-plus-square" size={35} color="#f4f7fc" />
           <Text style={styles.buttonText}>Google</Text>
         </TouchableOpacity>
@@ -153,6 +148,13 @@ const LoginScreen = (props: any) => {
           <Text style={styles.buttonText}>Google</Text>
         </TouchableOpacity>
       </View>
+      <MyAnimatedImage 
+        source={require('../../assets/Home_2_p_t.png')} 
+        style={[styles.box,style2]}
+        resizeMode="contain"
+      />
+       
+      
       {/* ///////////////////////////////////////////////////////////// */}
 
         {/* <Text style={styles.text}>Bem Vindo</Text> */}
@@ -172,6 +174,7 @@ const styles = StyleSheet.create({
     backgroundColor:'#2d2f31'
   },
   contentContainer: {
+    flexWrap: 'wrap',
     flexDirection: 'row', // Isso fará com que os filhos sejam dispostos em linha
     justifyContent: 'space-between', // Isso colocará espaço máximo entre os filhos
     width: '100%', // Isso fará com que a View ocupe 50% da largura da tela
@@ -184,7 +187,7 @@ const styles = StyleSheet.create({
     padding: 15,
     margin: 10,
     borderRadius: 15,
-    width: 200,
+    width: 150,
   },
   buttonText: {
     color: '#f4f7fc',
