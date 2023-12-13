@@ -136,23 +136,36 @@ const LoginScreen = (props: any) => {
     position.value =  - Dimensions.get('window').width / 2;
   };
   const MyAnimatedImage = Animated.createAnimatedComponent(Image);
+
+///////////////////////////////////////reanimated///////////////////////////
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.contentContainer}>
-        <TouchableOpacity style={styles.button} onPress={()=>onPress2()}>
-          <FontAwesome name="google-plus-square" size={35} color="#f4f7fc" />
-          <Text style={styles.buttonText}>Google</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={()=>onPress()}>
-          <FontAwesome name="google-plus-square" size={35} color="#f4f7fc" />
-          <Text style={styles.buttonText}>Google</Text>
-        </TouchableOpacity>
+      <View style={{justifyContent:'center',alignItems:'center'}}>
+
       </View>
-      <MyAnimatedImage 
+      <View style={styles.contentContainer}>
+        <View style={styles.container_width}>
+          <TouchableOpacity style={styles.button} onPress={()=>onPress2()}>
+            <FontAwesome name="google-plus-square" size={35} color="#f4f7fc" />
+            <Text style={styles.buttonText}>Google</Text>
+          </TouchableOpacity>
+          
+        </View>
+        <View style={styles.container_width2}>
+        <TouchableOpacity style={styles.button} onPress={()=>onPress()}>
+            <FontAwesome name="google-plus-square" size={35} color="#f4f7fc" />
+            <Text style={styles.buttonText}>Google</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+
+      {/* <MyAnimatedImage 
         source={require('../../assets/Home_2_p_t.png')} 
         style={[styles.box,style2]}
         resizeMode="contain"
-      />
+      /> */}
        
       
       {/* ///////////////////////////////////////////////////////////// */}
@@ -167,6 +180,7 @@ const LoginScreen = (props: any) => {
 };
 
 const styles = StyleSheet.create({
+  /////////////////////////////////////////////////////////////////
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -177,8 +191,24 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     flexDirection: 'row', // Isso fará com que os filhos sejam dispostos em linha
     justifyContent: 'space-between', // Isso colocará espaço máximo entre os filhos
-    width: '100%', // Isso fará com que a View ocupe 50% da largura da tela
+    width: '100%', 
   },
+  container_width: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor:'#046bd3',
+    width: '100%', 
+
+  },
+  container_width2: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor:'#39cf2b',
+    width: '100%', 
+  },
+  /////////////////////////////////////////////////////////////////
   button: {
     flexDirection:'row',
     alignItems: 'center',
@@ -198,8 +228,13 @@ const styles = StyleSheet.create({
     fontSize:30,
     fontFamily:"OpenSans-Bold"
   },
+  ////animacao
   box: {
-    flex:1,width:'100%',height:'100%',justifyContent:'center',alignItems:'center',
+    flex:1,
+    width:'100%',
+    height:'100%',
+    position: 'absolute',
+  
   },
 });
 
