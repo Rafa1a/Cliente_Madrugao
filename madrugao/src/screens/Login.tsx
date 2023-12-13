@@ -8,7 +8,8 @@ import {
   ActivityIndicator,
   Image,
   ImageBackground,
-  Button
+  Button,
+  Dimensions
 } from 'react-native';
 //necessarios para fazer login
 import * as Google from 'expo-auth-session/providers/google'
@@ -24,7 +25,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 import { add_On, setUser_login } from '../store/action/user';
-import Animated, { Easing, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withSpring, withTiming} from 'react-native-reanimated';
 import LottieView from 'lottie-react-native';
 
 const animation = React.createRef<LottieView>();
@@ -110,9 +111,6 @@ const LoginScreen = (props: any) => {
   add_and_navegation();
   }, [props.user_on])
 
-
-  const randomWidth = useSharedValue(50);
-
   const config = {
     duration: 300,
     easing: Easing.bezier(0.5, 0.01, 0, 1),
@@ -121,63 +119,47 @@ const LoginScreen = (props: any) => {
     mass: 1,
     stiffness: 200,
     damping: 7,
-
   };
+  
+  const position = useSharedValue(0);
 
-  const style = useAnimatedStyle(() => {
+  const style2 = useAnimatedStyle(() => {
     return {
-      width: withTiming(randomWidth.value, config),
-      borderWidth: withSpring(randomWidth.value/12, config_2),
+      transform: [withSpring({ translateX: position.value })],
     };
   });
 
+  const onPress = () => {
+    position.value =  Dimensions.get('window').width / 2;
+  };
 
+  const MyAnimatedImage = Animated.createAnimatedComponent(Image);
   return (
     <SafeAreaView style={styles.container}>
-     
-      <ImageBackground 
-        source={require('../../assets/Home_1.jpg')} 
-        style={{flex:1,width:'100%',height:'100%',justifyContent:'center',alignItems:'center',opacity:0.7}}
+      
+      <MyAnimatedImage 
+        source={require('../../assets/Home_2_p_t.png')} 
+        style={[styles.box,style2]}
         resizeMode="contain"
-      >
-        {/* <LottieView
-        autoPlay
-        ref={animation}
-        speed={-1}
-        // Find more Lottie files at https://lottiefiles.com/featured
-        source={require('../../assets/animacao_test.json')}
       />
-      <Button
-        title="toggle"
-        onPress={() => {
-          animation.current?.pause();
-        }}
-      /> 
-      <Button
-        title="Play"
-        onPress={() => {
-          animation.current?.play();
-        }}
-      /> */}
-      {/* ////////////////////////////////////////// */}
-      {/* <Animated.View style={[styles.box, style]}>
-        <Text style={{color:"#fff"}}>rafa</Text>
-      </Animated.View>
-      <Button
-        title="toggle"
-        onPress={() => {
-          randomWidth.value = Math.random() * 350;
-        }}
-      /> */}
-
+       
+      <View style={styles.contentContainer}>
+      <TouchableOpacity style={styles.button} onPress={()=>onPress()}>
+          <FontAwesome name="google-plus-square" size={35} color="#f4f7fc" />
+          <Text style={styles.buttonText}>Google</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={()=>onPress()}>
+          <FontAwesome name="google-plus-square" size={35} color="#f4f7fc" />
+          <Text style={styles.buttonText}>Google</Text>
+        </TouchableOpacity>
+      </View>
       {/* ///////////////////////////////////////////////////////////// */}
 
-        {/* <Text style={styles.text}>Bem Vindo</Text>
-        <TouchableOpacity style={styles.button} onPress={()=>promptAsync()}>
+        {/* <Text style={styles.text}>Bem Vindo</Text> */}
+        {/* <TouchableOpacity style={styles.button} onPress={()=>onPress()}>
           <FontAwesome name="google-plus-square" size={35} color="#f4f7fc" />
           <Text style={styles.buttonText}>Google</Text>
         </TouchableOpacity> */}
-      </ImageBackground>
     </SafeAreaView>
   );
 };
@@ -185,9 +167,14 @@ const LoginScreen = (props: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'space-evenly',
+    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor:'#2d2f31'
+  },
+  contentContainer: {
+    flexDirection: 'row', // Isso fará com que os filhos sejam dispostos em linha
+    justifyContent: 'space-between', // Isso colocará espaço máximo entre os filhos
+    width: '100%', // Isso fará com que a View ocupe 50% da largura da tela
   },
   button: {
     flexDirection:'row',
@@ -209,12 +196,7 @@ const styles = StyleSheet.create({
     fontFamily:"OpenSans-Bold"
   },
   box: {
-    width: 200,
-    height: 100,
-    borderRadius:200,
-    backgroundColor: 'black',
-    margin: 30,
-    borderColor:"#fd0000"
+    flex:1,width:'100%',height:'100%',justifyContent:'center',alignItems:'center',
   },
 });
 
