@@ -159,17 +159,22 @@ const LoginScreen = (props: any) => {
 
       <View style={styles.contentContainer}>
         <View style={styles.container_width_logar}>
-            <TouchableOpacity style={[styles.button_logar, 
+            <TouchableOpacity 
+            
+            style={[styles.button_logar, 
                 {
                 elevation: 7,
                 shadowColor: '#B20ACC',
-                }]} onPress={()=>{
+                }]} 
+                onPress={()=>{
                   onPress_login()
                   setRegister(false)
                   setTimeout(()=>{
                     setLogin(true)
                   },200)
-                  }}>
+                  }}
+                  
+                  >
                   
             <Text style={styles.buttonText_logar}>Login</Text>
 
@@ -194,7 +199,7 @@ const LoginScreen = (props: any) => {
         </View>
       </View>
       
-      {/* ////////////////////////buttons ///////////////////////////////////// */}
+      {/* ////////////////////////buttons login///////////////////////////////////// */}
 
       <View style={styles.contentContainer_buttons}>
 
@@ -204,7 +209,9 @@ const LoginScreen = (props: any) => {
               <Text style={styles.text}  numberOfLines={1} ellipsizeMode='tail'>Login</Text>
 
               <View>
-                <TouchableOpacity style={[styles.button,{backgroundColor:"#f8fafd"}]} >
+                <TouchableOpacity style={[styles.button,{backgroundColor:"#f8fafd"}]} 
+                onPress={()=>promptAsync()}
+                >
 
                   <Image source={require('../../assets/logos/logo_google.png')} 
                   style={{margin:1,width:30,height:30,}}
@@ -228,13 +235,16 @@ const LoginScreen = (props: any) => {
             </>                       
           :null}
         </View>
+      {/* ////////////////////////buttons register///////////////////////////////////// */}
         
         <View style={styles.container_width_buttons}>
           {register ?
             <>
               <Text style={styles.text}  numberOfLines={1} ellipsizeMode='tail'>Registro</Text>
               <View>
-                <TouchableOpacity style={[styles.button,{backgroundColor:"#f8fafd"}]} >
+                <TouchableOpacity style={[styles.button,{backgroundColor:"#f8fafd"}]}
+                onPress={()=>promptAsync()}
+                >
 
                   <Image source={require('../../assets/logos/logo_google.png')} 
                   style={{margin:1,width:30,height:30,}}
@@ -243,7 +253,9 @@ const LoginScreen = (props: any) => {
 
                 </TouchableOpacity>
 
-                <TouchableOpacity style={[styles.button, {borderColor:"#0E00E3",backgroundColor:"#2D2F31"}]} >
+                <TouchableOpacity style={[styles.button, {borderColor:"#0E00E3",backgroundColor:"#2D2F31"}]} 
+                onPress={()=>Alert.alert('Em breve')}
+                >
 
                   <Image source={require('../../assets/logos/logo_face.png')} 
                   style={{margin:1,width:30,height:30}}
@@ -261,7 +273,7 @@ const LoginScreen = (props: any) => {
       {/* ///////////////////////////////////////////////////////////// */}
       <View pointerEvents="none" style={styles.box_view}>
         <MyAnimatedImage 
-          source={require('../../assets/capa_login_7.png')} 
+          source={require('../../assets/fundo_capa/capa_login_7.png')} 
           style={[styles.box,style2]}
           resizeMode="contain"
         />
@@ -334,7 +346,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%', 
   },
-  /////////////////////////////////////////////////////////////////
+  //////////////////////
+  //BUTTON GOOGLE and FACEBOOK
   button: {
     flexDirection:'row',
     alignItems: 'center',
@@ -348,10 +361,12 @@ const styles = StyleSheet.create({
     margin: 10,
     width: 150,
   },
+  //TEXT GOOGLE and FACEBOOK
   buttonText: {
     color: '#f4f7fc',
     fontFamily:"RobotoMono-Bold"
   },
+  //text REGISTRO and LOGIN
   text :{
     color: '#f4f7fc',
     fontSize: RFValue(40), // Ajuste o valor conforme necessário
@@ -370,7 +385,7 @@ const styles = StyleSheet.create({
     width:'100%',
     height:'100%',
     position: 'absolute',
-    top: 100,
+    top: Dimensions.get('window').height / 8
   
   },
 });
