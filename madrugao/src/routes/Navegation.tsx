@@ -5,6 +5,7 @@ import { setAdicionar_pedido } from "../store/action/adicionar_pedido";
 import { connect } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import Login from "../screens/Login";
+import Splash from "../screens/Splash";
 //////////////////////////////////////////////////////////////////////
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +21,7 @@ const FeedStack = (props: any) => {
   return (
     <Stack.Navigator initialRouteName="Login" >
       <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} {...props} />
+      <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} {...props} />
     </Stack.Navigator>
   );
 };

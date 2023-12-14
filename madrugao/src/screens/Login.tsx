@@ -35,7 +35,14 @@ const animation = React.createRef<LottieView>();
 
 WebBrowser.maybeCompleteAuthSession();
 
-const LoginScreen = (props: any) => {
+interface LoginScreenProps {
+  navigation?: any;
+  user_on?: any;
+  onAdd_User?: any;
+  onSetUser_login?: any;
+}
+
+const LoginScreen = (props: LoginScreenProps) => {
 
 ////////////google auth //////////////////////////////////
   const [request,response,promptAsync] = Google.useAuthRequest({
@@ -106,7 +113,10 @@ const LoginScreen = (props: any) => {
       }
       //ja verifica se o user existe
       // await props.onAdd_User(new_user)
-      // props.navigation?.replace("Splash");
+      setTimeout(()=>{  
+        props.navigation?.replace("Splash");
+      },500)
+      // console.log('rafael')
     }
   }
   add_and_navegation();
@@ -141,10 +151,6 @@ const LoginScreen = (props: any) => {
   const [login,setLogin] = React.useState(false);
   const [register,setRegister] = React.useState(false);
   /////////////////////////////////////////////////////
-  useEffect(() => {
-    
-
-  }, [login,register]);
   /////////////////////////////////////////////////////
   return (
     <SafeAreaView style={styles.container}>
