@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import Login from "../screens/Login";
 import Splash from "../screens/Splash";
+import Principal from "../screens/Principal";
 //////////////////////////////////////////////////////////////////////
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +23,7 @@ const FeedStack = (props: any) => {
     <Stack.Navigator initialRouteName="Login" >
       <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} {...props} />
       <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} {...props} />
+      <Stack.Screen name="Principal" component={Principal} options={{ headerShown: false }} {...props} />
     </Stack.Navigator>
   );
 };

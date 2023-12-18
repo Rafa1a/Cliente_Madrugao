@@ -8,12 +8,22 @@ import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withTiming, wit
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 import { startCardapio } from '../store/action/cardapio';
+// 
+import { useStyles } from '../styles/styles_dark_ligth';
+import { user_on } from '../interface/inter';
 
 interface SplashProps {
     navigation: any;
+    cardapio: any;
+    user_info: user_on;
     onCardapio: ()=>void;
 }
 function Splash(props: SplashProps) {
+
+
+  //Estilo customizado do dark mode
+  const styles_dark0rligth = useStyles(props.user_info);  
+
     ////animacao
     const animation = useSharedValue(-100);
 
@@ -22,6 +32,8 @@ function Splash(props: SplashProps) {
         transform: [{ translateX: animation.value }],
       };
     });
+
+    //card menores animacao
     const animation_m = useSharedValue(-100);
 
     const animatedStyle_m = useAnimatedStyle(() => {
@@ -29,6 +41,7 @@ function Splash(props: SplashProps) {
         transform: [{ translateX: animation_m.value }],
       };
     });
+    //////////////
    ////animacao
     React.useEffect(() => {
 
@@ -53,35 +66,54 @@ function Splash(props: SplashProps) {
    useEffect(() => {
         //carregar dados backend
         const carregarcardapio = async () => {
-            await props.onCardapio();
-            // props.navigation.replace('Home');
+          await props.onCardapio();
+
         }
         carregarcardapio();
     }, []);
     
-  return (
-    <SafeAreaView style={styles.container}>
+    useEffect(() => { 
 
-        <View style={[styles.view_secundario,{ overflow: 'hidden' }]}>
+      if(props.cardapio){
+        // console.log('props.cardapio');
+        setTimeout(() => {
+          props.navigation.replace('Principal');
+        },1500);
+
+      }
+
+    }, [props.cardapio]);
+    //
+  return (
+    <SafeAreaView style={[styles.container,styles_dark0rligth.mode_theme_container]}>
+
+        {/* <View style={[styles.view_secundario,{ overflow: 'hidden' }]}>
             <Animated.View style={[styles.box_animacao, animatedStyle_m, ]}/>
-        </View>
+        </View> */}
         
 
             
-        <View style={styles.view_principal}>
+        <View style={[styles.view_principal,styles_dark0rligth.mode_theme_card]}>
             <View style={[{ overflow: 'hidden',width:'100%',flex:1,borderRadius: 30,}]}>
-                <Animated.View style={[styles.box_animacao, animatedStyle]} />
+                <Animated.View style={[styles.box_animacao,styles_dark0rligth.mode_theme_animated, animatedStyle]} />
             </View>
-
-            <Image 
-                source={require('../../assets/estilos/desfoque.png')} 
-                style={styles.circulo}
-            />
+            {
+            props.user_info.theme_mode?
+              <Image 
+                  source={require('../../assets/estilos/desfoque.png')} 
+                  style={styles.circulo}
+              />:
+              <Image 
+              source={require('../../assets/estilos/desfoque_black.png')} 
+              style={styles.circulo}
+              />
+            }
+            
         </View>
 
-        <View style={[styles.view_secundario,{ overflow: 'hidden' }]}>
+        {/* <View style={[styles.view_secundario,{ overflow: 'hidden' }]}>
             <Animated.View style={[styles.box_animacao, animatedStyle_m, ]}/>
-        </View>
+        </View> */}
 
     </SafeAreaView>
   );
@@ -129,17 +161,21 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '15%',
     opacity: 0.5,
-    
-    backgroundColor: '#7a7e81',
+
     borderRadius: 30,
   },
   
   
 });
-
+const mapStateToProps = ({  user, cardapio }: { user: any,cardapio})=> {
+  return {
+    cardapio: cardapio.cardapio,
+    user_info: user.user_info,
+      };
+};
 const mapDispatchToProps = (dispatch: any) => {
     return {
         onCardapio : () => dispatch(startCardapio()),
       };
 };
-export default connect(null,mapDispatchToProps)(Splash);
+export default connect(mapStateToProps,mapDispatchToProps)(Splash);

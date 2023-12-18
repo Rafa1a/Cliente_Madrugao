@@ -24,7 +24,7 @@ import { auth } from '../store/auth';
 import { FontAwesome } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
-import { add_On, setUser_login } from '../store/action/user';
+import { add_On, setUser_login, startUser_on_info } from '../store/action/user';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withSpring, withTiming} from 'react-native-reanimated';
 import LottieView from 'lottie-react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
@@ -38,8 +38,10 @@ WebBrowser.maybeCompleteAuthSession();
 interface LoginScreenProps {
   navigation?: any;
   user_on?: any;
+  user_on_info?: any;
   onAdd_User?: any;
   onSetUser_login?: any;
+  onUser_info?: (uid:string)=>void;
 }
 
 const LoginScreen = (props: LoginScreenProps) => {
@@ -99,6 +101,7 @@ const LoginScreen = (props: LoginScreenProps) => {
      }
     unsub();
   },[]);
+
   /////////////////////////////////////////////////////
   //verificar se o usuario ja esta logado e navegar para a tela de splash
   useEffect(() => {
@@ -112,15 +115,23 @@ const LoginScreen = (props: LoginScreenProps) => {
         image_on : props.user_on.photoURL,
       }
       //ja verifica se o user existe
-      // await props.onAdd_User(new_user)
-      setTimeout(()=>{  
-        props.navigation?.replace("Splash");
-      },500)
-      // console.log('rafael')
+      await props.onAdd_User(new_user) 
+      await props.onUser_info(props.user_on.uid)
     }
   }
   add_and_navegation();
   }, [props.user_on])
+
+  /////////////////////////////////////////////////////
+//user_info informacoes do user do banco de dados
+  useEffect(() => {
+    // console.log(props.user_on_info);
+    if(props.user_on_info !== undefined){
+      setTimeout(()=>{  
+        props.navigation?.replace("Splash");
+      },1000)
+    }
+  }, [props.user_on_info]);
   /////////////////////////////////////////////////////
 ///////////////////////////////////////reanimated///////////////////////////
   const config = {
@@ -400,7 +411,8 @@ const styles = StyleSheet.create({
 
 const mapStateProps = ({  user }: {  user: any}) => {
   return {
-    user_on:user.user
+    user_on:user.user,
+    user_on_info:user.user_info
   };
 };
 
@@ -409,6 +421,7 @@ const mapDispatchProps = (dispatch: any) => {
   return {
     onAdd_User: (user:any) => dispatch(add_On(user)),
     onSetUser_login: (user:any) => dispatch(setUser_login(user)),
+    onUser_info: (uid:string) => dispatch(startUser_on_info(uid)),
 
   };
 };

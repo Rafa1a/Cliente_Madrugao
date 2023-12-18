@@ -146,9 +146,11 @@ export interface user_on {
   id:string;
   image_on?:string;
   name_on?:string;
+  uid?:string;
+  theme_mode?:boolean;
+
   rua_on?:string;
   numero_on:number;
-  uid?:string;
 }
 
 // Card interfaces

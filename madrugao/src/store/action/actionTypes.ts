@@ -1,6 +1,7 @@
 export const SET_PEDIDOS = "SET_PEDIDOS"
 export const GET_USER    = 'GET_USER'
 export const LOGIN_USER    = 'LOGIN_USER'
+export const LOGIN_USER_INFO    = 'LOGIN_USER_INFO'
 export const SET_MESSAGE = 'SET_MESSAGE'
 export const SET_PEDIDOS_MESA = 'SET_PEDIDOS_MESA'
 export const SET_TOTALVALOR = 'SET_TOTALVALOR'
