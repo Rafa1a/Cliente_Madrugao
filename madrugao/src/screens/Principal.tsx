@@ -23,7 +23,7 @@ import { update_On_theme } from '../store/action/user';
 
   //////TESTES//////
   // console.log(props.user_info);    
-  // const test=[1,2,3,4,5,6,7,8,9,10]
+  const test=[1,2]
 ////////////////////////
 
   //Estilo customizado do dark mode
@@ -41,19 +41,25 @@ import { update_On_theme } from '../store/action/user';
   
 ////////////////////////
 const state_theme_mode = props.user_info.theme_mode;
+
 // console.log(props.user_info.theme_mode)
+////////////////////////
+//////////////////////////////////////////////////////
+const areEqual = (prevProps, nextProps) => {
+  // Substitua "prop" pelas propriedades que, quando alteradas, devem causar uma atualização.
+  return prevProps.item === nextProps.item;
+}
+
 const Item = React.memo(({ item, index }:{item:any,index:number}) => {
   return (
     <Principal_card
       item={item}
-      /////////////////////////////////////
       styles_dark0rligth={styles_dark0rligth}
-      /////////////////////////////////////
       selectedItem={selectedItem}
       index={index}
     />
   );
-});
+}, areEqual);
 
 ////////////////////////
 
@@ -73,7 +79,7 @@ const Item = React.memo(({ item, index }:{item:any,index:number}) => {
       </View>
       
       <FlatList
-        data={props.cardapio}
+        data={test}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item, index }) => <Item item={item} index={index}/>}
         horizontal={true}

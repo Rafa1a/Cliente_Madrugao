@@ -28,7 +28,7 @@ export const startUser_on_info= (uid:string) => {
         // console.error('Erro ao adicionar item ao pedido:', error);
         dispatch(setMessage({
             title: 'Error',
-            text: 'Ocorreu um erro o servidor do User: funcionarios'
+            text: 'Ocorreu um erro o servidor do User'
           }))
       }
   }; 
@@ -55,7 +55,7 @@ export const startUsers_on= () => {
         // console.error('Erro ao adicionar item ao pedido:', error);
         dispatch(setMessage({
             title: 'Error',
-            text: 'Ocorreu um erro o servidor do User: funcionarios'
+            text: 'Ocorreu um erro o servidor do User'
           }))
       }
   }; 
