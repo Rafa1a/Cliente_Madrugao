@@ -12,8 +12,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Svg, Path } from 'react-native-svg';
-
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 
 
 export default function App(props: any) {
@@ -32,14 +32,12 @@ export default function App(props: any) {
 
         <View style={styles.textContainer}>
           <Text style={styles.title}>title</Text>
-          <Text style={styles.description}>decricao</Text>
+          <Text style={styles.description}>decricaodsadsadsadsadasdsadsadsadasdsadassadasdsadsadasdsadsadsadsdsadsadsadsadsadsadsadasdsadsadsadsa</Text>
         </View>
 
         <View style={styles.iconContainer}>
-          <Svg height="24" viewBox="0 -960 960 960" width="24">
-           
-          </Svg>
-          <Icon name="comment" size={30} color="#900" />
+          <MaterialCommunityIcons name="heart-plus" size={25} color="#f70000" style={{margin:10}} />
+          <FontAwesome name="commenting-o" size={25} color="black" style={{margin:10}}/>
         </View>
 
       </View>
@@ -49,7 +47,7 @@ export default function App(props: any) {
         style={{ width: '50%', height: '25%' }}
       >
         <View style={styles.Button}>
-          <Text>Button</Text>
+          <FontAwesome name="cart-plus" size={24} color="black" />
         </View>
       </TouchableOpacity> 
     </View>
@@ -94,6 +92,7 @@ const styles = StyleSheet.create({
   ///////////////////////////////////////////////////// Text
   textContainer: {
     marginLeft: 10,
+    width: '70%',
     // backgroundColor: '#003ffd',
   },
   title: {
@@ -107,17 +106,24 @@ const styles = StyleSheet.create({
   iconContainer: {
     flexDirection: 'column',
     justifyContent: 'space-between',
+    alignItems: 'center',
     width: '20%',
     borderRadius: 10,
     
+    marginRight: 5,
+    //
     backgroundColor: '#f8fafd',
   },
   ///////////////////////////////////////////////////// Button
   Button: {
-    width: '100%',
-    height: '80%',
+    width: 100,
+    height: 100,
     backgroundColor: '#f8fafd',
-    borderRadius: 10,
+    borderRadius: 200,
+    marginTop: 10,
+
+    justifyContent: 'center',
+    alignItems: 'center',
   }
 });
 
