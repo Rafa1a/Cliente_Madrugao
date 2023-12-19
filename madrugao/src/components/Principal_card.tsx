@@ -26,28 +26,29 @@ export default function App(props: any) {
 
       <Image
         style={styles.image}
-        source={require('../../assets/testes/imagens_treino.png')}
+        source={require('../../assets/testes/costela_test_2.png')}
+        resizeMode="contain"
       />
       <View style={styles.text_icon_container}>
 
         <View style={styles.textContainer}>
           <Text style={styles.title}>title</Text>
-          <Text style={styles.description}>decricaodsadsadsadsadasdsadsadsadasdsadassadasdsadsadasdsadsadsadsdsadsadsadsadsadsadsadasdsadsadsadsa</Text>
+          <Text style={styles.description}>ingredientes</Text>
         </View>
 
         <View style={styles.iconContainer}>
-          <MaterialCommunityIcons name="heart-plus" size={25} color="#f70000" style={{margin:10}} />
-          <FontAwesome name="commenting-o" size={25} color="black" style={{margin:10}}/>
+          <MaterialCommunityIcons name="cards-heart-outline" size={25} color="#E81000" style={{margin:10}}/>
+          <FontAwesome name="commenting-o" size={25} color="#3C4043" style={{margin:10}}/>
         </View>
 
       </View>
 
       <TouchableOpacity
         onPress={() => {}}
-        style={{ width: '50%', height: '25%' }}
+        style={{ width: '50%', height: '25%', }}
       >
         <View style={styles.Button}>
-          <FontAwesome name="cart-plus" size={24} color="black" />
+          <FontAwesome name="cart-plus" size={40} color="#252A32" />
         </View>
       </TouchableOpacity> 
     </View>
@@ -63,9 +64,11 @@ const styles = StyleSheet.create({
     // backgroundColor: '#003ffd',
     justifyContent: 'center',
     alignItems: 'center',
+    //
+    marginBottom: `15%`,
   },
   view_principal: {
-    height: '50%',
+    height: '75%',
     width: Dimensions.get('window').width/1.7,
 
     backgroundColor: '#3C4043',
@@ -93,14 +96,28 @@ const styles = StyleSheet.create({
   textContainer: {
     marginLeft: 10,
     width: '70%',
-    // backgroundColor: '#003ffd',
+    backgroundColor: '#f4f7fc',
+
+    elevation: 5,
+
+    borderRadius: 10,
   },
   title: {
     fontSize: 16,
-    fontWeight: 'bold',
+    color: '#3C4043',
+    marginLeft: 10,
+    
+    fontFamily: 'OpenSans-Bold',
   },
   description: {
     fontSize: 14,
+    color: '#3C4043',
+    marginLeft: 5,
+
+
+    fontFamily: 'Roboto-Regular',
+
+
   },
   //////////////////////////////////////////////// Icon
   iconContainer: {
@@ -112,7 +129,9 @@ const styles = StyleSheet.create({
     
     marginRight: 5,
     //
-    backgroundColor: '#f8fafd',
+    backgroundColor: '#f4f7fc',
+
+    elevation: 5,
   },
   ///////////////////////////////////////////////////// Button
   Button: {
@@ -120,10 +139,15 @@ const styles = StyleSheet.create({
     height: 100,
     backgroundColor: '#f8fafd',
     borderRadius: 200,
+
     marginTop: 10,
 
     justifyContent: 'center',
     alignItems: 'center',
+
+
+    borderColor: '#DE6F00',
+    borderWidth: 1,
   }
 });
 
