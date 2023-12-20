@@ -14,45 +14,58 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
+import { connect } from 'react-redux';
+import { useStyles } from '../styles/styles_dark_ligth';
 
 
-export default function App(props: any) {
+ function Card(props: any) {
   // console.log(props.index)
+  const styles_dark0rligth = useStyles(props.user_info);  
+
   const itens = props.item;
+  
   return (
 
   <SafeAreaView style={[styles.container,props.selectedItem === props.index && { transform: [{ scale: 1.2 }] },]}>
-    <View style={[styles.view_principal,props.styles_dark0rligth.mode_theme_card]}>
 
-      <Image
-        style={styles.image}
-        source={require('../../assets/testes/costela_test_2.png')}
-        resizeMode="contain"
-      />
-      <View style={styles.text_icon_container}>
-
-        <View style={styles.textContainer}>
-          <Text style={styles.title}>title</Text>
-          <Text style={styles.description}>ingredientes</Text>
-        </View>
-
-        <View style={styles.iconContainer}>
-          <MaterialCommunityIcons name="cards-heart-outline" size={25} color="#E81000" style={{margin:10}}/>
-          <FontAwesome name="commenting-o" size={25} color="#3C4043" style={{margin:10}}/>
-        </View>
-
+    <View style={[styles.view_principal,styles_dark0rligth.mode_theme_card]}>
+      {/* IMAGE */}
+      <View style={[styles.view_image,styles_dark0rligth.mode_theme_card_image]}>
+        <Image
+          style={styles.image}
+          source={require('../../assets/testes/costela_test_2.png')}
+          resizeMode="contain"
+        />
+      </View>
+      {/* TEXT */}
+      <View style={styles.textContainer}>
+        <Text style={[styles.title,styles_dark0rligth.mode_theme_card_text]}>title</Text>
+        <Text numberOfLines={5} ellipsizeMode='tail' style={[styles.description,styles_dark0rligth.mode_theme_card_text,{ flexShrink: 1 }]}>ingredientes</Text>
       </View>
 
-      <TouchableOpacity
-        onPress={() => {}}
-        style={{ width: '50%', height: '25%', }}
-      >
-        <View style={styles.Button}>
-          <FontAwesome name="cart-plus" size={40} color="#252A32" />
-        </View>
-      </TouchableOpacity> 
-    </View>
+      <View style={styles.iconContainer}>
 
+        {props.user_info.theme_mode ? 
+          <FontAwesome name="commenting-o" size={25} color="#f8fafd" style={{margin:10}}/> 
+          : 
+          <FontAwesome name="commenting-o" size={25} color="#252A32" style={{margin:10}}/>
+          }
+        
+        {/* BUTTON CARD */}
+        <TouchableOpacity
+        onPress={() => {}}
+        style={{ width: '50%', height: '50%', alignItems: 'center', justifyContent: 'center',}}
+        >
+          <View style={styles.Button}>
+            <FontAwesome name="cart-plus" size={35} color="#252A32" /> 
+          </View>
+        </TouchableOpacity> 
+
+        <MaterialCommunityIcons name="cards-heart-outline" size={25} color="#E81000" style={{margin:10}}/>
+        
+      </View>
+
+    </View>
   </SafeAreaView>
   );
 }
@@ -73,81 +86,82 @@ const styles = StyleSheet.create({
 
     backgroundColor: '#3C4043',
     margin: 20,
-    borderRadius: 30,
+    borderRadius: 25,
 
     justifyContent: 'space-between',
     alignItems: 'center',
   },
 
   //////////////////////////////////////////////// Image
-  image: {
+  view_image: {
     width: '100%',
     height: '50%',
-    borderRadius: 25,
+
+    borderTopRightRadius: 25,
+    borderTopLeftRadius: 25,
+
+    backgroundColor: '#f8fafd',
+
   },
-  //////////////////////////////////////////////// Text + Icon container
-  text_icon_container:{
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  image: {
     width: '100%',
-    // backgroundColor: '#003ffd',
+    height: '100%',
   },
-  ///////////////////////////////////////////////////// Text
+  //////////////////////////////////////////////// Text
   textContainer: {
-    marginLeft: 10,
-    width: '70%',
-    backgroundColor: '#f4f7fc',
-
-    elevation: 5,
-
-    borderRadius: 10,
+    width: '100%',
+    // backgroundColor: '#f4f7fc',
+    // elevation: 5,
   },
   title: {
     fontSize: 16,
-    color: '#3C4043',
+    // color: '#f8fafd',
     marginLeft: 10,
     
     fontFamily: 'OpenSans-Bold',
+
+    flexWrap: 'wrap',
   },
   description: {
-    fontSize: 14,
-    color: '#3C4043',
-    marginLeft: 5,
-
+    fontSize: 11,
+    // color: '#f8fafd',
 
     fontFamily: 'Roboto-Regular',
-
-
+    
   },
   //////////////////////////////////////////////// Icon
   iconContainer: {
-    flexDirection: 'column',
+    flexDirection: 'row',
+
     justifyContent: 'space-between',
     alignItems: 'center',
-    width: '20%',
-    borderRadius: 10,
-    
-    marginRight: 5,
+    width: '100%',
     //
-    backgroundColor: '#f4f7fc',
+    // backgroundColor: '#f4f7fc',
 
-    elevation: 5,
+    // elevation: 5,
   },
   ///////////////////////////////////////////////////// Button
   Button: {
-    width: 100,
-    height: 100,
+    width: '80%',
+    height: '200%',
     backgroundColor: '#f8fafd',
     borderRadius: 200,
 
-    marginTop: 10,
+    position: 'absolute',
+    top: '20%',
 
     justifyContent: 'center',
     alignItems: 'center',
 
-
     borderColor: '#DE6F00',
-    borderWidth: 1,
+    borderWidth: 0.7,
   }
 });
 
+const mapStateToProps = ({  user }: { user: any})=> {
+  return {
+    user_info: user.user_info,
+      };
+};
+export default connect(mapStateToProps)(React.memo(Card));

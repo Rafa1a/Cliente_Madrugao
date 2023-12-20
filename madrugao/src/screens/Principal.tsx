@@ -20,9 +20,17 @@ import { update_On_theme } from '../store/action/user';
 //components
 import Subcategoria_comida from '../components/Subcategoria_Comida';
 import Subcategoria_bar from '../components/Subcategoria_Bar';
+
+import Subcategoria_comida_new from '../components/Subcategoria_Comida_new';
+import Subcategoria_bar_new from '../components/Subcategoria_Bar_new';
 //icons
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
+
+//
+import { Divider } from '@rneui/themed';
 
  function Principal_comp(props: Principal) {
 
@@ -49,9 +57,8 @@ const state_theme_mode = props.user_info.theme_mode;
 
 // console.log(props.user_info.theme_mode)
 ////////////////////////
-//////////////////////////////////////////////////////
+////////////////////////////////////////////////////// atualizar quando tiver mudança no banco de dados
 const areEqual = (prevProps, nextProps) => {
-  // Substitua "prop" pelas propriedades que, quando alteradas, devem causar uma atualização.
   return prevProps.item === nextProps.item;
 }
 
@@ -89,30 +96,36 @@ const [bar,setBar]=useState(false);
       {/* /////////////////////////////////////////////////////////// */}
       <View style={{alignItems:'flex-start'}}>
       {/* /////////////////////Categoria///////////////////////// */}
-        <View style={[styles.view_categoria,{flexDirection:'row'},styles_dark0rligth.view_categoria]}>
+        {/* <View style={[styles.view_categoria,{flexDirection:'row'},styles_dark0rligth.view_categoria]}>
 
           <TouchableOpacity style={styles.buttons_categoria} onPress={()=>{setComida(false),setBar(!bar) }}>
             <Text style={styles.text}> Bar </Text>
           </TouchableOpacity>
-          {/* separador */}
+
           <View style={{backgroundColor:'#2D2F31',height:'100%',width:1}}/>
-          {/* separador */}
+
           <TouchableOpacity style={styles.buttons_categoria} onPress={()=>{setBar(false),setComida(!comida)}}>
             <Text style={styles.text}>Comida</Text>
           </TouchableOpacity>
 
-        </View>
+        </View> */}
         {/* ////////////Subcategoria /////////////////////////////*/}
         <View style={{flexDirection:'row',justifyContent:'space-between',width:'100%'}}>
-          {bar?
+          {/* {bar?
             <Subcategoria_bar styles_mode={styles_dark0rligth}/>
           :null}
           {comida?
             <Subcategoria_comida styles_mode={styles_dark0rligth}/>
-          :null}
-          
+          :null} */}
+          <View style={{width:'70%'}}>
+            <Subcategoria_bar_new />
+            <Divider/>
+            <Subcategoria_comida_new />
+            <Divider/>
+          </View>
+
           {/* ////////////Filtro /////////////////////////////*/}
-          <View>
+          <View style={{width:'15%'}}>
 
             <View style={styles.container_filtro}>
               <TouchableOpacity style={styles.buttons_filtro}>
@@ -146,9 +159,27 @@ const [bar,setBar]=useState(false);
         // viewabilityConfig={viewabilityConfig}
         // ItemSeparatorComponent={() => <View style={{ width: 20 }} />}
       />
-      <View style={{justifyContent:'center', alignItems:'center',width:'100%',height:100,}}>
-        <TouchableOpacity style={{backgroundColor:'#fff',width:100,height:100, borderRadius:100}}>
+      {/* ////////////////////////////////////////////// Base*/}
+      <View style={styles.base_view_container}>
+
+        <TouchableOpacity style={styles.base_buttons}>
+          {props.user_info.theme_mode ?
+          <AntDesign name="clockcircleo" size={30} color="#f8fafd" />
+          :<AntDesign name="clockcircleo" size={30} color="#202124" />}
+          
         </TouchableOpacity>
+
+        <TouchableOpacity style={[styles.base_button_carrinho,styles_dark0rligth.carrinho]}>
+          <AntDesign name="shoppingcart" size={30} color="#3C4043" />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.base_buttons}>
+          {props.user_info.theme_mode ?
+          <FontAwesome name="user-circle" size={30} color="#f8fafd" />:
+          <FontAwesome name="user-circle" size={30} color="#202124" />}
+          
+        </TouchableOpacity>
+        
       </View>
     </SafeAreaView>
   );
@@ -161,41 +192,66 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'flex-start',
     },
-    //////////////////////////////////////////////// categoria
-  view_categoria:{
-    backgroundColor:'#fff',
-    margin:10,
-    borderRadius:20,
-  },
-  buttons_categoria:{
-    padding:15,
-    borderRadius:20,
-  },
-  text: {
-    fontSize: 13,
-    color: '#3C4043',
-    
-    fontFamily: 'OpenSans-Bold',
-  },
+   
 /////////////////////////////////////////////// Filtro
+  container_filtro:{
+    borderRadius:20,
+    alignItems:'center',
 
-container_filtro:{
-  borderRadius:20,
-  alignItems:'center',
+    backgroundColor:'#fff',
+  },
+  buttons_filtro:{
+    padding:7,
+    alignItems:'center',
 
-  backgroundColor:'#fff',
-},
-buttons_filtro:{
-  padding:7,
-  alignItems:'center',
+  },
+  text_filtro: {
+    fontSize: 9,
+    color: '#3C4043',
+    fontFamily: 'Roboto-Regular',
+  },
+  //////////////////////////////////////////////// Base
+  base_view_container:{
+    flexDirection:'row',
+    justifyContent:'space-between', 
+    alignItems:'flex-end',
+    width:'100%',
+    height:'10%',
+  },
+  base_buttons:{
+    justifyContent:'center',
+    alignItems:'center',
+    width:"10%",
+    height:'50%', 
+    borderRadius:100
+  },
+  base_button_carrinho:{
+    justifyContent:'center',
+    alignItems:'center',
+    backgroundColor:'#e8f0fe',
+    width:"20%",
+    height:'100%', 
+    borderRadius:100,
 
-},
-text_filtro: {
-  fontSize: 9,
-  color: '#3C4043',
-  fontFamily: 'Roboto-Regular',
-},
-      
+    elevation: 5,
+  }
+//nao usado
+  //      //////////////////////////////////////////////// categoria
+  // view_categoria:{
+  //   backgroundColor:'#fff',
+  //   margin:10,
+  //   borderRadius:20,
+  // },
+  // buttons_categoria:{
+  //   padding:15,
+  //   borderRadius:20,
+  // },
+  // text: {
+  //   fontSize: 13,
+  //   color: '#3C4043',
+    
+  //   fontFamily: 'OpenSans-Bold',
+  // },
 });
 
 const mapStateToProps = ({  user, cardapio }: { user: any,cardapio})=> {

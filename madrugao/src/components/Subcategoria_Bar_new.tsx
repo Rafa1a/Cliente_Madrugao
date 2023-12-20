@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+    ScrollView,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -8,6 +9,7 @@ import {
 import { MaterialIcons, MaterialCommunityIcons,Ionicons,Entypo } from '@expo/vector-icons';
 import { connect } from 'react-redux';
 import { useStyles } from '../styles/styles_dark_ligth';
+import { Divider } from '@rneui/themed';
 
 
 
@@ -26,31 +28,33 @@ const App = (props: any) => {
         </TouchableOpacity>
     );
     return (
-        <>
-            <View>
-                <Button icon="bottle-soda-classic-outline" text="Refri" IconComponent={MaterialCommunityIcons} />
-                <Button icon="local-drink" text="Sucos" IconComponent={MaterialIcons} />
-            </View>
+        <>  
+            {/* <Text style={[styles.text,styles_dark0rligth.text_sub_categoria]}>Bebidas</Text> */}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                <View style={{flexDirection:'row'}}>
+                    <Button icon="bottle-soda-classic-outline" text="Refri" IconComponent={MaterialCommunityIcons} />
+                    <Divider orientation="vertical"/>
+                    <Button icon="local-drink" text="Sucos" IconComponent={MaterialIcons} />
+                    <Divider orientation="vertical"/>
+                    <Button icon="beer-outline" text="Cerveja" IconComponent={Ionicons} />
+                    <Divider orientation="vertical"/>
+                    <Button icon="drink" text="Drinks" IconComponent={Entypo} />
+                </View>
 
-            {/* separador */}
-            <View style={[styles.separator,styles_dark0rligth.separator]}/>
-
-            <View>
-                <Button icon="beer-outline" text="Cerveja" IconComponent={Ionicons} />
-                <Button icon="drink" text="Drinks" IconComponent={Entypo} />
-            </View>
-
+                {/* separador */}
+                {/* <View style={[styles.separator,styles_dark0rligth.separator]}/> */}
+            </ScrollView>
         </>
     );
 }
 
 const styles = StyleSheet.create({
-    sectionContainer: {
-        marginTop: 32,
-        paddingHorizontal: 24,
+    text:{
+        fontSize: 15,
+        fontFamily: 'OpenSans-Bold',
     },
     buttons_subcategoria:{
-        padding:10,
+        padding:6,
         borderRadius:20,
         alignItems:'center',
     },
