@@ -22,6 +22,7 @@ type Props = {
         color: props.theme_mode?"#f8fafd":"#202124",
     },
     mode_theme_card_image: {
+        //nao sendo usado
         shadowColor: props.theme_mode?"#f8fafd":"#202124",
     },
     /////////////////////////////categoria/////////////////////////

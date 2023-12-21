@@ -6,23 +6,26 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
-  TouchableOpacity
+  TouchableOpacity,
+  ActivityIndicator
 
 } from 'react-native';
+import { Image } from '@rneui/themed';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { connect } from 'react-redux';
 import { useStyles } from '../styles/styles_dark_ligth';
+import { Principal_card } from '../interface/Novas_componentes';
 
 
- function Card(props: any) {
+ function Card(props: Principal_card) {
   // console.log(props.index)
   const styles_dark0rligth = useStyles(props.user_info);  
 
   const itens = props.item;
+  // console.log(itens.ingredientes?itens.ingredientes.join(', '):'')
   
   return (
 
@@ -35,12 +38,25 @@ import { useStyles } from '../styles/styles_dark_ligth';
           style={styles.image}
           source={require('../../assets/testes/costela_test_2.png')}
           resizeMode="contain"
+          PlaceholderContent={
+            <View style={{
+              width: '100%',
+              height: '100%',
+              borderTopRightRadius: 25,
+              borderTopLeftRadius: 25,
+  
+              backgroundColor: '#f8fafd'}}>
+                <ActivityIndicator size="small" color="#3C4043" />
+            </View>
+        }
         />
       </View>
       {/* TEXT */}
       <View style={styles.textContainer}>
-        <Text style={[styles.title,styles_dark0rligth.mode_theme_card_text]}>title</Text>
-        <Text numberOfLines={5} ellipsizeMode='tail' style={[styles.description,styles_dark0rligth.mode_theme_card_text,{ flexShrink: 1 }]}>ingredientes</Text>
+        <Text style={[styles.title,styles_dark0rligth.mode_theme_card_text]}>{itens.name}</Text>
+        <Text numberOfLines={5} ellipsizeMode='tail' style={[styles.description,styles_dark0rligth.mode_theme_card_text,{ flexShrink: 1 }]}>
+          {itens.ingredientes?itens.ingredientes.join(', '):''}
+        </Text>
       </View>
 
       <View style={styles.iconContainer}>
@@ -60,8 +76,10 @@ import { useStyles } from '../styles/styles_dark_ligth';
             <FontAwesome name="cart-plus" size={35} color="#252A32" /> 
           </View>
         </TouchableOpacity> 
-
-        <MaterialCommunityIcons name="cards-heart-outline" size={25} color="#E81000" style={{margin:10}}/>
+          <View style={{marginRight:10,marginTop:10,alignItems:'center',justifyContent:'center'}}>
+            <MaterialCommunityIcons name="cards-heart-outline" size={25} color="#E81000" />
+            <Text style={{color:'#E81000',fontSize:10,fontFamily:'Roboto-Regular'}}>{itens.curtidas}</Text>
+          </View>
         
       </View>
 

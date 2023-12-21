@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
+    ActivityIndicator,
     ScrollView,
     StyleSheet,
     Text,
@@ -11,46 +12,85 @@ import { useStyles } from '../styles/styles_dark_ligth';
 import { connect } from 'react-redux';
 import { Divider } from '@rneui/themed';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Subcategoria } from '../interface/Novas_componentes';
 
 
 
-const App = (props: any) => {
+const App = (props: Subcategoria) => {
     //Estilo customizado do dark mode
     const styles_dark0rligth = useStyles(props.user_info);  
     const theme = props.user_info.theme_mode;
-    const Button = ({ icon, text, IconComponent }) => (
-        <TouchableOpacity style={styles.buttons_subcategoria}>
+    // loading
+    const [loading_definir,setLoading_definir] = React.useState('');
+    //button component com estilos customizados
+    const Button = ({ icon, text, IconComponent, funcao_string }) => (
+        <TouchableOpacity 
+        style={[styles.buttons_subcategoria,
+            props.filters.includes(funcao_string)?
+            theme?{elevation:5,shadowColor:'#fff',backgroundColor:'#2D2F31'}
+            :{elevation:5,backgroundColor:'#ffff'}
+            :{}]} 
+            
+        onPress={()=>{props.toggleFilter(funcao_string),setLoading_definir(funcao_string)}}>
+
             {theme?
             <IconComponent name={icon} size={17} color="#f8fafd" />
             :<IconComponent name={icon} size={17} color="#202124" />}
-            
-            <Text style={[styles.text_sub,styles_dark0rligth.text_sub_categoria]}>{text}</Text>
+
+            <Text 
+            style={[styles.text_sub,styles_dark0rligth.text_sub_categoria]}>
+                {text}
+            </Text>
+
         </TouchableOpacity>
     );
+    //atualizacao loading
+    useEffect(() => {
+        if (!props.filters.includes('hamburguer') && !props.filters.includes('hotdog') && !props.filters.includes('porcao')) {
+            setLoading_definir('');
+        }
+    }, [props.filters]);          
+                
     return (
         <>
             {/* <Text style={[styles.text,styles_dark0rligth.text_sub_categoria]}>Comidas</Text> */}
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <View style={{flexDirection:'row'}}>
-                    <Button icon="hamburger" text="hamburguer" IconComponent={FontAwesome5} />
-                    <Divider orientation="vertical"/>
                     
-                    <Button icon="hotdog" text="hotdog" IconComponent={FontAwesome5} />
+                    {loading_definir === 'hamburguer' && props.loading_categoria?
+                    <ActivityIndicator size="small" color="#3C4043" />:
+                    <Button icon="hamburger" text="hamburguer" IconComponent={FontAwesome5} funcao_string='hamburguer'/>
+                    }
+
                     <Divider orientation="vertical"/>
 
-                    <Button icon="food-turkey" text="Porções" IconComponent={MaterialCommunityIcons} />
+                    {loading_definir === 'hotdog' && props.loading_categoria?
+                    <ActivityIndicator size="small" color="#3C4043" />:
+                    <Button icon="hotdog" text="hotdog" IconComponent={FontAwesome5} funcao_string='hotdog'/>
+                    }
+
                     <Divider orientation="vertical"/>
 
-                    <Button icon="cow" text="Boi" IconComponent={MaterialCommunityIcons} />
+                    {loading_definir === 'porcao' && props.loading_categoria?
+                    <ActivityIndicator size="small" color="#3C4043" />:
+                    <Button icon="food-turkey" text="Porções" IconComponent={MaterialCommunityIcons} funcao_string='porcao' />
+                    }
+
                     <Divider orientation="vertical"/>
 
-                    <Button icon="pig-variant-outline" text="Porco" IconComponent={MaterialCommunityIcons} />
+                    {/* <Button icon="cow" text="Boi" IconComponent={MaterialCommunityIcons} funcao_string='boi'/>
                     <Divider orientation="vertical"/>
 
-                    <Button icon="food-drumstick" text="Frango" IconComponent={MaterialCommunityIcons} />
+                    <Button icon="pig-variant-outline" text="Porco" IconComponent={MaterialCommunityIcons} funcao_string='porco'/>
                     <Divider orientation="vertical"/>
 
-                    <Button icon="food-apple-outline" text="Vegano" IconComponent={MaterialCommunityIcons}  />
+                    <Button icon="food-drumstick" text="Frango" IconComponent={MaterialCommunityIcons} funcao_string='frango'/>
+                    <Divider orientation="vertical"/>
+
+                    <Button icon="fish" text="Peixe" IconComponent={FontAwesome5} funcao_string='peixe'/>
+                    <Divider orientation="vertical"/>
+
+                    <Button icon="food-apple-outline" text="Vegano" IconComponent={MaterialCommunityIcons}  funcao_string='vegano'/> */}
 
                 </View>
             </ScrollView>
@@ -68,6 +108,7 @@ const styles = StyleSheet.create({
     },
     buttons_subcategoria:{
         padding:6,
+        borderRadius:10,
         alignItems:'center',
     },
     text_sub: {

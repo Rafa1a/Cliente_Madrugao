@@ -6,7 +6,10 @@ export interface cardapio {
     categoria_2: string;
     categoria_3?: string;
     comments: string[];
+
     curtidas: number;
+    pedidos_quantidade: number;
+    
     image: string;
     ingredientes: string[];
     name: string;

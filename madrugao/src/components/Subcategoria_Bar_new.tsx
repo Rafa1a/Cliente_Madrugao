@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
+    ActivityIndicator,
     ScrollView,
     StyleSheet,
     Text,
@@ -10,35 +11,78 @@ import { MaterialIcons, MaterialCommunityIcons,Ionicons,Entypo } from '@expo/vec
 import { connect } from 'react-redux';
 import { useStyles } from '../styles/styles_dark_ligth';
 import { Divider } from '@rneui/themed';
+import { Subcategoria } from '../interface/Novas_componentes';
 
 
 
 
-const App = (props: any) => {
+const App = (props: Subcategoria) => {
 
     const styles_dark0rligth = useStyles(props.user_info);  
     const theme = props.user_info.theme_mode;
-    
-    const Button = ({ icon, text, IconComponent }) => (
-        <TouchableOpacity style={styles.buttons_subcategoria}>
+
+    const [loading_definir,setLoading_definir] = React.useState('');
+
+    // console.log(props.filters.includes('refri'));
+    const Button = ({ icon, text, IconComponent, funcao_string }) => (
+        <TouchableOpacity 
+        style={[styles.buttons_subcategoria,
+            props.filters.includes(funcao_string)?
+            theme?{elevation:5,shadowColor:'#fff',backgroundColor:'#2D2F31'}
+            :{elevation:5,backgroundColor:'#ffff'}
+            :{}]} 
+            
+        onPress={()=>{props.toggleFilter(funcao_string),setLoading_definir(funcao_string)}}>
+
             {theme?
             <IconComponent name={icon} size={17} color="#f8fafd" />
             :<IconComponent name={icon} size={17} color="#202124" />}
-            <Text style={[styles.text_sub,styles_dark0rligth.text_sub_categoria]}>{text}</Text>
+
+            <Text 
+            style={[styles.text_sub,styles_dark0rligth.text_sub_categoria]}>
+                {text}
+            </Text>
+
         </TouchableOpacity>
     );
+
+    useEffect(() => {
+        if (!props.filters.includes('refri') && !props.filters.includes('sucos') && !props.filters.includes('cerveja') && !props.filters.includes('drinks')) {
+            setLoading_definir('');
+        }
+    }, [props.filters]);  
+    
     return (
         <>  
             {/* <Text style={[styles.text,styles_dark0rligth.text_sub_categoria]}>Bebidas</Text> */}
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <View style={{flexDirection:'row'}}>
-                    <Button icon="bottle-soda-classic-outline" text="Refri" IconComponent={MaterialCommunityIcons} />
+
+                    {loading_definir === 'refri' && props.loading_categoria?
+                    <ActivityIndicator size="small" color="#3C4043" />:
+                    <Button icon="bottle-soda-classic-outline" text="Refri" IconComponent={MaterialCommunityIcons} funcao_string='refri'/>
+                    }
+                    
                     <Divider orientation="vertical"/>
-                    <Button icon="local-drink" text="Sucos" IconComponent={MaterialIcons} />
+
+                    { loading_definir === 'sucos' && props.loading_categoria?
+                    <ActivityIndicator size="small" color="#3C4043" />:
+                    <Button icon="local-drink" text="Sucos" IconComponent={MaterialIcons} funcao_string='sucos'/>
+                    }
                     <Divider orientation="vertical"/>
-                    <Button icon="beer-outline" text="Cerveja" IconComponent={Ionicons} />
+
+                    { loading_definir === 'cerveja' && props.loading_categoria?
+                    <ActivityIndicator size="small" color="#3C4043" />:
+                    <Button icon="beer-outline" text="Cerveja" IconComponent={Ionicons} funcao_string='cerveja'/>
+                    }
+                    
                     <Divider orientation="vertical"/>
-                    <Button icon="drink" text="Drinks" IconComponent={Entypo} />
+
+                    { loading_definir === 'drinks' && props.loading_categoria?
+                    <ActivityIndicator size="small" color="#3C4043" />:
+                    <Button icon="drink" text="Drinks" IconComponent={Entypo} funcao_string='drinks' />
+                    }
+                    
                 </View>
 
                 {/* separador */}
@@ -55,7 +99,7 @@ const styles = StyleSheet.create({
     },
     buttons_subcategoria:{
         padding:6,
-        borderRadius:20,
+        borderRadius:10,
         alignItems:'center',
     },
     text_sub: {

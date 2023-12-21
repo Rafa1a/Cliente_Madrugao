@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   Dimensions,
@@ -7,7 +7,8 @@ import {
   Image,
   View,
   TouchableOpacity,
-  Text
+  Text,
+  ActivityIndicator
 
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -23,6 +24,8 @@ import Subcategoria_bar from '../components/Subcategoria_Bar';
 
 import Subcategoria_comida_new from '../components/Subcategoria_Comida_new';
 import Subcategoria_bar_new from '../components/Subcategoria_Bar_new';
+
+import Flatlist_principal from '../components/Flatlist_principal';
 //icons
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
@@ -32,54 +35,230 @@ import { FontAwesome } from '@expo/vector-icons';
 //
 import { Divider } from '@rneui/themed';
 
- function Principal_comp(props: Principal) {
+function Principal_comp(props: Principal) {
 
-  //////TESTES//////
-  // console.log(props.user_info);    
-  const test=[1,2]
-////////////////////////
 
-  //Estilo customizado do dark mode
-  const styles_dark0rligth = useStyles(props.user_info);  
-
-  //Visualizacao do item selecionado
-  const [selectedItem, setSelectedItem] = useState(null);
-
-  const viewabilityConfig = {
-    itemVisiblePercentThreshold: 50 // Item is considered visible when 50% of it is visible
-  };
-  const onViewableItemsChanged = React.useCallback(({ viewableItems }) => {
-    setSelectedItem(viewableItems[0].index);
-  }, []);
-  
+const styles_dark0rligth = useStyles(props.user_info);  
 ////////////////////////
 const state_theme_mode = props.user_info.theme_mode;
+  ////////////////////////////////////Filtro Cardapio
+  const [filteredCardapio, setFilteredCardapio] = useState(props.cardapio);
+  const [filters, setFilters] = useState([]);
+  const [mais_curtidas, setMais_curtidas] = useState(true);
+  const [mais_pedidos, setMais_pedidos] = useState(false);
 
-// console.log(props.user_info.theme_mode)
-////////////////////////
-////////////////////////////////////////////////////// atualizar quando tiver mudança no banco de dados
-const areEqual = (prevProps, nextProps) => {
-  return prevProps.item === nextProps.item;
-}
+  const [loading_mais_curtidas, setLoading_mais_curtidas] = useState(false);
+  const [loading_mais_pedidos, setLoading_mais_pedidos] = useState(false);
 
-const Item = React.memo(({ item, index }:{item:any,index:number}) => {
-  return (
-    <Principal_card
-      item={item}
-      styles_dark0rligth={styles_dark0rligth}
-      selectedItem={selectedItem}
-      index={index}
-    />
-  );
-}, areEqual);
+  const [loading_categoria, setLoading_categoria] = useState(false);
 
-////////////////////////
-//////////////////////////Categoria Click
-const [comida,setComida]=useState(true);
-const [bar,setBar]=useState(false);
+  useEffect(() => {
+    console.log('Filtros ativos:', filters);
 
+    let filteredArray = [];
+    ////////////////////////////////////Drinks e bebidas
+    if(filters.includes('refri')){
+      const newArray = props.cardapio.filter((item) => item.categoria === 'bebidas' && item.categoria_2 === 'no-alcool');
+      filteredArray = [...filteredArray, ...newArray];
+    }
 
+    if(filters.includes('sucos')){
+      const newArray = props.cardapio.filter((item) => item.categoria === 'bar' && item.categoria_2 === 'sucos');
+      filteredArray = [...filteredArray, ...newArray];
+    }
 
+    if(filters.includes('cerveja')){
+      const newArray = props.cardapio.filter((item) => item.categoria === 'bebidas' && item.categoria_2 === 'alcool');
+      filteredArray = [...filteredArray, ...newArray];
+    }
+
+    if(filters.includes('drinks')){
+      const newArray = props.cardapio.filter((item) => item.categoria === 'bar' && item.categoria_2 === 'drinks');
+      filteredArray = [...filteredArray, ...newArray];
+    }
+    ///////////////////////////////////// Comidas
+
+    if(filters.includes('hamburguer')){
+      const newArray = props.cardapio.filter((item) => item.categoria === 'comidas' && item.categoria_2 === 'lanches');
+
+      filteredArray = [...filteredArray, ...newArray];
+
+    }
+    if(filters.includes('hotdog')){
+      const newArray = props.cardapio.filter((item) => item.categoria === 'comidas' && item.categoria_2 === 'hotdogs');
+
+      filteredArray = [...filteredArray, ...newArray];
+    }
+    if(filters.includes('porcao')){
+      const newArray = props.cardapio.filter((item) => item.categoria === 'comidas' && item.categoria_2 === 'porcoes');
+
+      filteredArray = [...filteredArray, ...newArray];
+    }
+    ///////////////////sub categorias comidas
+    // if(filters.includes('boi') && filters.length === 1){
+    //   const newArray = props.cardapio.filter((item) => item.categoria === 'comidas' && item.categoria_3 === 'boi');
+    //   filteredArray = [...filteredArray, ...newArray];
+    // }
+    // if(filters.includes('porco' && filters.length === 1)){
+    //   const newArray = props.cardapio.filter((item) => item.categoria === 'comidas' && item.categoria_3 === 'porco');
+    //   filteredArray = [...filteredArray, ...newArray];
+    // }
+    // if(filters.includes('frango') && filters.length === 1){
+    //   const newArray = props.cardapio.filter((item) => item.categoria === 'comidas' && item.categoria_3 === 'frango');
+    //   filteredArray = [...filteredArray, ...newArray];
+    // }
+    // if(filters.includes('peixe') && filters.length === 1){
+    //   const newArray = props.cardapio.filter((item) => item.categoria === 'comidas' && item.categoria_3 === 'peixe');
+    //   filteredArray = [...filteredArray, ...newArray];
+    // }
+    // if(filters.includes('vegano') && filters.length === 1){
+    //   const newArray = props.cardapio.filter((item) => item.categoria === 'comidas' && item.categoria_3 === 'vegetariano');
+    //   filteredArray = [...filteredArray, ...newArray];
+    // }
+    //Filtros
+
+    /////////////////////////////Ordem de filtro
+
+    if(filteredArray.length === 0){
+      console.log('Mais:', mais_curtidas, mais_pedidos);
+
+      //mais curtidas
+      if(mais_curtidas){
+        setLoading_mais_curtidas(true);
+        new Promise(resolve => {
+          setTimeout(() => {
+            const newArray = [...props.cardapio];
+            newArray.sort(function (a, b) {
+              let aValue = a.curtidas || 0;
+              let bValue = b.curtidas || 0;
+
+              if (aValue > bValue) {
+                return -1;
+              }
+              if (aValue < bValue) {
+                return 1;
+              }
+              return 0;
+            });
+            resolve(newArray);
+          }, 0);
+        }).then((newArray: any) => {
+          setLoading_mais_curtidas(false);
+          setFilteredCardapio(newArray);
+        });
+      }
+      //mais pedidos
+      else if(mais_pedidos){ 
+        setLoading_mais_pedidos(true);
+        new Promise(resolve => {
+          setTimeout(() => {
+            const newArray = [...props.cardapio];
+            newArray.sort(function (a, b) {
+              let aValue = a.pedidos_quantidade || 0;
+              let bValue = b.pedidos_quantidade || 0;
+
+              if (aValue > bValue) {
+                return -1;
+              }
+              if (aValue < bValue) {
+                return 1;
+              }
+              return 0;
+            });
+            resolve(newArray);
+          }, 0);
+        }).then((newArray: any) => {
+          setLoading_mais_pedidos(false);
+          setFilteredCardapio(newArray);
+        });
+      }
+    } 
+    /////////////////////////////Ordem de filtro
+    else {
+      console.log('Mais:', mais_curtidas, mais_pedidos);
+      //mais curtidas
+      if(mais_curtidas){
+        setLoading_mais_curtidas(true);
+        new Promise(resolve => {
+          setTimeout(() => {
+            const newArray = [...filteredArray];
+            newArray.sort(function (a, b) {
+              let aValue = a.curtidas || 0;
+              let bValue = b.curtidas || 0;
+      
+              if (aValue > bValue) {
+                return -1;
+              }
+              if (aValue < bValue) {
+                return 1;
+              }
+              return 0;
+            });
+            resolve(newArray);
+          }, 0);
+        }).then((newArray: any) => {
+          setLoading_mais_curtidas(false);
+          setFilteredCardapio(newArray);
+        });
+      }
+      //mais pedidos
+      else if(mais_pedidos){ 
+        setLoading_mais_pedidos(true);
+        new Promise(resolve => {
+          setTimeout(() => {
+            const newArray = [...filteredArray];
+            newArray.sort(function (a, b) {
+              let aValue = a.pedidos_quantidade || 0;
+              let bValue = b.pedidos_quantidade || 0;
+
+              if (aValue > bValue) {
+                return -1;
+              }
+              if (aValue < bValue) {
+                return 1;
+              }
+              return 0;
+            });
+            resolve(newArray);
+          }, 0);
+        }).then((newArray: any) => {
+          setLoading_mais_pedidos(false);
+          setFilteredCardapio(newArray);
+        });
+      }
+    }
+
+  }, [filters, props.cardapio,mais_curtidas,mais_pedidos]);
+
+  //////////////////////////////////////////////////////
+
+//funcao click filtro
+  function toggleFilter(filter) {
+    setLoading_categoria(true);
+    new Promise(resolve => {
+      setTimeout(() => {
+        setFilters(prevFilters => {
+          let newFilters;
+          if (prevFilters.includes(filter)) {
+            // Se o filtro já está ativo, remova-o da lista de filtros ativos
+            newFilters = prevFilters.filter(f => f !== filter);
+          } else {
+            // Se o filtro não está ativo, adicione-o
+            newFilters = [...prevFilters, filter];
+          }
+          resolve(newFilters);
+          return newFilters; // Adicione esta linha
+        }); 
+      }, 0);
+    }).then((newFilters: any) => {
+      setLoading_categoria(false);
+      setFilters(newFilters);
+    });
+    
+  }
+
+  //////////////////////////////////////////////////////
+  const Cardapio = useMemo(() => filteredCardapio, [filteredCardapio,props.cardapio]);
   return (
     <SafeAreaView style={[styles.container,styles_dark0rligth.mode_theme_container]}>
       <View>
@@ -95,20 +274,6 @@ const [bar,setBar]=useState(false);
       </View>
       {/* /////////////////////////////////////////////////////////// */}
       <View style={{alignItems:'flex-start'}}>
-      {/* /////////////////////Categoria///////////////////////// */}
-        {/* <View style={[styles.view_categoria,{flexDirection:'row'},styles_dark0rligth.view_categoria]}>
-
-          <TouchableOpacity style={styles.buttons_categoria} onPress={()=>{setComida(false),setBar(!bar) }}>
-            <Text style={styles.text}> Bar </Text>
-          </TouchableOpacity>
-
-          <View style={{backgroundColor:'#2D2F31',height:'100%',width:1}}/>
-
-          <TouchableOpacity style={styles.buttons_categoria} onPress={()=>{setBar(false),setComida(!comida)}}>
-            <Text style={styles.text}>Comida</Text>
-          </TouchableOpacity>
-
-        </View> */}
         {/* ////////////Subcategoria /////////////////////////////*/}
         <View style={{flexDirection:'row',justifyContent:'space-between',width:'100%'}}>
           {/* {bar?
@@ -118,9 +283,9 @@ const [bar,setBar]=useState(false);
             <Subcategoria_comida styles_mode={styles_dark0rligth}/>
           :null} */}
           <View style={{width:'70%'}}>
-            <Subcategoria_bar_new />
+            <Subcategoria_bar_new toggleFilter={toggleFilter} filters={filters} loading_categoria={loading_categoria}/>
             <Divider/>
-            <Subcategoria_comida_new />
+            <Subcategoria_comida_new toggleFilter={toggleFilter} filters={filters} loading_categoria={loading_categoria}/>
             <Divider/>
           </View>
 
@@ -128,16 +293,30 @@ const [bar,setBar]=useState(false);
           <View style={{width:'15%'}}>
 
             <View style={styles.container_filtro}>
-              <TouchableOpacity style={styles.buttons_filtro}>
+              <TouchableOpacity style={styles.buttons_filtro} onPress={()=>{
+                setMais_curtidas(true)
+                setMais_pedidos(false)
+                }
+              }>
                {/* <IconComponent name={icon} size={25} color="#fff" /> */}
-               <FontAwesome5 name="heartbeat" size={17} color="#3C4043" />
+               {loading_mais_curtidas?
+               <ActivityIndicator size="small" color="#3C4043" />
+               :<FontAwesome5 name="heartbeat" size={17} color="#3C4043" />}
+               
                 <Text style={styles.text_filtro}>+curtidos</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.buttons_filtro}>
+              <TouchableOpacity style={styles.buttons_filtro} onPress={()=>{
+                setMais_pedidos(true)
+                setMais_curtidas(false) 
+                }
+              }>
                {/* <IconComponent name={icon} size={25} color="#fff" /> */}
-               <Fontisto name="smiling" size={24} color="#3C4043" />
-                <Text style={styles.text_filtro}>+pedidos</Text>
+                {loading_mais_pedidos?
+                <ActivityIndicator size="small" color="#3C4043" />
+                :<Fontisto name="smiling" size={24} color="#3C4043" />}
+               
+                <Text style={styles.text_filtro} >+pedidos</Text>
               </TouchableOpacity>
               
             </View>
@@ -148,17 +327,11 @@ const [bar,setBar]=useState(false);
         {/* ////////////Subcategoria /////////////////////////////*/}
       </View>
       {/* /////////////////////Categoria///////////////////////// */}
-      {/* ////////////////////////////////////////////// */}
-      <FlatList
-        data={test}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item, index }) => <Item item={item} index={index}/>}
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
-        // onViewableItemsChanged={onViewableItemsChanged}
-        // viewabilityConfig={viewabilityConfig}
-        // ItemSeparatorComponent={() => <View style={{ width: 20 }} />}
-      />
+
+      {/* ////////////////////////////////////////////// FLATLIST*/}
+        <Flatlist_principal cardapio={Cardapio} filters={filters}/>
+      {/* ////////////////////////////////////////////// FLATLIST*/}
+
       {/* ////////////////////////////////////////////// Base*/}
       <View style={styles.base_view_container}>
 
