@@ -1,6 +1,10 @@
+import { NavigationProp } from '@react-navigation/native';
 import { user_on } from './inter';
 import { cardapio } from './inter_cardapio';
+
 export interface Principal {
+    navigation ?: NavigationProp<any,any>;
+
     cardapio: cardapio[];
     user_info?: user_on;
     onUpdate_theme: (id:string,theme: boolean) => void;
@@ -12,6 +16,9 @@ export interface Principal_card{
     selectedItem?:number
     index?:number
     styles_dark0rligth?: any;
+
+    Update_curtidas: (id:string,curtidas: number) => void;
+    Update_curtidas_user: (id:string,curtidas: string,curtidas_array:string[]) => void;
 }
 
 export interface Subcategoria{

@@ -31,7 +31,8 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
-
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 //
 import { Divider } from '@rneui/themed';
 
@@ -43,17 +44,29 @@ const styles_dark0rligth = useStyles(props.user_info);
 const state_theme_mode = props.user_info.theme_mode;
   ////////////////////////////////////Filtro Cardapio
   const [filteredCardapio, setFilteredCardapio] = useState(props.cardapio);
+  //
   const [filters, setFilters] = useState([]);
   const [mais_curtidas, setMais_curtidas] = useState(true);
   const [mais_pedidos, setMais_pedidos] = useState(false);
-
+  const [onorof, setOnorof] = useState('');
+  /////////////////////////////loadding
   const [loading_mais_curtidas, setLoading_mais_curtidas] = useState(false);
   const [loading_mais_pedidos, setLoading_mais_pedidos] = useState(false);
 
   const [loading_categoria, setLoading_categoria] = useState(false);
-
+  //favoritos
+  const [loading_favoritos, setLoading_favoritos] = useState(false);
+  ///buton voltar
+  const [voltar, setVoltar] = useState(false);
+  //////////////////////////////////////onofor
   useEffect(() => {
-    console.log('Filtros ativos:', filters);
+    const onorofValues = props.cardapio.map(item => item.onorof).join();
+    setOnorof(onorofValues);
+    // console.log(onorofValues)
+  },[props.cardapio]);
+  //////////////////////////////////////////////////////
+  useEffect(() => {
+    // console.log('Filtros ativos:', filters);
 
     let filteredArray = [];
     ////////////////////////////////////Drinks e bebidas
@@ -120,7 +133,7 @@ const state_theme_mode = props.user_info.theme_mode;
     /////////////////////////////Ordem de filtro
 
     if(filteredArray.length === 0){
-      console.log('Mais:', mais_curtidas, mais_pedidos);
+      // console.log('Mais:', mais_curtidas, mais_pedidos);
 
       //mais curtidas
       if(mais_curtidas){
@@ -175,7 +188,7 @@ const state_theme_mode = props.user_info.theme_mode;
     } 
     /////////////////////////////Ordem de filtro
     else {
-      console.log('Mais:', mais_curtidas, mais_pedidos);
+      // console.log('Mais:', mais_curtidas, mais_pedidos);
       //mais curtidas
       if(mais_curtidas){
         setLoading_mais_curtidas(true);
@@ -228,7 +241,7 @@ const state_theme_mode = props.user_info.theme_mode;
       }
     }
 
-  }, [filters, props.cardapio,mais_curtidas,mais_pedidos]);
+  }, [filters,mais_curtidas,mais_pedidos,onorof]);
 
   //////////////////////////////////////////////////////
 
@@ -256,9 +269,39 @@ const state_theme_mode = props.user_info.theme_mode;
     });
     
   }
+  // funcao clique em favoritos definir itens cardapio
+  function toggleFavoritos() {
+    setLoading_favoritos(true);
+    new Promise(resolve => {
+      setTimeout(() => {
+        const array_curtidas = props.user_info.curtidas
+        const newArray = [...props.cardapio];
+        const newArray_filtrado = newArray.filter((item) => array_curtidas.includes(item.id));
+        newArray_filtrado.sort(function (a, b) {
+          let aValue = a.curtidas || 0;
+          let bValue = b.curtidas || 0;
 
+          if (aValue > bValue) {
+            return -1;
+          }
+          if (aValue < bValue) {
+            return 1;
+          }
+          return 0;
+        });
+        resolve(newArray_filtrado);
+      }, 0);
+    }).then((newFilters: any) => {
+      setFilteredCardapio(newFilters);
+      // console.log(newFilters)
+      setLoading_favoritos(false);
+      setVoltar(true);
+      
+    });
+  }
   //////////////////////////////////////////////////////
   const Cardapio = useMemo(() => filteredCardapio, [filteredCardapio,props.cardapio]);
+  //////////////////////////////////////////////////////
   return (
     <SafeAreaView style={[styles.container,styles_dark0rligth.mode_theme_container]}>
       <View>
@@ -273,7 +316,7 @@ const state_theme_mode = props.user_info.theme_mode;
         </TouchableOpacity>
       </View>
       {/* /////////////////////////////////////////////////////////// */}
-      <View style={{alignItems:'flex-start'}}>
+      <View style={{alignItems:'flex-start',width:'100%'}}>
         {/* ////////////Subcategoria /////////////////////////////*/}
         <View style={{flexDirection:'row',justifyContent:'space-between',width:'100%'}}>
           {/* {bar?
@@ -323,8 +366,32 @@ const state_theme_mode = props.user_info.theme_mode;
 
           </View>
           {/* ////////////Filtro /////////////////////////////*/}
+          
         </View>
         {/* ////////////Subcategoria /////////////////////////////*/}
+          <View style={styles.favoritos}>
+            <TouchableOpacity style={{alignItems:'center'}} 
+            onPress={()=>{
+                if(voltar){
+                  setVoltar(false)
+                  setFilters([])
+                  return
+                }else{
+                  toggleFavoritos()
+                }
+            }}>
+              
+              {
+              loading_favoritos?
+              <ActivityIndicator size="small" color="#3C4043" />
+              :voltar?
+              <Ionicons name="return-down-back" size={24} color="black" />:
+              <MaterialCommunityIcons name="hand-heart-outline" size={24} color="#3C4043" />
+              }
+
+              <Text style={{color:'#3C4043',fontSize:10,fontFamily:'Roboto-Regular'}}>Favoritos</Text>
+            </TouchableOpacity>
+          </View>
       </View>
       {/* /////////////////////Categoria///////////////////////// */}
 
@@ -345,8 +412,8 @@ const state_theme_mode = props.user_info.theme_mode;
         <TouchableOpacity style={[styles.base_button_carrinho,styles_dark0rligth.carrinho]}>
           <AntDesign name="shoppingcart" size={30} color="#3C4043" />
         </TouchableOpacity>
-
-        <TouchableOpacity style={styles.base_buttons}>
+        {/* onPress={()=>props.navigation.navigate('Comments')} */}
+        <TouchableOpacity style={styles.base_buttons} >
           {props.user_info.theme_mode ?
           <FontAwesome name="user-circle" size={30} color="#f8fafd" />:
           <FontAwesome name="user-circle" size={30} color="#202124" />}
@@ -407,6 +474,20 @@ const styles = StyleSheet.create({
     borderRadius:100,
 
     elevation: 5,
+  },
+  //////////////////////////////////////////////Favoritos
+  favoritos:{
+    alignSelf: 'flex-end',
+    marginTop:25,
+    marginRight:15, 
+    //stilos
+    backgroundColor:'#f8fafd',
+    padding:5,
+    borderRadius:10,
+    elevation:5,
+
+    borderColor:'#E81000',
+    borderWidth:0.5,
   }
 //nao usado
   //      //////////////////////////////////////////////// categoria

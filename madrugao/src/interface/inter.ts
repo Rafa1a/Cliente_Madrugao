@@ -149,6 +149,8 @@ export interface user_on {
   uid?:string;
   theme_mode?:boolean;
 
+  curtidas:string[]
+  //entrega
   rua_on?:string;
   numero_on:number;
 }

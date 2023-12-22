@@ -1,7 +1,7 @@
 
 import {GET_USER, LOGIN_USER, LOGIN_USER_INFO} from './actionTypes'
 import { user_on} from '../../interface/inter'
-import { collection, addDoc,setDoc,doc,onSnapshot,getDocs,query, where, updateDoc,arrayUnion} from "firebase/firestore"; 
+import { collection, addDoc,setDoc,doc,onSnapshot,getDocs,query, where, updateDoc,arrayUnion, arrayRemove} from "firebase/firestore"; 
 import { db } from '../auth';
 import { setMessage } from './message';
 
@@ -89,7 +89,7 @@ export const add_On = (user:user_on) => {
       }
   }
 }
-/////////////////////////UPDATE
+/////////////////////////UPDATE THEME em user_on
 export const update_On_theme = (id:string,theme_mode:boolean) => {
   return async(dispatch:any)=>{
     try {
@@ -105,7 +105,45 @@ export const update_On_theme = (id:string,theme_mode:boolean) => {
       }
   }
 }
-/////////////////////////UPDATE
+/////////////////////////UPDATE CURTIDAS em cardapio
+export const update_On_curtidas = (id:string,curtidas:number) => {
+  return async(dispatch:any)=>{
+    try {
+      // console.log(curtidas)
+      updateDoc(doc(db, "cardapio", id), {
+        curtidas: curtidas,
+      });
+  } catch (e) { 
+        dispatch(setMessage({
+          title: 'Error',
+          text: 'Ocorreu um erro ao contatar o servidor dos usuarios'
+        }))
+      }
+  }
+}
+/////////////////////////UPDATE user_on Curtidas em user_on id de cardapio
+export const update_On_curtidas_user = (id:string,curtidas:string,curtidas_array:string[]) => {
+  return async(dispatch:any)=>{
+    try {
+      // console.log(curtidas)
+      if(curtidas_array.includes(curtidas)){
+        updateDoc(doc(db, "user_on", id), {
+          curtidas: arrayRemove(curtidas),
+        });
+      } else {
+        updateDoc(doc(db, "user_on", id), {
+          curtidas: arrayUnion(curtidas),
+        });
+      }
+  } catch (e) { 
+        dispatch(setMessage({
+          title: 'Error',
+          text: 'Ocorreu um erro ao contatar o servidor dos usuarios'
+        }))
+      }
+  }
+}
+/////////////////////////////////////
 export const setUser =  (users:user_on[]) => {
     return { 
         type:GET_USER,

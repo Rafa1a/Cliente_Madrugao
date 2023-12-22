@@ -19,7 +19,11 @@ export const startCardapio = () => {
               id: doc.id}) 
           }); 
           // console.log(cardapio)
-          dispatch(setCardapio(cardapio))
+
+          const cardapio_filtrado = cardapio.filter((item)=>item.onorof===true)
+          
+          dispatch(setCardapio(cardapio_filtrado))
+
           console.log("Cardapio onsnap")
 
         });

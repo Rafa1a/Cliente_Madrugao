@@ -1,5 +1,5 @@
 import { Icon } from '@rneui/themed';
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   
   Dimensions,
@@ -7,7 +7,8 @@ import {
   Text,
   View,
   TouchableOpacity,
-  ActivityIndicator
+  ActivityIndicator,
+  TouchableHighlight
 
 } from 'react-native';
 import { Image } from '@rneui/themed';
@@ -18,6 +19,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { connect } from 'react-redux';
 import { useStyles } from '../styles/styles_dark_ligth';
 import { Principal_card } from '../interface/Novas_componentes';
+import { update_On_curtidas, update_On_curtidas_user } from '../store/action/user';
 
 
  function Card(props: Principal_card) {
@@ -26,7 +28,23 @@ import { Principal_card } from '../interface/Novas_componentes';
 
   const itens = props.item;
   // console.log(itens.ingredientes?itens.ingredientes.join(', '):'')
-  
+  //deifinir curtidas 
+  const [curtidas, setCurtidas] = React.useState(false);
+
+  useEffect(() => {
+    const curtidas = props.user_info.curtidas;
+    const id = itens.id;
+    // console.log(curtidas)
+    // console.log(id)
+    const find = curtidas.includes(id)
+    if(find){
+      setCurtidas(true)
+    }else{
+      setCurtidas(false)
+    }
+  }, [props.user_info.curtidas,itens.id])
+
+
   return (
 
   <SafeAreaView style={[styles.container,props.selectedItem === props.index && { transform: [{ scale: 1.2 }] },]}>
@@ -36,10 +54,13 @@ import { Principal_card } from '../interface/Novas_componentes';
       <View style={[styles.view_image,styles_dark0rligth.mode_theme_card_image]}>
         <Image
           style={styles.image}
-          source={require('../../assets/testes/costela_test_2.png')}
+          source={require('../../assets/testes/imagens_treino.png')}
           resizeMode="contain"
           PlaceholderContent={
             <View style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+
               width: '100%',
               height: '100%',
               borderTopRightRadius: 25,
@@ -76,8 +97,24 @@ import { Principal_card } from '../interface/Novas_componentes';
             <FontAwesome name="cart-plus" size={35} color="#252A32" /> 
           </View>
         </TouchableOpacity> 
-          <View style={{marginRight:10,marginTop:10,alignItems:'center',justifyContent:'center'}}>
-            <MaterialCommunityIcons name="cards-heart-outline" size={25} color="#E81000" />
+          <View style={{marginRight:10,marginTop:10,alignItems:'center',justifyContent:'center'}} >
+            <TouchableOpacity onPress={async()=>{
+                if(curtidas){
+                  await setCurtidas(false)
+                  await props.Update_curtidas_user(props.user_info.id,itens.id,props.user_info.curtidas)
+                  return
+                }else{
+                  await setCurtidas(true)
+                  await props.Update_curtidas(itens.id,itens.curtidas+1)
+                  await props.Update_curtidas_user(props.user_info.id,itens.id,props.user_info.curtidas)
+                }
+              }}>  
+
+              {curtidas?
+              <MaterialCommunityIcons name="cards-heart" size={25} color="#E81000" />
+              :<MaterialCommunityIcons name="cards-heart-outline" size={25} color="#E81000" />}
+
+            </TouchableOpacity>
             <Text style={{color:'#E81000',fontSize:10,fontFamily:'Roboto-Regular'}}>{itens.curtidas}</Text>
           </View>
         
@@ -91,7 +128,7 @@ import { Principal_card } from '../interface/Novas_componentes';
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
+    flex: 1,
     // backgroundColor: '#003ffd',
     justifyContent: 'center',
     alignItems: 'center',
@@ -99,7 +136,7 @@ const styles = StyleSheet.create({
     marginBottom: `15%`,
   },
   view_principal: {
-    height: '75%',
+    height: '90%',
     width: Dimensions.get('window').width/1.7,
 
     backgroundColor: '#3C4043',
@@ -182,4 +219,10 @@ const mapStateToProps = ({  user }: { user: any})=> {
     user_info: user.user_info,
       };
 };
-export default connect(mapStateToProps)(React.memo(Card));
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    Update_curtidas: (id:string,curtidas: number) => dispatch(update_On_curtidas(id,curtidas)),
+    Update_curtidas_user: (id:string,curtidas: string,curtidas_array:string[]) => dispatch(update_On_curtidas_user(id,curtidas,curtidas_array)),
+  };
+}
+export default connect(mapStateToProps,mapDispatchToProps)(React.memo(Card));
