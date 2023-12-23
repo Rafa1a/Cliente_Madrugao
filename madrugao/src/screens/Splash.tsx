@@ -7,16 +7,21 @@ import {
 import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withTiming, withSequence } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
-import { startCardapio } from '../store/action/cardapio';
+import { setComments, setOnorof, startCardapio } from '../store/action/cardapio';
 // 
 import { useStyles } from '../styles/styles_dark_ligth';
 import { user_on } from '../interface/inter';
+import { startUsers_on } from '../store/action/user';
 
 interface SplashProps {
     navigation: any;
     cardapio: any;
     user_info: user_on;
+    users: user_on[];
     onCardapio: ()=>void;
+    onUsers: ()=>void;
+    setComments: (comments:string)=>void;
+    setOnorof: (onorof:string)=>void;
 }
 function Splash(props: SplashProps) {
 
@@ -67,6 +72,7 @@ function Splash(props: SplashProps) {
         //carregar dados backend
         const carregarcardapio = async () => {
           await props.onCardapio();
+          await props.onUsers();
 
         }
         carregarcardapio();
@@ -74,7 +80,7 @@ function Splash(props: SplashProps) {
     
     useEffect(() => { 
 
-      if(props.cardapio){
+      if(props.cardapio && props.users){
         // console.log('props.cardapio');
         setTimeout(() => {
           props.navigation.replace('Principal');
@@ -82,8 +88,22 @@ function Splash(props: SplashProps) {
 
       }
 
-    }, [props.cardapio]);
+    }, [props.cardapio,props.users]);
     //
+  //////////////////////////////////////onofor e comentarios atualizacao GATILHO de mudanças
+    useEffect(() => {
+      if(props.cardapio !== undefined){
+        // console.log(props.cardapio[0])
+        //onorof do cardapio caso mude
+        const onorofValues = props.cardapio.map(item => item.onorof).join();
+        props.setOnorof(onorofValues);
+        //comentarios do cardapio caso mude
+        const comentariosValues = props.cardapio.map(item => item.comments).join();
+        props.setComments(comentariosValues);
+      }
+    },[props.cardapio]);
+    
+//////////////////////////////////////
   return (
     <SafeAreaView style={[styles.container,styles_dark0rligth.mode_theme_container]}>
 
@@ -171,11 +191,15 @@ const mapStateToProps = ({  user, cardapio }: { user: any,cardapio})=> {
   return {
     cardapio: cardapio.cardapio,
     user_info: user.user_info,
+    users: user.users,
       };
 };
 const mapDispatchToProps = (dispatch: any) => {
     return {
         onCardapio : () => dispatch(startCardapio()),
+        onUsers : () => dispatch(startUsers_on()),
+        setComments : (comments:string) => dispatch(setComments(comments)),
+        setOnorof : (onorof:string) => dispatch(setOnorof(onorof)),
       };
 };
 export default connect(mapStateToProps,mapDispatchToProps)(Splash);

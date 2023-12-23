@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   
   Dimensions,
@@ -7,18 +7,23 @@ import {
   View,
   TouchableOpacity,
   ActivityIndicator,
-  TouchableHighlight
+  TouchableHighlight,
+  FlatList
 
 } from 'react-native';
-import { Image } from '@rneui/themed';
+import { BottomSheet, Image, Input, ListItem } from '@rneui/themed';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons,AntDesign } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { connect } from 'react-redux';
 import { useStyles } from '../styles/styles_dark_ligth';
-import { Principal_card } from '../interface/Novas_componentes';
+import { Principal_card, commentss2 } from '../interface/Novas_componentes';
 import { update_On_curtidas, update_On_curtidas_user } from '../store/action/user';
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import { Avatar } from '@rneui/base';
+import { addComment, setModal_comments } from '../store/action/cardapio';
+import { comments } from '../interface/inter_cardapio';
 
 
  function Card(props: Principal_card) {
@@ -42,8 +47,43 @@ import { update_On_curtidas, update_On_curtidas_user } from '../store/action/use
       setCurtidas(false)
     }
   }, [props.user_info.curtidas,itens.id])
+  /////////////////////////////////////////////// BottomSheet
+  const [isVisible, setIsVisible] = useState(false);
+  /////////////////////////////////////////////// BottomSheet
+  // console.log(itens.comments.length)
+  
+  //////////////////////////////////////////////////////////////
+  //animacao
+  const [icon, setIcon] = useState(false);
 
+  const [input, setInput] = useState('');
+  const[loading_comment,setLoading_comment] = useState(false);
 
+  const randomWidth = useSharedValue(50);
+
+  const config = {
+    duration: 300,
+    easing: Easing.bezier(0.5, 0.01, 0, 1),
+  };
+  const config_2 = {
+    mass: 2,
+    stiffness: 200,
+    damping: 10,
+
+  };
+  const style = useAnimatedStyle(() => {
+    return {
+      width: withSpring(`${randomWidth.value}%`, config_2),
+      // borderWidth: withSpring(randomWidth.value/12, config_2),
+    };
+  });
+  //funcao para procurar user em users
+  const find_user = (uid:string) => {
+    const user = props.users.find((item:any) => item.uid === uid);
+    return user;
+  }
+  //////////////////////////////////////////////////////////////
+  // console.log(itens.comments[0].date.toDate().toLocaleDateString())
   return (
 
   <SafeAreaView style={[styles.container,props.selectedItem === props.index && { transform: [{ scale: 1.2 }] },]}>
@@ -56,19 +96,15 @@ import { update_On_curtidas, update_On_curtidas_user } from '../store/action/use
           source={require('../../assets/testes/imagens_treino.png')}
           resizeMode="contain"
           PlaceholderContent={
-            <View style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-
-              width: '100%',
-              height: '100%',
-              borderTopRightRadius: 25,
-              borderTopLeftRadius: 25,
-  
-              backgroundColor: '#f8fafd'}}>
-                <ActivityIndicator size="small" color="#3C4043" />
-            </View>
+                <ActivityIndicator size="large" color="#DE6F00" />
         }
+        placeholderStyle={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          borderTopRightRadius: 25,
+          borderTopLeftRadius: 25,
+          backgroundColor: '#f8fafd'
+        }}
         />
       </View>
       {/* TEXT */}
@@ -80,13 +116,18 @@ import { update_On_curtidas, update_On_curtidas_user } from '../store/action/use
       </View>
 
       <View style={styles.iconContainer}>
+        {/* BUTTON COMENTARIO */}
+        <View style={{marginLeft:10,marginTop:10,alignItems:'center',justifyContent:'center'}} >
+          <TouchableOpacity onPress={()=>setIsVisible(true)}>
 
-        {props.user_info.theme_mode ? 
-          <FontAwesome name="commenting-o" size={25} color="#f8fafd" style={{margin:10}}/> 
-          : 
-          <FontAwesome name="commenting-o" size={25} color="#252A32" style={{margin:10}}/>
-          }
-        
+              {props.user_info.theme_mode ? 
+              <FontAwesome name="commenting-o" size={25} color="#f8fafd" /> 
+              : 
+              <FontAwesome name="commenting-o" size={25} color="#252A32" />
+              }
+              <Text style={{color:'#252A32',fontSize:10,fontFamily:'Roboto-Regular',textAlign:'center'}}>{itens.comments.length}</Text>
+          </TouchableOpacity>
+        </View>
         {/* BUTTON CARD */}
         <TouchableOpacity
         onPress={() => {}}
@@ -96,6 +137,7 @@ import { update_On_curtidas, update_On_curtidas_user } from '../store/action/use
             <FontAwesome name="cart-plus" size={35} color="#252A32" /> 
           </View>
         </TouchableOpacity> 
+        {/* button curtidas */}
           <View style={{marginRight:10,marginTop:10,alignItems:'center',justifyContent:'center'}} >
             <TouchableOpacity onPress={async()=>{
                 if(curtidas){
@@ -114,12 +156,90 @@ import { update_On_curtidas, update_On_curtidas_user } from '../store/action/use
               :<MaterialCommunityIcons name="cards-heart-outline" size={25} color="#E81000" />}
 
             </TouchableOpacity>
-            <Text style={{color:'#E81000',fontSize:10,fontFamily:'Roboto-Regular'}}>{itens.curtidas}</Text>
+            <Text style={{color:'#E81000',fontSize:10,fontFamily:'Roboto-Regular',textAlign:'center'}}>{itens.curtidas}</Text>
           </View>
         
       </View>
 
     </View>
+
+    <BottomSheet modalProps={{}} isVisible={isVisible}>
+
+      <View style={[{flex:1,justifyContent:'center',alignItems:'flex-end'}]}>
+        {/* botao fechar */}
+        <TouchableOpacity style={{margin:10,backgroundColor:'#f4f7fc',padding:10,borderRadius:50,elevation:5}} onPress={()=>{
+            setIsVisible(false),
+            randomWidth.value=50,
+            setIcon(false)
+            props.Setmodal(false)
+          }}>
+
+          <AntDesign name="closecircle" size={24} color="#3C4043" />
+        </TouchableOpacity>
+        {/*input  */}
+
+
+        <Animated.View style={[style,{backgroundColor: '#f4f7fc', elevation: 5, borderRadius: 10, margin: 10 }]} >
+          <Input
+          placeholder="Comment"
+          rightIcon={
+            icon?loading_comment?<ActivityIndicator size="small" color="#3C4043" />:
+              <MaterialCommunityIcons name="comment-plus" size={30} color="#3C4043" onPress={async()=>{
+                props.Setmodal(true)
+                setLoading_comment(true)
+                await props.AddComment(itens.id,{
+                  uid:props.user_info.uid,
+                  comment:input,
+                  date: new Date(),
+                })
+                setLoading_comment(false)
+              } 
+              }/>:
+              <MaterialCommunityIcons name="comment-processing" size={30} color="#3C4043" />
+          }
+          onChangeText={value => setInput(value)}
+          // containerStyle={{ width: '90%'}}
+          onFocus={() => {randomWidth.value = 80, setIcon(true)}}
+          />
+        </Animated.View>
+      </View>
+        {/* //////////////////////////////////////////////// */}
+
+      {/* flatlista de comentarios */}
+      <FlatList
+        scrollEnabled={false}
+        data={itens.comments.slice().reverse()}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item, index }) => (
+          <ListItem key={index}>
+            <Avatar
+              size={40}
+              rounded
+              source={{
+                uri: find_user(item.uid).image_on,
+              }}
+              />
+            <ListItem.Content>
+            
+              <ListItem.Title style={{backgroundColor:'#f4f7fc',padding:10,borderRadius:10,color:'#202124',fontFamily:'OpenSans-Regular'}}>
+                
+                <Text style={{fontFamily:'OpenSans-Bold'}}>
+                  {find_user(item.uid).name_on}
+                </Text>
+                {"\n"}
+                {"  "}
+                {item.comment}
+              </ListItem.Title>
+              
+              <ListItem.Subtitle style={{ fontSize: 11, lineHeight: 14,fontFamily:'Roboto-Regular' }}>
+                {item.date.toDate().toLocaleDateString()} {item.date.toDate().toLocaleTimeString()}
+              </ListItem.Subtitle>
+            </ListItem.Content>
+          </ListItem>
+        )}
+      />
+    </BottomSheet>
+
   </SafeAreaView>
   );
 }
@@ -213,15 +333,19 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = ({  user }: { user: any})=> {
+const mapStateToProps = ({  user,cardapio }: { user: any,cardapio:any})=> {
   return {
     user_info: user.user_info,
+    users: user.users,
+    isModalOpen: cardapio.modal,
       };
 };
 const mapDispatchToProps = (dispatch: any) => {
   return {
     Update_curtidas: (id:string,curtidas: number) => dispatch(update_On_curtidas(id,curtidas)),
     Update_curtidas_user: (id:string,curtidas: string,curtidas_array:string[]) => dispatch(update_On_curtidas_user(id,curtidas,curtidas_array)),
+    AddComment: (id:string,comments: commentss2) => dispatch(addComment(id,comments)),
+    Setmodal: (boolean:boolean) => dispatch(setModal_comments(boolean)),
   };
 }
 export default connect(mapStateToProps,mapDispatchToProps)(React.memo(Card));

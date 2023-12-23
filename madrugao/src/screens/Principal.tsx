@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   Dimensions,
@@ -34,21 +34,30 @@ import { FontAwesome } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 //
+//lotie
+import LottieView from 'lottie-react-native';
+//
 import { Divider } from '@rneui/themed';
 
 function Principal_comp(props: Principal) {
 
 
-const styles_dark0rligth = useStyles(props.user_info);  
-////////////////////////
-const state_theme_mode = props.user_info.theme_mode;
+  const styles_dark0rligth = useStyles(props.user_info);  
+  ////////////////////////
+  const state_theme_mode = props.user_info.theme_mode;
   ////////////////////////////////////Filtro Cardapio
   const [filteredCardapio, setFilteredCardapio] = useState(props.cardapio);
   //
   const [filters, setFilters] = useState([]);
   const [mais_curtidas, setMais_curtidas] = useState(true);
   const [mais_pedidos, setMais_pedidos] = useState(false);
+  //atualizacoes 
   const [onorof, setOnorof] = useState('');
+  const firstonorof = useRef(true);
+
+  const [comments, setComments] = useState('');
+  const firstcomments = useRef(true);
+
   /////////////////////////////loadding
   const [loading_mais_curtidas, setLoading_mais_curtidas] = useState(false);
   const [loading_mais_pedidos, setLoading_mais_pedidos] = useState(false);
@@ -58,16 +67,49 @@ const state_theme_mode = props.user_info.theme_mode;
   const [loading_favoritos, setLoading_favoritos] = useState(false);
   ///buton voltar
   const [voltar, setVoltar] = useState(false);
-  //////////////////////////////////////onofor
+  //////////////////////////////////////////////////////
+  //animacao lottie
+  const [lottie, setLottie] = useState(false);
+  const animation = useRef(null);
+
+  const firstRender = useRef(true);
+  //////////////////////////////////////onofor e comentarios atualizacao GATILHO de mudanças
+
   useEffect(() => {
     const onorofValues = props.cardapio.map(item => item.onorof).join();
-    setOnorof(onorofValues);
+    const onorofstring = props.onorof
+    // console.log(onorofstring)
     // console.log(onorofValues)
+    if(firstonorof.current === true && onorofstring !== onorofValues){
+      firstonorof.current = false;
+      setOnorof(onorofValues);
+      return;
+    }else if(firstonorof.current === false){
+        setOnorof(onorofValues);
+    }
+    //////////////////////////////////////////////////////////////
+    if (props.isModalOpen) {
+      const comentariosValues = props.cardapio.map(item => item.comments).join();
+      const commentsstring = props.comments
+
+      if (firstcomments.current === true && commentsstring !== comentariosValues ) {
+        firstcomments.current = false;
+        setComments(comentariosValues);
+        return;
+      }else if (firstcomments.current === false) {
+        setComments(comentariosValues);
+      }
+    }
   },[props.cardapio]);
+
   //////////////////////////////////////////////////////
   useEffect(() => {
     // console.log('Filtros ativos:', filters);
-
+    if (firstRender.current) {
+      firstRender.current = false;
+    } else if(props.isModalOpen === false && firstRender.current === false){
+      setLottie(true);
+    }
     let filteredArray = [];
     ////////////////////////////////////Drinks e bebidas
     if(filters.includes('refri')){
@@ -131,10 +173,8 @@ const state_theme_mode = props.user_info.theme_mode;
     //Filtros
 
     /////////////////////////////Ordem de filtro
-
     if(filteredArray.length === 0){
       // console.log('Mais:', mais_curtidas, mais_pedidos);
-
       //mais curtidas
       if(mais_curtidas){
         setLoading_mais_curtidas(true);
@@ -158,6 +198,7 @@ const state_theme_mode = props.user_info.theme_mode;
         }).then((newArray: any) => {
           setLoading_mais_curtidas(false);
           setFilteredCardapio(newArray);
+          setLottie(false);
         });
       }
       //mais pedidos
@@ -183,6 +224,8 @@ const state_theme_mode = props.user_info.theme_mode;
         }).then((newArray: any) => {
           setLoading_mais_pedidos(false);
           setFilteredCardapio(newArray);
+          setLottie(false);
+
         });
       }
     } 
@@ -212,6 +255,8 @@ const state_theme_mode = props.user_info.theme_mode;
         }).then((newArray: any) => {
           setLoading_mais_curtidas(false);
           setFilteredCardapio(newArray);
+          setLottie(false);
+
         });
       }
       //mais pedidos
@@ -237,11 +282,13 @@ const state_theme_mode = props.user_info.theme_mode;
         }).then((newArray: any) => {
           setLoading_mais_pedidos(false);
           setFilteredCardapio(newArray);
+          setLottie(false);
         });
       }
     }
+    console.log('Filtros ativos:', filteredArray);
 
-  }, [filters,mais_curtidas,mais_pedidos,onorof]);
+  }, [filters,mais_curtidas,mais_pedidos,onorof,comments]);
 
   //////////////////////////////////////////////////////
 
@@ -300,6 +347,8 @@ const state_theme_mode = props.user_info.theme_mode;
     });
   }
   //////////////////////////////////////////////////////
+  // console.log(filteredCardapio[0])
+  // console.log(props.cardapio[0])
   const Cardapio = useMemo(() => filteredCardapio, [filteredCardapio,props.cardapio]);
   //////////////////////////////////////////////////////
   return (
@@ -396,7 +445,19 @@ const state_theme_mode = props.user_info.theme_mode;
       {/* /////////////////////Categoria///////////////////////// */}
 
       {/* ////////////////////////////////////////////// FLATLIST*/}
-        <Flatlist_principal cardapio={Cardapio} filters={filters}/>
+     
+      {
+      lottie?
+        <LottieView
+          autoPlay
+          ref={animation}
+            
+          // Find more Lottie files at https://lottiefiles.com/featured
+          source={require('../../assets/anim/animacao_flatlist.json')}
+          style={{flex:1,alignSelf:'center',width:Dimensions.get('window').width}}
+        />:
+        <Flatlist_principal cardapio={Cardapio} />
+      }
       {/* ////////////////////////////////////////////// FLATLIST*/}
 
       {/* ////////////////////////////////////////////// Base*/}
@@ -511,12 +572,16 @@ const styles = StyleSheet.create({
 const mapStateToProps = ({  user, cardapio }: { user: any,cardapio})=> {
   return {
     cardapio: cardapio.cardapio,
+    onorof: cardapio.onorof,
+    comments: cardapio.comments,
+    isModalOpen: cardapio.modal,
     user_info: user.user_info,
       };
 };
 const mapDispatchProps = (dispatch: any) => {
   return {
     onUpdate_theme: (id:string,theme_mode:boolean) => dispatch(update_On_theme(id,theme_mode)),
+    
   };
 };
 export default connect(mapStateToProps,mapDispatchProps)(Principal_comp);

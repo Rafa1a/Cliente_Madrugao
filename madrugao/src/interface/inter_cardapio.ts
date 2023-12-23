@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface cardapio {
     id:string
     id_pedido:string[]
@@ -5,7 +7,7 @@ export interface cardapio {
     categoria: string;
     categoria_2: string;
     categoria_3?: string;
-    comments: string[];
+    comments: comments[];
 
     curtidas: number;
     pedidos_quantidade: number;
@@ -17,7 +19,11 @@ export interface cardapio {
     valor: number;
     estoque?:number;
 }
-
+export interface comments{
+    uid: string;
+    comment: string;
+    date: Timestamp;
+}
 export interface estoque_screen{
     cardapio:cardapio[];
     onAtualizar_onorof: (id: any, onorof: any) => void;

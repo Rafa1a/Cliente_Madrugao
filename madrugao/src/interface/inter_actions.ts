@@ -9,7 +9,10 @@ export const initialState:any = {
     total:0,
 }
 export const initialState_cardapio:any = {
-    cardapio:undefined
+    cardapio:undefined,
+    modal:false,
+    comments:undefined,
+    onorof:undefined,
 }
 export interface message {
     title:string;

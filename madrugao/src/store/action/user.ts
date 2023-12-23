@@ -48,8 +48,8 @@ export const startUsers_on= () => {
                 id: doc.id}) 
             }); 
         // console.log(users)
-        dispatch(setUser(users));
-        console.log("user_on onsnap")
+        dispatch(setUsers(users));
+        console.log("users onsnap")
       }); 
     }catch (error) {
         // console.error('Erro ao adicionar item ao pedido:', error);
@@ -144,7 +144,7 @@ export const update_On_curtidas_user = (id:string,curtidas:string,curtidas_array
   }
 }
 /////////////////////////////////////
-export const setUser =  (users:user_on[]) => {
+export const setUsers =  (users:user_on[]) => {
     return { 
         type:GET_USER,
         payload:users
