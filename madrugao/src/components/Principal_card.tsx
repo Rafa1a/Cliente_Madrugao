@@ -63,17 +63,11 @@ import { comments } from '../interface/inter_cardapio';
 
   const config = {
     duration: 300,
-    easing: Easing.bezier(0.5, 0.01, 0, 1),
-  };
-  const config_2 = {
-    mass: 2,
-    stiffness: 200,
-    damping: 10,
-
+    easing: Easing.bezier(0.59, -0.01, 0.19, 1.41),
   };
   const style = useAnimatedStyle(() => {
     return {
-      width: withSpring(`${randomWidth.value}%`, config_2),
+      width: withTiming(`${randomWidth.value}%`, config),
       // borderWidth: withSpring(randomWidth.value/12, config_2),
     };
   });
@@ -87,7 +81,7 @@ import { comments } from '../interface/inter_cardapio';
   return (
 
   <SafeAreaView style={[styles.container,props.selectedItem === props.index && { transform: [{ scale: 1.2 }] },]}>
-    
+
     {/* CARD */}
     <View style={[styles.view_principal,styles_dark0rligth.mode_theme_card]}>
       {/* IMAGE */}
