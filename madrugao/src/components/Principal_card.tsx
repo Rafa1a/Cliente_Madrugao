@@ -36,11 +36,11 @@ import { comments } from '../interface/inter_cardapio';
   const [curtidas, setCurtidas] = React.useState(false);
 
   useEffect(() => {
-    const curtidas = props.user_info.curtidas;
+    const curtidas = props.user_info.curtidas || [];
     const id = itens.id;
     // console.log(curtidas)
     // console.log(id)
-    const find = curtidas.includes(id)
+    const find = curtidas?.includes(id)
     if(find){
       setCurtidas(true)
     }else{
@@ -147,7 +147,7 @@ import { comments } from '../interface/inter_cardapio';
                 }else{
                   await setCurtidas(true)
                   await props.Update_curtidas(itens.id,itens.curtidas+1)
-                  await props.Update_curtidas_user(props.user_info.id,itens.id,props.user_info.curtidas)
+                  await props.Update_curtidas_user(props.user_info.id,itens.id,props.user_info.curtidas||[])
                 }
               }}>  
 

@@ -104,7 +104,7 @@ function Principal_comp(props: Principal) {
 
   //////////////////////////////////////////////////////
   useEffect(() => {
-    // console.log('Filtros ativos:', filters);
+    console.log('Filtros 32:', filters);
     if (firstRender.current) {
       firstRender.current = false;
     } else if(props.isModalOpen === false && firstRender.current === false){
@@ -286,7 +286,7 @@ function Principal_comp(props: Principal) {
         });
       }
     }
-    console.log('Filtros ativos:', filteredArray);
+    // console.log('Filtros ativos:', filteredArray);
 
   }, [filters,mais_curtidas,mais_pedidos,onorof,comments]);
 
@@ -314,16 +314,16 @@ function Principal_comp(props: Principal) {
       setLoading_categoria(false);
       setFilters(newFilters);
     });
-    
+     
   }
   // funcao clique em favoritos definir itens cardapio
   function toggleFavoritos() {
     setLoading_favoritos(true);
     new Promise(resolve => {
       setTimeout(() => {
-        const array_curtidas = props.user_info.curtidas
+        const array_curtidas = props.user_info.curtidas || [];
         const newArray = [...props.cardapio];
-        const newArray_filtrado = newArray.filter((item) => array_curtidas.includes(item.id));
+        const newArray_filtrado = newArray.filter((item) => array_curtidas?.includes(item.id));
         newArray_filtrado.sort(function (a, b) {
           let aValue = a.curtidas || 0;
           let bValue = b.curtidas || 0;
@@ -346,6 +346,7 @@ function Principal_comp(props: Principal) {
       
     });
   }
+
   //////////////////////////////////////////////////////
   // console.log(filteredCardapio[0])
   // console.log(props.cardapio[0])
