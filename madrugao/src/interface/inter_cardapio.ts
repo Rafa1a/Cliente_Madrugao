@@ -3,7 +3,7 @@ import { Timestamp } from "firebase/firestore";
 export interface cardapio {
     id:string
     id_pedido:string[]
-    adicionais?: string[];
+    adicionais?: adicionais[];
     categoria: string;
     categoria_2: string;
     categoria_3?: string;
@@ -18,6 +18,10 @@ export interface cardapio {
     onorof: boolean;
     valor: number;
     estoque?:number;
+}
+interface adicionais {
+    name: string;
+    valor: number;
 }
 export interface comments{
     uid: string;
