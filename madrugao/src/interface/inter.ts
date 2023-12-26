@@ -52,10 +52,10 @@ export interface ItemProps {
 export interface Item {
   id:string
   name_p: string;
-  categoria: "comidas" | "bebidas" | "bar";
-  categoria_2?: "lanches" | "hotdogs" | "porcoes";
-  retirar_p: string[];
-  adicionar_p: string[];
+  categoria: "comidas" | "bebidas" | "bar" |string;
+  categoria_2?: "lanches" | "hotdogs" | "porcoes"|string;
+  retirar_p?: string[];
+  adicionar_p?: string[];
   quantidade:number;
   valor_p : number;
 }

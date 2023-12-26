@@ -1,5 +1,5 @@
 import { NavigationProp } from '@react-navigation/native';
-import { user_on } from './inter';
+import { Item, user_on } from './inter';
 import { cardapio,comments } from './inter_cardapio';
 
 export interface Principal {
@@ -27,6 +27,9 @@ export interface Principal_card{
     Update_curtidas_user: (id:string,curtidas: string,curtidas_array:string[]) => void;
     AddComment: (id:string,comments: commentss2) => void;
     Setmodal: (boolean:boolean) => void;
+    //adicionar itens
+    adicionar_itens?: Item[];
+    Set_add_itens: (itens:Item[]) => void;
 }
 export interface commentss2{
     uid: string;

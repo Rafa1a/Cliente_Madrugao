@@ -24,7 +24,9 @@ import Animated, { Easing, useAnimatedStyle, useSharedValue, withSpring, withTim
 import { Avatar } from '@rneui/base';
 import { addComment, setModal_comments } from '../store/action/cardapio';
 import { comments } from '../interface/inter_cardapio';
-
+import { setAdicionar_itens,  } from '../store/action/adicionar_pedido';
+import { Item } from '../interface/inter';
+import Modal_adicionar_itens from './Modal_adicionar_itens';
 
  function Card(props: Principal_card) {
   // console.log(props.index)
@@ -78,6 +80,36 @@ import { comments } from '../interface/inter_cardapio';
   }
   //////////////////////////////////////////////////////////////
   // console.log(itens.comments[0].date.toDate().toLocaleDateString())
+  //////////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////////
+  //MODAL
+  const [modal, setModal] = useState(false);
+  //FUNCAO PARA ADICIONAR ITENS
+  const add_itens = () => {
+    if(itens.categoria === 'comidas'){
+      setModal(true)
+    }else{
+      const itens_add = {
+        id: itens.id,
+        name_p: itens.name,
+        categoria: itens.categoria,
+        categoria_2: itens.categoria_2,
+        // retirar_p?: string[];
+        // adicionar_p?: string[];
+        quantidade: 1,
+        valor_p : itens.valor,
+      }
+      const itens_add_array = [...props.adicionar_itens||[]];
+  
+      itens_add_array.push(itens_add)
+  
+      props.Set_add_itens(itens_add_array)
+  
+      console.log(props.adicionar_itens)
+    }
+  }
+  //////////////////////////////////////////////////////////////
   return (
 
   <SafeAreaView style={[styles.container,props.selectedItem === props.index && { transform: [{ scale: 1.2 }] },]}>
@@ -124,40 +156,47 @@ import { comments } from '../interface/inter_cardapio';
           </TouchableOpacity>
         </View>
         {/* BUTTON CARD */}
+
         <TouchableOpacity
-        onPress={() => {}}
+        onPress={() => {
+          add_itens()
+          // setModal(true)
+          // props.Set_add_itens()
+        }}
         style={{ width: '50%', height: '50%', alignItems: 'center', justifyContent: 'center',}}
         >
           <View style={styles.Button}>
             <FontAwesome name="cart-plus" size={35} color="#252A32" /> 
           </View>
         </TouchableOpacity> 
+
         {/* button curtidas */}
-          <View style={{marginRight:10,marginTop:10,alignItems:'center',justifyContent:'center'}} >
-            <TouchableOpacity onPress={async()=>{
-                if(curtidas){
-                  await setCurtidas(false)
-                  await props.Update_curtidas_user(props.user_info.id,itens.id,props.user_info.curtidas)
-                  return
-                }else{
-                  await setCurtidas(true)
-                  await props.Update_curtidas(itens.id,itens.curtidas+1)
-                  await props.Update_curtidas_user(props.user_info.id,itens.id,props.user_info.curtidas||[])
-                }
-              }}>  
+        <View style={{marginRight:10,marginTop:10,alignItems:'center',justifyContent:'center'}} >
+          <TouchableOpacity onPress={async()=>{
+              if(curtidas){
+                await setCurtidas(false)
+                await props.Update_curtidas_user(props.user_info.id,itens.id,props.user_info.curtidas)
+                return
+              }else{
+                await setCurtidas(true)
+                await props.Update_curtidas(itens.id,itens.curtidas+1)
+                await props.Update_curtidas_user(props.user_info.id,itens.id,props.user_info.curtidas||[])
+              }
+            }}>  
 
-              {curtidas?
-              <MaterialCommunityIcons name="cards-heart" size={25} color="#E81000" />
-              :<MaterialCommunityIcons name="cards-heart-outline" size={25} color="#E81000" />}
+            {curtidas?
+            <MaterialCommunityIcons name="cards-heart" size={25} color="#E81000" />
+            :<MaterialCommunityIcons name="cards-heart-outline" size={25} color="#E81000" />}
 
-            </TouchableOpacity>
-            <Text style={{color:'#E81000',fontSize:10,fontFamily:'Roboto-Regular',textAlign:'center'}}>{itens.curtidas}</Text>
-          </View>
+          </TouchableOpacity>
+          <Text style={{color:'#E81000',fontSize:10,fontFamily:'Roboto-Regular',textAlign:'center'}}>{itens.curtidas}</Text>
+        </View>
         
       </View>
 
     </View>
     {/* CARD */}
+    
     {/* COMENTARIOS */}
     <BottomSheet modalProps={{}} isVisible={isVisible}>
 
@@ -236,6 +275,10 @@ import { comments } from '../interface/inter_cardapio';
       />
     </BottomSheet>
     {/* COMENTARIOS */}
+
+    {/* MODAL itens personalizados */}
+    <Modal_adicionar_itens visible={modal} setModal={setModal} itens={itens}/>
+    {/* MODAL itens personalizados*/}
 
   </SafeAreaView>
   );
@@ -330,11 +373,13 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = ({  user,cardapio }: { user: any,cardapio:any})=> {
+const mapStateToProps = ({  user,cardapio,adicionar_pedido }: { user: any,cardapio:any,adicionar_pedido:any})=> {
   return {
     user_info: user.user_info,
     users: user.users,
     isModalOpen: cardapio.modal,
+    //
+    adicionar_itens: adicionar_pedido.adicionar_itens,
       };
 };
 const mapDispatchToProps = (dispatch: any) => {
@@ -343,6 +388,8 @@ const mapDispatchToProps = (dispatch: any) => {
     Update_curtidas_user: (id:string,curtidas: string,curtidas_array:string[]) => dispatch(update_On_curtidas_user(id,curtidas,curtidas_array)),
     AddComment: (id:string,comments: commentss2) => dispatch(addComment(id,comments)),
     Setmodal: (boolean:boolean) => dispatch(setModal_comments(boolean)),
+
+    Set_add_itens: (itens:Item[]) => dispatch(setAdicionar_itens(itens)),
   };
 }
 export default connect(mapStateToProps,mapDispatchToProps)(React.memo(Card));

@@ -3,6 +3,7 @@ import { db } from '../auth';
 
 import { addDoc, collection, getDocs, onSnapshot, query } from 'firebase/firestore';
 import { setMessage } from './message';
+import { Item } from '../../interface/inter';
 
 
 
@@ -26,15 +27,15 @@ export const addItemToPedidos = (novoItem:any) => {
     };
   };
 
-export const setAdicionar_pedido = (pedido:any) => {
+export const setAdicionar_itens= (pedido:Item[]) => {
     return {
         type: SET_ADICIONAR_PEDIDO_ITENS,
         payload: pedido
     }
 }
-export const setAdicionar_pedido_state_mesa = (pedido:any) => {
-  return {
-      type: SET_ADICIONAR_PEDIDO_MESA,
-      payload: pedido
-  }
-}
+// export const setAdicionar_pedido_state_mesa = (pedido:any) => {
+//   return {
+//       type: SET_ADICIONAR_PEDIDO_MESA,
+//       payload: pedido
+//   }
+// }
