@@ -1,5 +1,5 @@
 import { Button } from '@rneui/base';
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     ActivityIndicator,
     Alert,
@@ -14,6 +14,8 @@ import {
 import { cardapio } from '../interface/inter_cardapio';
 import { BottomSheet, Image, Input, ListItem } from '@rneui/themed';
 import { Ionicons } from '@expo/vector-icons';
+import { createURL,useURL } from 'expo-linking';
+
 interface Props {
     visible: boolean;
     setModal: (boolean: boolean) => void;
@@ -21,6 +23,14 @@ interface Props {
 }
 
 export default (props: Props) => {
+    /////////////////solucao qr code 
+    // const user = useURL();
+    // const creaturl = createURL('rafael',{});
+    // console.log('URL =>',creaturl)
+    // useEffect(()=>{
+    //     console.log(user)
+    // },[user])
+    ///////////////////solucao qr code 
   return (
     <>
         <Modal
