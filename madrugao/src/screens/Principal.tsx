@@ -366,6 +366,7 @@ function Principal_comp(props: Principal) {
         </TouchableOpacity>
       </View>
       {/* /////////////////////////////////////////////////////////// */}
+      {/* /////////////////////Categoria///////////////////////// */}
       <View style={{alignItems:'flex-start',width:'100%'}}>
         {/* ////////////Subcategoria /////////////////////////////*/}
         <View style={{flexDirection:'row',justifyContent:'space-between',width:'100%'}}>
@@ -446,7 +447,6 @@ function Principal_comp(props: Principal) {
       {/* /////////////////////Categoria///////////////////////// */}
 
       {/* ////////////////////////////////////////////// FLATLIST*/}
-     
       {
       lottie?
         <LottieView

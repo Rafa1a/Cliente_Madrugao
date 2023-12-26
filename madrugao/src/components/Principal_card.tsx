@@ -87,7 +87,8 @@ import { comments } from '../interface/inter_cardapio';
   return (
 
   <SafeAreaView style={[styles.container,props.selectedItem === props.index && { transform: [{ scale: 1.2 }] },]}>
-
+    
+    {/* CARD */}
     <View style={[styles.view_principal,styles_dark0rligth.mode_theme_card]}>
       {/* IMAGE */}
       <View style={[styles.view_image,styles_dark0rligth.mode_theme_card_image]}>
@@ -162,7 +163,8 @@ import { comments } from '../interface/inter_cardapio';
       </View>
 
     </View>
-
+    {/* CARD */}
+    {/* COMENTARIOS */}
     <BottomSheet modalProps={{}} isVisible={isVisible}>
 
       <View style={[{flex:1,justifyContent:'center',alignItems:'flex-end'}]}>
@@ -239,6 +241,7 @@ import { comments } from '../interface/inter_cardapio';
         )}
       />
     </BottomSheet>
+    {/* COMENTARIOS */}
 
   </SafeAreaView>
   );
