@@ -152,7 +152,7 @@ import Modal_adicionar_itens from './Modal_adicionar_itens';
               : 
               <FontAwesome name="commenting-o" size={25} color="#252A32" />
               }
-              <Text style={{color:'#252A32',fontSize:10,fontFamily:'Roboto-Regular',textAlign:'center'}}>{itens.comments.length}</Text>
+              <Text style={[{color:'#252A32',fontSize:10,fontFamily:'Roboto-Regular',textAlign:'center'},styles_dark0rligth.mode_theme_card_text]}>{itens.comments.length}</Text>
           </TouchableOpacity>
         </View>
         {/* BUTTON CARD */}

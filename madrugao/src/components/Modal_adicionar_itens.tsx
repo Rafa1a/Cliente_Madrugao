@@ -13,18 +13,27 @@ import {
 
 } from 'react-native';
 import { cardapio } from '../interface/inter_cardapio';
-import { BottomSheet, Divider, Image, Input, ListItem,Button } from '@rneui/themed';
+import { BottomSheet, Divider, Image, Input, ListItem,Button, CheckBox } from '@rneui/themed';
 import { Ionicons } from '@expo/vector-icons';
 import { createURL,useURL } from 'expo-linking';
 import { ListItemAccordion } from '@rneui/base/dist/ListItem/ListItem.Accordion';
+import Flatlist_adicionar from './Flatlist_adicionar';
+import Flatlist_retirar from './Flatlist_retirar';
+import { connect } from 'react-redux';
+import { setAdicionar_itens } from '../store/action/adicionar_pedido';
+import { Item } from '../interface/inter';
 
 interface Props {
     visible: boolean;
     setModal: (boolean: boolean) => void;
     itens: cardapio;
+
+    Set_add_itens: (itens: Item[]) => void;
+
+    adicionar_itens: Item[];
 }
 
-export default (props: Props) => {
+const Modal_adicionar_retirar = (props: Props) => {
     /////////////////solucao qr code 
     // const user = useURL();
     // const creaturl = createURL('rafael',{});
@@ -34,8 +43,48 @@ export default (props: Props) => {
     // },[user])
     ///////////////////solucao qr code 
 
-    const [expanded_adicionar, setExpanded_adicionar] = React.useState(false);
-    const [expanded_retirar, setExpanded_retirar] = React.useState(false);
+///////////////////////////////////////////////checkbox adicionais e retirar 
+    const [adicionar_adicionais, setAdicionar_adicionais] = React.useState([]);
+    const [retirar_, setRetirar_] = React.useState([]);
+
+    const [itens, setItens] = React.useState<Item>();
+
+    useEffect(()=>{
+        //definir valor do item
+        let valor_p = props.itens.valor;
+
+        if (props.itens.adicionais && adicionar_adicionais) {
+            valor_p += props.itens.adicionais.reduce((total, item) => {
+                if (adicionar_adicionais.includes(item.name)) {
+                    return total + Number(item.valor.toFixed(2));
+                } else {
+                    return total;
+                }
+            }, 0);
+        }
+        //passar para o state
+        const itens_add = {
+            id: props.itens.id,
+            name_p: props.itens.name,
+            categoria: props.itens.categoria,
+            categoria_2: props.itens.categoria_2,
+            retirar_p: retirar_ ,
+            adicionar_p: adicionar_adicionais,
+            quantidade: 1,
+            valor_p : valor_p,
+          }
+        //definir valor do item
+          setItens(itens_add)
+        // console.log(adicionar_adicionais)
+        // console.log(retirar_)
+    },[adicionar_adicionais,retirar_])
+
+///////////////////////////////////////////////checkbox adicionais e retirar 
+    function add_Itens(){
+        console.log(itens)
+        props.Set_add_itens([...props.adicionar_itens||[],itens])
+        props.setModal(false)
+    }
   return (
     <>
         <Modal
@@ -69,51 +118,61 @@ export default (props: Props) => {
                         />
                     </View>
                     {/* IMAGE */}
-                    <ScrollView style={{flex:1}} contentContainerStyle={{flexGrow: 1}}>
+                    <ScrollView style={{flex:1}} contentContainerStyle={{flexGrow: 1}}  showsVerticalScrollIndicator={false} >
                         {/* TEXT */}
-                        <Text style={styles.text}>{props.itens.name}</Text>
+                        <Text style={[styles.text,{fontFamily:'OpenSans-Bold'}]}>{props.itens.name}</Text>
                         <Text style={styles.text_ingredientes}> {props.itens.ingredientes?props.itens.ingredientes.join(', '):''}</Text>
                         {/* TEXT */}
-                        <Divider />
 
-                        {/* ACCORDION 1*/}
-                            <FlatList
-                                scrollEnabled={false}
-                                // nestedScrollEnabled={true}
-                                data={props.itens.adicionais?props.itens.adicionais:[]}
-                                renderItem={({item})=>(
-                                    <ListItem>
-                                        <ListItem.Content>
-                                            <ListItem.Title>{item.name}</ListItem.Title>
-                                        </ListItem.Content>
-                                    </ListItem>
-                                )}
-                                keyExtractor={(item,index)=>index.toString()}
-                            />
-                        {/* ACCORDION 1*/}
-                        <Divider />
+                        {/* FLATLIST Adicionar 1*/}
+                        {props.itens.adicionais?
+                            <>
+                                <Divider />
+                                <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',paddingVertical:10,elevation:5}}>
+                                    <Text style={styles.text}>Adicionar : </Text>
+                                </View>
+                            </>
+                        :null}
+                        <FlatList
+                            scrollEnabled={false}
+                            // nestedScrollEnabled={true}
+                            data={props.itens.adicionais?props.itens.adicionais:[]}
+                            renderItem={({item})=>(
+                                <Flatlist_adicionar item={item} setAdicionar_adicionais={setAdicionar_adicionais} adicionar_adicionais={adicionar_adicionais}/>
+                            )}
+                            keyExtractor={(item,index)=>index.toString()}
+                            //estilo
+                            contentContainerStyle={{justifyContent:'center',alignItems:'center'}}
+                            // divisor
+                            ItemSeparatorComponent={() => <View style={{paddingVertical:'2%'}}/>} 
+                        />
+                        {/* FLATLIST 1*/}
+                        <Divider style={{paddingTop:5}}/>
 
-                        {/* ACCORDION 2*/}
-                            <FlatList
-                                scrollEnabled={false}
-                                // nestedScrollEnabled={true}
-                                data={props.itens.ingredientes?props.itens.ingredientes:[]}
-                                renderItem={({item})=>(
-                                    <ListItem>
-                                        <ListItem.Content>
-                                            <ListItem.Title>{item}</ListItem.Title>
-                                        </ListItem.Content>
-                                    </ListItem>
-                                )}
-                                keyExtractor={(item,index)=>index.toString()}
-                            />
-                        {/* ACCORDION 2*/}
+                        <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',paddingVertical:10,elevation:5}}>
+                            <Text style={styles.text}>Retirar : </Text>
+                        </View>
+                        {/* FLATLIST Retirar 2*/}
+                        <FlatList
+                            scrollEnabled={false}
+                            // nestedScrollEnabled={true}
+                            data={props.itens.ingredientes?props.itens.ingredientes:[]}
+                            renderItem={({item})=>(
+                                <Flatlist_retirar item={item} setRetirar_={setRetirar_} retirar_={retirar_}/>
+                            )}
+                            keyExtractor={(item,index)=>index.toString()}
+                            //estilo
+                            contentContainerStyle={{justifyContent:'center',alignItems:'center'}}
+                            // divisor
+                            ItemSeparatorComponent={() => <View style={{paddingVertical:'2%'}}/>} 
+                        />
+                        {/* FLATLIST 2*/}
 
                         {/* BUTTON */}
                         <Divider />
 
-                        <TouchableOpacity style={styles.button}>
-                            <Text style={styles.text}>Adicionar ao carrinho</Text>
+                        <TouchableOpacity style={styles.button} onPress={()=>{add_Itens()}}>
+                            <Text style={[styles.text,{color:'#fff'}]}>Adicionar ao carrinho</Text>
                         </TouchableOpacity>
                         {/* BUTTON */}
                     </ScrollView>
@@ -135,8 +194,8 @@ const styles = StyleSheet.create({
     },
     modal: {
         backgroundColor: '#f8fafd',
-        width: '80%',
-        height: '80%', 
+        width: '90%',
+        height: '95%', 
         borderRadius: 10, 
         padding: 10,
         elevation: 5,
@@ -146,21 +205,15 @@ const styles = StyleSheet.create({
     //////////////////////////////////////text
     text: {
         color: '#2D2F31',
-        fontSize: 20,
-        fontFamily:'OpenSans-Bold'
+        fontSize: 18,
+        fontFamily:'OpenSans-Regular'
     },
     text_ingredientes: {
         color: '#2D2F31',
         fontSize: 15,
-        fontFamily:'OpenSans-Regular',
+        fontFamily:'Roboto-Light',
         marginVertical: 10,
     },
-    text_acordion:{
-        color: '#2D2F31',
-        fontSize: 15,
-        fontFamily:'OpenSans-Regular',
-    }
-    ,
     
     //////////////////////////////////////////////// Image
     view_image: {
@@ -174,19 +227,29 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%',
     },
-    //////////////////////////////////////////////// Acordeon
-    tabaccordion:{
-        backgroundColor:'#f4f7fc',
-        borderWidth:0.5, 
-        borderRadius:10,
-        marginTop:'5%'
-      },
+    
       ////////////////////////////////////////////Buttons
     button: {
-        backgroundColor: '#e2e2e2',
+        backgroundColor: '#DE6F00',
         borderRadius: 10,
         padding: 10,
-        marginTop: '5%',
+        marginTop: '2%',
+
+        // borderWidth: 0.5,
+
+        // borderColor: '#E81000',
+
     },
 });
-
+const mapStateToProps = ({ adicionar_pedido }: { adicionar_pedido:any})=> {
+    return {
+      //
+      adicionar_itens: adicionar_pedido.adicionar_itens,
+        };
+  };
+const mapDispatchToProps = (dispatch: any) => {
+    return {
+      Set_add_itens: (itens:Item[]) => dispatch(setAdicionar_itens(itens)),
+    };
+  }
+export default connect(mapStateToProps,mapDispatchToProps)(Modal_adicionar_retirar)
