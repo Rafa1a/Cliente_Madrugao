@@ -33,7 +33,13 @@ const Flatlist_adicionar_retirar = (props:Props_adicionar) =>{
       props.setAdicionar_adicionais(props.adicionar_adicionais.filter((item:string)=>item != props.item.name))
     }
   },[check1]) 
-  
+  // caso o tem ja exista, definir check como true
+  useEffect(()=>{
+    // console.log(props.adicionar_adicionais)
+    if(props.adicionar_adicionais.includes(props.item.name)){
+      setCheck1(true)
+    }
+  },[])
   return(
     
     <TouchableOpacity style={[styles.flatlist_container,{ width:'75%',elevation:3,}]} onPress={()=>{setCheck1(!check1)}}>

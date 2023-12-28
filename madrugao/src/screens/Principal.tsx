@@ -463,15 +463,15 @@ function Principal_comp(props: Principal) {
 
       {/* ////////////////////////////////////////////// Base*/}
       <View style={styles.base_view_container}>
-
+        {/*buttons relogio*/}
         <TouchableOpacity style={styles.base_buttons}>
           {props.user_info.theme_mode ?
           <AntDesign name="clockcircleo" size={30} color="#f8fafd" />
           :<AntDesign name="clockcircleo" size={30} color="#202124" />}
           
         </TouchableOpacity>
-
-        <TouchableOpacity style={[styles.base_button_carrinho,styles_dark0rligth.carrinho]}>
+        {/* Carrinho */}
+        <TouchableOpacity style={[styles.base_button_carrinho,styles_dark0rligth.carrinho]} onPress={()=>props.navigation.navigate('Carrinho')}>
           <AntDesign name="shoppingcart" size={30} color="#3C4043" />
         </TouchableOpacity>
         {/* onPress={()=>props.navigation.navigate('Comments')} */}

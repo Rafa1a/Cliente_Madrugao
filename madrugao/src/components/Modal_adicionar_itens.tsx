@@ -31,6 +31,10 @@ interface Props {
     Set_add_itens: (itens: Item[]) => void;
 
     adicionar_itens: Item[];
+
+    index?:number
+
+    carrinho?:boolean
 }
 
 const Modal_adicionar_retirar = (props: Props) => {
@@ -46,15 +50,26 @@ const Modal_adicionar_retirar = (props: Props) => {
 ///////////////////////////////////////////////checkbox adicionais e retirar 
     const [adicionar_adicionais, setAdicionar_adicionais] = React.useState([]);
     const [retirar_, setRetirar_] = React.useState([]);
+    // atualizar caso o item ja exista no carrinho, atualizar adicionar_adicionais e retirar_
+    useEffect(()=>{
+        console.log(props.index)
+        const item = props.index >= 0 ?props.adicionar_itens?.find((item:Item,index) => item.id === props.itens?.id && index === props.index ):null
+        if(item){
+            // console.log(item)
+            setAdicionar_adicionais(item.adicionar_p)
+            setRetirar_(item.retirar_p)
+        }
+        // console.log(item)
+    },[props.itens?.id,props.visible])
 
     const [itens, setItens] = React.useState<Item>();
-
+    // definir os valores do item
     useEffect(()=>{
         //definir valor do item
-        let valor_p = props.itens.valor;
+        let valor_p = props.itens?.valor;
 
-        if (props.itens.adicionais && adicionar_adicionais) {
-            valor_p += props.itens.adicionais.reduce((total, item) => {
+        if (props.itens?.adicionais && adicionar_adicionais) {
+            valor_p += props.itens?.adicionais.reduce((total, item) => {
                 if (adicionar_adicionais.includes(item.name)) {
                     return total + Number(item.valor.toFixed(2));
                 } else {
@@ -64,12 +79,12 @@ const Modal_adicionar_retirar = (props: Props) => {
         }
         //passar para o state
         const itens_add = {
-            id: props.itens.id,
-            name_p: props.itens.name,
-            categoria: props.itens.categoria,
-            categoria_2: props.itens.categoria_2,
-            retirar_p: retirar_ ,
-            adicionar_p: adicionar_adicionais,
+            id: props.itens?.id,
+            name_p: props.itens?.name,
+            categoria: props.itens?.categoria,
+            categoria_2: props.itens?.categoria_2,
+            retirar_p: [...new Set(retirar_)] ,
+            adicionar_p: [...new Set(adicionar_adicionais)],
             quantidade: 1,
             valor_p : valor_p,
           }
@@ -77,14 +92,36 @@ const Modal_adicionar_retirar = (props: Props) => {
           setItens(itens_add)
         // console.log(adicionar_adicionais)
         // console.log(retirar_)
-    },[adicionar_adicionais,retirar_])
+    },[retirar_,adicionar_adicionais])
 
 ///////////////////////////////////////////////checkbox adicionais e retirar 
     function add_Itens(){
-        console.log(itens)
+        // console.log(itens)
         props.Set_add_itens([...props.adicionar_itens||[],itens])
         props.setModal(false)
+        setAdicionar_adicionais([])
+        setRetirar_([])
     }
+    function adicionar_Itens(){
+        console.log(itens) 
+        // Encontre o índice do item que você deseja atualizar
+        const index = props.index >= 0 ?props.adicionar_itens?.findIndex((item,index) => item.id === itens.id && index === props.index ):null
+        props.Set_add_itens
+           // Se o item não foi encontrado, retorne
+        if (index === -1) return;
+         // Crie uma cópia do array
+        const newItems = [...props.adicionar_itens];
+
+        // Atualize o item na cópia
+        newItems[index] = itens;
+
+        // Atualize o estado com a cópia
+        props.Set_add_itens(newItems);
+        props.setModal(false)
+        // setAdicionar_adicionais([])
+        // setRetirar_([])
+    }
+
   return (
     <>
         <Modal
@@ -120,12 +157,12 @@ const Modal_adicionar_retirar = (props: Props) => {
                     {/* IMAGE */}
                     <ScrollView style={{flex:1}} contentContainerStyle={{flexGrow: 1}}  showsVerticalScrollIndicator={false} >
                         {/* TEXT */}
-                        <Text style={[styles.text,{fontFamily:'OpenSans-Bold'}]}>{props.itens.name}</Text>
-                        <Text style={styles.text_ingredientes}> {props.itens.ingredientes?props.itens.ingredientes.join(', '):''}</Text>
+                        <Text style={[styles.text,{fontFamily:'OpenSans-Bold'}]}>{props.itens?.name}</Text>
+                        <Text style={styles.text_ingredientes}> {props.itens?.ingredientes?props.itens?.ingredientes.join(', '):''}</Text>
                         {/* TEXT */}
 
                         {/* FLATLIST Adicionar 1*/}
-                        {props.itens.adicionais?
+                        {props.itens?.adicionais?
                             <>
                                 <Divider />
                                 <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',paddingVertical:10,elevation:5}}>
@@ -136,7 +173,7 @@ const Modal_adicionar_retirar = (props: Props) => {
                         <FlatList
                             scrollEnabled={false}
                             // nestedScrollEnabled={true}
-                            data={props.itens.adicionais?props.itens.adicionais:[]}
+                            data={props.itens?.adicionais?props.itens?.adicionais:[]}
                             renderItem={({item})=>(
                                 <Flatlist_adicionar item={item} setAdicionar_adicionais={setAdicionar_adicionais} adicionar_adicionais={adicionar_adicionais}/>
                             )}
@@ -156,7 +193,7 @@ const Modal_adicionar_retirar = (props: Props) => {
                         <FlatList
                             scrollEnabled={false}
                             // nestedScrollEnabled={true}
-                            data={props.itens.ingredientes?props.itens.ingredientes:[]}
+                            data={props.itens?.ingredientes?props.itens?.ingredientes:[]}
                             renderItem={({item})=>(
                                 <Flatlist_retirar item={item} setRetirar_={setRetirar_} retirar_={retirar_}/>
                             )}
@@ -170,10 +207,14 @@ const Modal_adicionar_retirar = (props: Props) => {
 
                         {/* BUTTON */}
                         <Divider />
-
+                        {props.carrinho?
+                        <TouchableOpacity style={styles.button} onPress={()=>{adicionar_Itens()}}>
+                            <Text style={[styles.text,{color:'#fff'}]}>Atualizar</Text>
+                        </TouchableOpacity>: 
                         <TouchableOpacity style={styles.button} onPress={()=>{add_Itens()}}>
                             <Text style={[styles.text,{color:'#fff'}]}>Adicionar ao carrinho</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity>}
+                       
                         {/* BUTTON */}
                     </ScrollView>
 
