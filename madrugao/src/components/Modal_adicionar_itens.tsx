@@ -38,21 +38,12 @@ interface Props {
 }
 
 const Modal_adicionar_retirar = (props: Props) => {
-    /////////////////solucao qr code 
-    // const user = useURL();
-    // const creaturl = createURL('rafael',{});
-    // console.log('URL =>',creaturl)
-    // useEffect(()=>{
-    //     console.log(user)
-    // },[user])
-    ///////////////////solucao qr code 
-
 ///////////////////////////////////////////////checkbox adicionais e retirar 
     const [adicionar_adicionais, setAdicionar_adicionais] = React.useState([]);
     const [retirar_, setRetirar_] = React.useState([]);
     // atualizar caso o item ja exista no carrinho, atualizar adicionar_adicionais e retirar_
     useEffect(()=>{
-        console.log(props.index)
+        // console.log(props.index)
         const item = props.index >= 0 ?props.adicionar_itens?.find((item:Item,index) => item.id === props.itens?.id && index === props.index ):null
         if(item){
             // console.log(item)
@@ -103,10 +94,9 @@ const Modal_adicionar_retirar = (props: Props) => {
         setRetirar_([])
     }
     function adicionar_Itens(){
-        console.log(itens) 
+        // console.log(itens) 
         // Encontre o índice do item que você deseja atualizar
         const index = props.index >= 0 ?props.adicionar_itens?.findIndex((item,index) => item.id === itens.id && index === props.index ):null
-        props.Set_add_itens
            // Se o item não foi encontrado, retorne
         if (index === -1) return;
          // Crie uma cópia do array

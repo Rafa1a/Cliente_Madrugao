@@ -90,6 +90,11 @@ import Modal_adicionar_itens from './Modal_adicionar_itens';
     if(itens.categoria === 'comidas'){
       setModal(true)
     }else{
+      //caso ja exista nao adicionar
+      const find = props.adicionar_itens?.find((item:Item) => item.id === itens.id)
+      if(find){
+        return
+      }
       const itens_add = {
         id: itens.id,
         name_p: itens.name,

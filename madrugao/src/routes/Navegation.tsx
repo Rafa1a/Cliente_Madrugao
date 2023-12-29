@@ -21,6 +21,7 @@ const FeedStack = (props: any) => {
   // }
 
   // //splash q inicia o app e carrega os dados de auth/firebase
+ 
   return (
     <Stack.Navigator initialRouteName="Login" >
       <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} {...props} />

@@ -38,6 +38,7 @@ import { Ionicons } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
 //
 import { Divider } from '@rneui/themed';
+import { createURL, useURL } from 'expo-linking';
 
 function Principal_comp(props: Principal) {
 
@@ -352,9 +353,19 @@ function Principal_comp(props: Principal) {
   // console.log(props.cardapio[0])
   const Cardapio = useMemo(() => filteredCardapio, [filteredCardapio,props.cardapio]);
   //////////////////////////////////////////////////////
+  //////////////////////////////////////QRCODE
+  /////////////////solucao qr code 
+    const user = useURL();
+    const creaturl = createURL('Carrinho',{});
+    console.log('URL =>',creaturl)
+    useEffect(()=>{
+        console.log(user)
+    },[user])
+
+  ///////////////////solucao qr code 
   return (
     <SafeAreaView style={[styles.container,styles_dark0rligth.mode_theme_container]}>
-      <View>
+      <View style={{width:'100%', flexDirection:'row',justifyContent:'space-between',marginBottom:5}}>
         <TouchableOpacity 
         onPress={()=>props.onUpdate_theme(props.user_info.id,!state_theme_mode)} 
         >
@@ -364,7 +375,18 @@ function Principal_comp(props: Principal) {
           />
 
         </TouchableOpacity>
+        {/* qr code */}
+        <TouchableOpacity 
+         style={{flexDirection:'row',backgroundColor:'#fff',borderRadius:10, elevation:5,justifyContent:'center',alignItems:'center',padding:5}}
+        // onPress={()=>props.onUpdate_theme(props.user_info.id,!state_theme_mode)} 
+        >
+          <AntDesign name="qrcode" size={20} color="#3C4043" />
+         <Text style={{fontSize:14,fontFamily:'Roboto-Bold',color:'#3C4043'}}> Estou na Mesa !</Text>
+
+        </TouchableOpacity>
+
       </View>
+      
       {/* /////////////////////////////////////////////////////////// */}
       {/* /////////////////////Categoria///////////////////////// */}
       <View style={{alignItems:'flex-start',width:'100%'}}>

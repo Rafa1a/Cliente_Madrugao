@@ -16,6 +16,7 @@ export default function App() {
     'OpenSans-Regular': require('./assets/fonts/OpenSans-Regular.ttf'),
     'Roboto-Light': require('./assets/fonts/Roboto-Light.ttf'),
     'Roboto-Regular': require('./assets/fonts/Roboto-Regular.ttf'),
+    'Roboto-Bold': require('./assets/fonts/Roboto-Bold.ttf'),
     'RobotoMono-Bold': require('./assets/fonts/RobotoMono-Bold.ttf'),
     'RobotoMono-Light': require('./assets/fonts/RobotoMono-Light.ttf'),
   });

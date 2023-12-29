@@ -55,7 +55,7 @@ const Flatlist_adicionar_retirar = (props:Props_retirar) =>{
                 checked={check1}
                 onPress={() => setCheck1(!check1)}
 
-                containerStyle={{width:'20%',backgroundColor:'#f4f7fc'}}
+                containerStyle={{width:'20%',backgroundColor:'#f8fafd0'}}
             />
             
         </View>
