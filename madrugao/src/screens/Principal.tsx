@@ -38,7 +38,7 @@ import { Ionicons } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
 //
 import { Divider } from '@rneui/themed';
-import { createURL, useURL } from 'expo-linking';
+import { createURL, useURL,makeUrl } from 'expo-linking';
 
 function Principal_comp(props: Principal) {
 
@@ -356,12 +356,16 @@ function Principal_comp(props: Principal) {
   //////////////////////////////////////QRCODE
   /////////////////solucao qr code 
     const user = useURL();
-    const creaturl = createURL('Carrinho',{});
-    console.log('URL =>',creaturl)
+    // const url = makeUrl('/');
+    // console.log('URL =>',url)
+    // const creaturl = createURL('Carrinho');
+    // console.log('URL =>',creaturl)
     useEffect(()=>{
         console.log(user)
-    },[user])
-
+        const { id } = props.route.params?props.route.params:'';
+        console.log(id) 
+    },[user]) 
+ 
   ///////////////////solucao qr code 
   return (
     <SafeAreaView style={[styles.container,styles_dark0rligth.mode_theme_container]}>

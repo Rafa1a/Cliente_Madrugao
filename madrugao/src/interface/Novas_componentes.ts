@@ -4,7 +4,7 @@ import { cardapio,comments } from './inter_cardapio';
 
 export interface Principal {
     navigation ?: NavigationProp<any,any>;
-
+    route?: any;
     cardapio: cardapio[];
     isModalOpen: boolean;
     user_info?: user_on;

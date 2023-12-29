@@ -28,6 +28,7 @@ const FeedStack = (props: any) => {
       <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} {...props} />
       <Stack.Screen name="Principal" component={Principal} options={{ headerShown: false }} {...props} />
       <Stack.Screen name="Comments" component={Comments}  {...props} />
+      
       <Stack.Screen name="Carrinho" component={Carrinho}  {...props} />
     </Stack.Navigator>
   );
