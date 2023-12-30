@@ -12,6 +12,10 @@ export interface Principal {
     comments?: string;
     onUpdate_theme: (id:string,theme: boolean) => void;
 
+    //localidade
+    onUser_localidade?: (status_mesa:boolean, mesa:number, id_user:string) => void
+
+
 }
 
 export interface Principal_card{

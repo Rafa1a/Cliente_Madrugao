@@ -153,6 +153,10 @@ export interface user_on {
   //entrega
   rua_on?:string;
   numero_on:number;
+
+  //localidade
+  mesa?:number;
+  status_mesa?:boolean
 }
 
 // Card interfaces

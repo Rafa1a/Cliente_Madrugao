@@ -11,17 +11,22 @@ import { setComments, setOnorof, startCardapio } from '../store/action/cardapio'
 // 
 import { useStyles } from '../styles/styles_dark_ligth';
 import { user_on } from '../interface/inter';
-import { startUsers_on } from '../store/action/user';
+import { setQr_code, startUser_on_info, startUsers_on } from '../store/action/user';
 
 interface SplashProps {
     navigation: any;
     cardapio: any;
     user_info: user_on;
     users: user_on[];
+
+    qrcode:boolean
+    
     onCardapio: ()=>void;
     onUsers: ()=>void;
     setComments: (comments:string)=>void;
     setOnorof: (onorof:string)=>void;
+    OnQr_code?: (qrcode:boolean) => void;
+
 }
 function Splash(props: SplashProps) {
 
@@ -73,9 +78,13 @@ function Splash(props: SplashProps) {
         const carregarcardapio = async () => {
           await props.onCardapio();
           await props.onUsers();
-
         }
-        carregarcardapio();
+        console.log(props.qrcode)
+        
+        if(props.qrcode === false){
+          carregarcardapio();
+          props.OnQr_code(true)
+        }
     }, []);
     
     useEffect(() => { 
@@ -192,6 +201,9 @@ const mapStateToProps = ({  user, cardapio }: { user: any,cardapio})=> {
     cardapio: cardapio.cardapio,
     user_info: user.user_info,
     users: user.users,
+
+    qrcode:user.qrcode
+
       };
 };
 const mapDispatchToProps = (dispatch: any) => {
@@ -200,6 +212,9 @@ const mapDispatchToProps = (dispatch: any) => {
         onUsers : () => dispatch(startUsers_on()),
         setComments : (comments:string) => dispatch(setComments(comments)),
         setOnorof : (onorof:string) => dispatch(setOnorof(onorof)),
+        OnQr_code: (qrcode:boolean) => dispatch(setQr_code(qrcode)),
+
+
       };
 };
 export default connect(mapStateToProps,mapDispatchToProps)(Splash);

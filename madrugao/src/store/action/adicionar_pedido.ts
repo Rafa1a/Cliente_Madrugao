@@ -1,7 +1,7 @@
-import { SET_ADICIONAR_PEDIDO, SET_ADICIONAR_PEDIDO_ITENS, SET_ADICIONAR_PEDIDO_MESA, SET_MESAS } from './actionTypes';
+import {  SET_ADICIONAR_PEDIDO_ITENS,  } from './actionTypes';
 import { db } from '../auth';
 
-import { addDoc, collection, getDocs, onSnapshot, query } from 'firebase/firestore';
+import { addDoc, collection,} from 'firebase/firestore';
 import { setMessage } from './message';
 import { Item } from '../../interface/inter';
 

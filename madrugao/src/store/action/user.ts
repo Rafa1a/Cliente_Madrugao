@@ -1,5 +1,5 @@
 
-import {GET_USER, LOGIN_USER, LOGIN_USER_INFO} from './actionTypes'
+import {GET_USER, LOGIN_USER, LOGIN_USER_INFO, SET_QR_CODE} from './actionTypes'
 import { user_on} from '../../interface/inter'
 import { collection, addDoc,setDoc,doc,onSnapshot,getDocs,query, where, updateDoc,arrayUnion, arrayRemove} from "firebase/firestore"; 
 import { db } from '../auth';
@@ -143,6 +143,22 @@ export const update_On_curtidas_user = (id:string,curtidas:string,curtidas_array
       }
   }
 }
+///////////////////////////////////// atualizar localidade MESA
+export const setUser_localidade = (status_mesa:boolean, mesa:number, id_user:string) =>{
+  return async(dispatch:any)=>{
+    try {
+      updateDoc(doc(db, "user_on", id_user), {
+        status_mesa:status_mesa,
+        mesa:mesa
+      });
+    } catch (e) {
+      dispatch(setMessage({
+        title: 'Error',
+        text: 'Ocorreu um erro ao contatar o servidor dos usuarios'
+      }))
+    }
+  }
+}
 /////////////////////////////////////
 export const setUsers =  (users:user_on[]) => {
     return { 
@@ -163,6 +179,16 @@ export const setUser_login_info =  (user_info:user_on) => {
   return { 
       type:LOGIN_USER_INFO,
       payload:user_info
+  }
+  
+}
+
+//QR CODE solucao para nao ser redundante quando voltar ao login o qr code
+
+export const setQr_code =  (qrcode:boolean) => {
+  return { 
+      type:SET_QR_CODE,
+      payload:qrcode
   }
   
 }

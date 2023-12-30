@@ -28,6 +28,12 @@ export default (props: any) => {
             id: (id:string)=>id,
           },
       },
+        Login: { 
+          path:'Login/:numero_mesa',
+          parse: {
+            numero_mesa: (numero_mesa:string)=>Number(numero_mesa),
+          },
+        },
       },
     },
   };

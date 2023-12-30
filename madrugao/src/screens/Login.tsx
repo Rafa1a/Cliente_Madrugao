@@ -24,10 +24,12 @@ import { auth } from '../store/auth';
 import { FontAwesome } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
-import { add_On, setUser_login, startUser_on_info } from '../store/action/user';
+import { add_On, setQr_code, setUser_localidade, setUser_login, startUser_on_info } from '../store/action/user';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withSpring, withTiming} from 'react-native-reanimated';
 import LottieView from 'lottie-react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
+import { useURL } from 'expo-linking';
+import { user_on } from '../interface/inter';
 
 const animation = React.createRef<LottieView>();
 // updates
@@ -38,10 +40,16 @@ WebBrowser.maybeCompleteAuthSession();
 interface LoginScreenProps {
   navigation?: any;
   user_on?: any;
-  user_on_info?: any;
+  user_on_info?: user_on;
+  qrcode?: boolean;
   onAdd_User?: any;
   onSetUser_login?: any;
-  onUser_info?: (uid:string)=>void;
+  onUser_info?: (uid:string) => void;
+  onUser_localidade?: (status_mesa:boolean, mesa:number, id_user:string) => void
+
+  OnQr_code?: (qrcode:boolean) => void;
+
+  route?:any
 }
 
 const LoginScreen = (props: LoginScreenProps) => {
@@ -103,9 +111,35 @@ const LoginScreen = (props: LoginScreenProps) => {
   },[]);
 
   /////////////////////////////////////////////////////
+  
+  //////////////////////////////////////QRCODE
+  ///////////////// deeb link
+  // const url = makeUrl('/');
+  // console.log('URL =>',url)
+  // const creaturl = createURL('Carrinho');
+  // console.log('URL =>',creaturl)
+
+  const user = useURL();
+
+  useEffect(()=>{
+      // console.log(user)
+      const { numero_mesa } = props.route.params?props.route.params:'';
+      
+      if(numero_mesa){
+        props.onUser_localidade(true,numero_mesa,props.user_on_info.id)
+      }
+
+      console.log('numero_mesa => ',numero_mesa) 
+  },[user]) 
+
+  //////////////////////////////////////QRCODE
+
   //verificar se o usuario ja esta logado e navegar para a tela de splash
   useEffect(() => {
+    
+    console.log('boolean',props.qrcode)
     const add_and_navegation = async () =>{
+
       if(props.user_on){
       // console.log('user on',props.user_on) 
        /////////////// Add_user
@@ -115,8 +149,13 @@ const LoginScreen = (props: LoginScreenProps) => {
         image_on : props.user_on.photoURL,
       }
       //ja verifica se o user existe
-      await props.onAdd_User(new_user) 
-      await props.onUser_info(props.user_on.uid)
+      if(props.qrcode === false){
+        await props.onAdd_User(new_user) 
+
+        console.log('user_info sendo chamado caraio')
+        await props.onUser_info(props.user_on.uid)
+      }
+      
     }
   }
   add_and_navegation();
@@ -162,6 +201,8 @@ const LoginScreen = (props: LoginScreenProps) => {
   const [login,setLogin] = React.useState(false);
   const [register,setRegister] = React.useState(false);
   /////////////////////////////////////////////////////
+
+
   /////////////////////////////////////////////////////
   return (
     <SafeAreaView style={styles.container}>
@@ -412,7 +453,8 @@ const styles = StyleSheet.create({
 const mapStateProps = ({  user }: {  user: any}) => {
   return {
     user_on:user.user,
-    user_on_info:user.user_info
+    user_on_info:user.user_info,
+    qrcode:user.qrcode
   };
 };
 
@@ -422,6 +464,9 @@ const mapDispatchProps = (dispatch: any) => {
     onAdd_User: (user:any) => dispatch(add_On(user)),
     onSetUser_login: (user:any) => dispatch(setUser_login(user)),
     onUser_info: (uid:string) => dispatch(startUser_on_info(uid)),
+    onUser_localidade: (status_mesa:boolean, mesa:number, id_user:string) => dispatch(setUser_localidade(status_mesa,mesa,id_user)),
+    
+    OnQr_code: (qrcode:boolean) => dispatch(setQr_code(qrcode)),
 
   };
 };

@@ -8,7 +8,8 @@ import {
   View,
   TouchableOpacity,
   Text,
-  ActivityIndicator
+  ActivityIndicator,
+  Button
 
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -17,7 +18,7 @@ import {Principal} from '../interface/Novas_componentes'
 import Principal_card from '../components/Principal_card';
 //
 import { useStyles } from '../styles/styles_dark_ligth';
-import { update_On_theme } from '../store/action/user';
+import { setUser_localidade, update_On_theme } from '../store/action/user';
 //components
 import Subcategoria_comida from '../components/Subcategoria_Comida';
 import Subcategoria_bar from '../components/Subcategoria_Bar';
@@ -38,8 +39,10 @@ import { Ionicons } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
 //
 import { Divider } from '@rneui/themed';
+//qrcode
 import { createURL, useURL,makeUrl } from 'expo-linking';
-
+import { BarCodeScanner } from 'expo-barcode-scanner';
+//
 function Principal_comp(props: Principal) {
 
 
@@ -353,20 +356,7 @@ function Principal_comp(props: Principal) {
   // console.log(props.cardapio[0])
   const Cardapio = useMemo(() => filteredCardapio, [filteredCardapio,props.cardapio]);
   //////////////////////////////////////////////////////
-  //////////////////////////////////////QRCODE
-  /////////////////solucao qr code 
-    const user = useURL();
-    // const url = makeUrl('/');
-    // console.log('URL =>',url)
-    // const creaturl = createURL('Carrinho');
-    // console.log('URL =>',creaturl)
-    useEffect(()=>{
-        console.log(user)
-        const { id } = props.route.params?props.route.params:'';
-        console.log(id) 
-    },[user]) 
- 
-  ///////////////////solucao qr code 
+  
   return (
     <SafeAreaView style={[styles.container,styles_dark0rligth.mode_theme_container]}>
       <View style={{width:'100%', flexDirection:'row',justifyContent:'space-between',marginBottom:5}}>
@@ -382,11 +372,22 @@ function Principal_comp(props: Principal) {
         {/* qr code */}
         <TouchableOpacity 
          style={{flexDirection:'row',backgroundColor:'#fff',borderRadius:10, elevation:5,justifyContent:'center',alignItems:'center',padding:5}}
-        // onPress={()=>props.onUpdate_theme(props.user_info.id,!state_theme_mode)} 
+         onPress={()=>{
+          props.user_info.status_mesa?
+          props.onUser_localidade(false,0,props.user_info.id):
+          props.navigation.navigate('Qrcode') 
+          
+        }}
         >
-          <AntDesign name="qrcode" size={20} color="#3C4043" />
-         <Text style={{fontSize:14,fontFamily:'Roboto-Bold',color:'#3C4043'}}> Estou na Mesa !</Text>
-
+          {props.user_info.status_mesa?
+          <Text style={{fontSize:14,fontFamily:'Roboto-Bold',color:'#3C4043'}}> Sair da Mesa !</Text>:
+          <>
+            <AntDesign name="qrcode" size={20} color="#3C4043" />
+            <Text style={{fontSize:14,fontFamily:'Roboto-Bold',color:'#3C4043'}}> Estou na Mesa !</Text>
+          </>
+          }
+         
+         
         </TouchableOpacity>
 
       </View>
@@ -608,6 +609,7 @@ const mapStateToProps = ({  user, cardapio }: { user: any,cardapio})=> {
 const mapDispatchProps = (dispatch: any) => {
   return {
     onUpdate_theme: (id:string,theme_mode:boolean) => dispatch(update_On_theme(id,theme_mode)),
+    onUser_localidade: (status_mesa:boolean, mesa:number, id_user:string) => dispatch(setUser_localidade(status_mesa,mesa,id_user)),
     
   };
 };
