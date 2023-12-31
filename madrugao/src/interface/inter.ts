@@ -122,9 +122,9 @@ export interface pedido_inter {
   pegar_local?: boolean;
   rua?: string;
   numero?: string;
-  dinheiro:number;
-  cartao:cartao;
-  pix:boolean;
+  dinheiro?:number;
+  cartao?:cartao;
+  pix?:boolean;
 }
 
 // User interfaces
@@ -152,7 +152,7 @@ export interface user_on {
   curtidas:string[]
   //entrega
   rua_on?:string;
-  numero_on:number;
+  numero_on?:string;
 
   //localidade
   mesa?:number;

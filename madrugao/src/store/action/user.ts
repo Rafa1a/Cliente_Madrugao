@@ -159,6 +159,23 @@ export const setUser_localidade = (status_mesa:boolean, mesa:number, id_user:str
     }
   }
 }
+///////////////////////////////////// atualizar user on rua_on e numero_on
+export const setUser_rua_numero = (rua_on:string, numero_on:string, id_user:string) =>{
+  return async(dispatch:any)=>{
+    try {
+      console.log(rua_on, numero_on)
+      updateDoc(doc(db, "user_on", id_user), {
+        rua_on:rua_on,
+        numero_on:numero_on
+      });
+    } catch (e) {
+      dispatch(setMessage({
+        title: 'Error',
+        text: 'Ocorreu um erro ao contatar o servidor dos usuarios'
+      }))
+    }
+  }
+}
 /////////////////////////////////////
 export const setUsers =  (users:user_on[]) => {
     return { 

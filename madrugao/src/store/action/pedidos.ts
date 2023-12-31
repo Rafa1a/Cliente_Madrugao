@@ -4,7 +4,7 @@ import { Dispatch } from 'redux'
 //auth
 import { db } from '../auth';
 
-import { collection,doc,onSnapshot,getDocs,query, where, updateDoc, deleteDoc, arrayRemove} from "firebase/firestore"; 
+import { collection,doc,onSnapshot,getDocs,query, where, updateDoc, deleteDoc, arrayRemove,addDoc} from "firebase/firestore"; 
 import { setMessage } from './message';
 import { ItemProps } from '../../interface/inter';
 

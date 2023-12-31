@@ -12,6 +12,7 @@ import { setComments, setOnorof, startCardapio } from '../store/action/cardapio'
 import { useStyles } from '../styles/styles_dark_ligth';
 import { user_on } from '../interface/inter';
 import { setQr_code, startUser_on_info, startUsers_on } from '../store/action/user';
+import { startPedidosListener } from '../store/action/pedidos';
 
 interface SplashProps {
     navigation: any;
@@ -23,6 +24,7 @@ interface SplashProps {
     
     onCardapio: ()=>void;
     onUsers: ()=>void;
+    onPedidos: ()=>void;
     setComments: (comments:string)=>void;
     setOnorof: (onorof:string)=>void;
     OnQr_code?: (qrcode:boolean) => void;
@@ -78,6 +80,7 @@ function Splash(props: SplashProps) {
         const carregarcardapio = async () => {
           await props.onCardapio();
           await props.onUsers();
+          await props.onPedidos();
         }
         console.log(props.qrcode)
         
@@ -210,6 +213,7 @@ const mapDispatchToProps = (dispatch: any) => {
     return {
         onCardapio : () => dispatch(startCardapio()),
         onUsers : () => dispatch(startUsers_on()),
+        onPedidos : () => dispatch(startPedidosListener()),
         setComments : (comments:string) => dispatch(setComments(comments)),
         setOnorof : (onorof:string) => dispatch(setOnorof(onorof)),
         OnQr_code: (qrcode:boolean) => dispatch(setQr_code(qrcode)),
