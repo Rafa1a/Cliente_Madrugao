@@ -9,7 +9,8 @@ import {
   TouchableOpacity,
   Text,
   ActivityIndicator,
-  Button
+  Button,
+  Modal
 
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -42,6 +43,7 @@ import { Divider } from '@rneui/themed';
 //qrcode
 import { createURL, useURL,makeUrl } from 'expo-linking';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import Animated, { Easing, interpolateColor, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 //
 function Principal_comp(props: Principal) {
 
@@ -75,9 +77,43 @@ function Principal_comp(props: Principal) {
   //animacao lottie
   const [lottie, setLottie] = useState(false);
   const animation = useRef(null);
+  //////////////////////////////////////////////////////
+  //carregar o flat list antes de mudar o estado
+  //possivel solucao nao funcional:
+  // const [isFlatListReady, setFlatListReady] = useState(false);
+  // console.log(isFlatListReady)
+  
+  // function handleLayout  (bollean) {
+  //   console.log('handleLayout called');
+  //   setFlatListReady(bollean);
+  // };
+  // const flatListStyle = isFlatListReady ? {opacity: 1} : {opacity: 0};
 
-  const firstRender = useRef(true);
+  ////////////////// search e loading lottie do card final
+  const animation_search = useRef(null);
+  
+  let intervalId = null;
+
+  useEffect(() => {
+    // Inicia a animação do quadro 110 ao quadro 156
+    animation_search.current.play(109, 156);
+    // console.log(animation_search.current.play)
+
+    // Quando a animação terminar, reinicia e começa do quadro 110 novamente
+    intervalId = setInterval(() => {
+      animation_search.current.play(109, 156);
+    }, 5000); 
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, []);
+ 
+  ////////////////// search e loading lottie do card final
   //////////////////////////////////////onofor e comentarios atualizacao GATILHO de mudanças
+  const firstRender = useRef(true);
 
   useEffect(() => {
     const onorofValues = props.cardapio.map(item => item.onorof).join();
@@ -202,7 +238,9 @@ function Principal_comp(props: Principal) {
         }).then((newArray: any) => {
           setLoading_mais_curtidas(false);
           setFilteredCardapio(newArray);
-          setLottie(false);
+          setTimeout(() => {
+            setLottie(false);
+            }, 1500);
         });
       }
       //mais pedidos
@@ -228,7 +266,9 @@ function Principal_comp(props: Principal) {
         }).then((newArray: any) => {
           setLoading_mais_pedidos(false);
           setFilteredCardapio(newArray);
-          setLottie(false);
+          setTimeout(() => {
+            setLottie(false);
+            }, 1500);
 
         });
       }
@@ -242,7 +282,7 @@ function Principal_comp(props: Principal) {
         new Promise(resolve => {
           setTimeout(() => {
             const newArray = [...filteredArray];
-            newArray.sort(function (a, b) {
+            newArray.sort(function (a, b) { 
               let aValue = a.curtidas || 0;
               let bValue = b.curtidas || 0;
       
@@ -259,7 +299,9 @@ function Principal_comp(props: Principal) {
         }).then((newArray: any) => {
           setLoading_mais_curtidas(false);
           setFilteredCardapio(newArray);
-          setLottie(false);
+          setTimeout(() => {
+            setLottie(false);
+            }, 1500);
 
         });
       }
@@ -286,7 +328,9 @@ function Principal_comp(props: Principal) {
         }).then((newArray: any) => {
           setLoading_mais_pedidos(false);
           setFilteredCardapio(newArray);
+          setTimeout(() => {
           setLottie(false);
+          }, 1500);
         });
       }
     }
@@ -356,9 +400,54 @@ function Principal_comp(props: Principal) {
   // console.log(props.cardapio[0])
   const Cardapio = useMemo(() => filteredCardapio, [filteredCardapio,props.cardapio]);
   //////////////////////////////////////////////////////
-  
+  //////////////////////////////////////////////////////animacao do button card
+  const randomWidth = useSharedValue(1);
+  const progress = useSharedValue(0);
+  const config = {
+    duration: 300,
+    easing: Easing.bezier(0.5, 0.01, 0, 1),
+  };
+  const config_2 = {
+    mass: 1,
+    stiffness: 200,
+    damping: 7,
+
+  };
+
+  const style = useAnimatedStyle(() => {
+    return {
+      transform: [{scale: randomWidth.value}],
+      backgroundColor:interpolateColor(
+        progress.value,
+        [0, 1],
+        ['#f8fafd', '#E81000']
+      ),
+    };
+  });
+  const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
+  //funcao 
+  function toggleButton() {
+    // console.log(props.adicionar_itens)
+    if(props.adicionar_itens && props.adicionar_itens.length > 0){
+      console.log('entrou')
+      randomWidth.value = withSpring(1.2, config_2);
+      progress.value = withTiming(1, { duration: 1000 });
+    }
+    else { 
+      console.log('saiu') 
+      randomWidth.value =   withSpring(1, config_2);
+      progress.value = withTiming(0, { duration: 1000 });
+    }
+  }
+  //
+  useEffect(() => {
+    toggleButton();
+  }, [props.adicionar_itens]);
+  // 
+  //////////////////////////////////////////////////////animacao do button card
   return (
     <SafeAreaView style={[styles.container,styles_dark0rligth.mode_theme_container]}>
+      {/* /////////////////////////////////////////////////theme mode e qrcode */}
       <View style={{width:'100%', flexDirection:'row',justifyContent:'space-between',marginBottom:5}}>
         <TouchableOpacity 
         onPress={()=>props.onUpdate_theme(props.user_info.id,!state_theme_mode)} 
@@ -391,25 +480,42 @@ function Principal_comp(props: Principal) {
         </TouchableOpacity>
 
       </View>
+      {/* /////////////////////////////////////////////////theme mode e qrcode */}
       
       {/* /////////////////////////////////////////////////////////// */}
       {/* /////////////////////Categoria///////////////////////// */}
       <View style={{alignItems:'flex-start',width:'100%'}}>
-        {/* ////////////Subcategoria /////////////////////////////*/}
-        <View style={{flexDirection:'row',justifyContent:'space-between',width:'100%'}}>
+
+        {/* ////////////Categoria /////////////////////////////*/}
+        <View style={{
+          flexDirection:'row',
+          justifyContent:'space-between',
+          width:'100%',
+          elevation:15, shadowColor:'#E81000',
+          backgroundColor:'#fff',
+          }}>
           {/* {bar?
             <Subcategoria_bar styles_mode={styles_dark0rligth}/>
           :null}
           {comida?
             <Subcategoria_comida styles_mode={styles_dark0rligth}/>
           :null} */}
-          <View style={{width:'70%'}}>
+          <View style={{width:'40%'}}>
             <Subcategoria_bar_new toggleFilter={toggleFilter} filters={filters} loading_categoria={loading_categoria}/>
             <Divider/>
             <Subcategoria_comida_new toggleFilter={toggleFilter} filters={filters} loading_categoria={loading_categoria}/>
             <Divider/>
           </View>
-
+          {/* ////////////Categoria /////////////////////////////*/}
+          <View style={{flex: 1}}  pointerEvents="none">
+            <LottieView
+              loop={false}
+              ref={animation_search}
+              source={require('../../assets/anim/searching_animacao.json')}
+              style={{transform: [{scale: 1.2}]}}
+              
+            />
+          </View>
           {/* ////////////Filtro /////////////////////////////*/}
           <View style={{width:'15%'}}>
 
@@ -446,7 +552,7 @@ function Principal_comp(props: Principal) {
           {/* ////////////Filtro /////////////////////////////*/}
           
         </View>
-        {/* ////////////Subcategoria /////////////////////////////*/}
+        {/* ////////////Favoritos /////////////////////////////*/}
           <View style={styles.favoritos}>
             <TouchableOpacity style={{alignItems:'center'}} 
             onPress={()=>{
@@ -470,21 +576,21 @@ function Principal_comp(props: Principal) {
               <Text style={{color:'#3C4043',fontSize:10,fontFamily:'Roboto-Regular'}}>Favoritos</Text>
             </TouchableOpacity>
           </View>
+        {/* ////////////Favoritos /////////////////////////////*/}
+
       </View>
       {/* /////////////////////Categoria///////////////////////// */}
 
       {/* ////////////////////////////////////////////// FLATLIST*/}
       {
-      lottie?
+      lottie ?
         <LottieView
           autoPlay
           ref={animation}
-            
-          // Find more Lottie files at https://lottiefiles.com/featured
           source={require('../../assets/anim/animacao_flatlist.json')}
           style={{flex:1,alignSelf:'center',width:Dimensions.get('window').width}}
-        />:
-        <Flatlist_principal cardapio={Cardapio} />
+        /> :
+         <Flatlist_principal cardapio={Cardapio} />
       }
       {/* ////////////////////////////////////////////// FLATLIST*/}
 
@@ -497,19 +603,42 @@ function Principal_comp(props: Principal) {
           :<AntDesign name="clockcircleo" size={30} color="#202124" />}
           
         </TouchableOpacity>
+        {/*buttons relogio*/}
+
         {/* Carrinho */}
-        <TouchableOpacity style={[styles.base_button_carrinho,styles_dark0rligth.carrinho]} onPress={()=>props.navigation.navigate('Carrinho')}>
-          <AntDesign name="shoppingcart" size={30} color="#3C4043" />
-        </TouchableOpacity>
-        {/* onPress={()=>props.navigation.navigate('Comments')} */}
+        <AnimatedTouchableOpacity 
+        style={[styles.base_button_carrinho,styles_dark0rligth.carrinho,style]} 
+        onPress={()=>props.navigation.navigate('Carrinho')}>
+          
+          {/* <LottieView
+                autoPlay
+                ref={animation}
+              source={require('../../assets/anim/fuma.json')}
+              // style={{transform: [{scale: 1.2}]}}
+            /> */}
+          {props.adicionar_itens && props.adicionar_itens.length > 0?
+          <>
+            <Text style={{color:'#f8fafd',fontSize:12,fontFamily:'Roboto-Bold'}}>{props.adicionar_itens.length}</Text>
+            <AntDesign name="shoppingcart" size={30} color="#f8fafd" />
+          </>:
+          <AntDesign name="shoppingcart" size={30} color="#3C4043" />}
+
+        </AnimatedTouchableOpacity>
+        {/* Carrinho */}
+
+        {/* perfil */}
         <TouchableOpacity style={styles.base_buttons} >
+          
           {props.user_info.theme_mode ?
           <FontAwesome name="user-circle" size={30} color="#f8fafd" />:
           <FontAwesome name="user-circle" size={30} color="#202124" />}
           
         </TouchableOpacity>
+        {/* perfil */}
+
         
       </View>
+      
     </SafeAreaView>
   );
 }
@@ -546,6 +675,8 @@ const styles = StyleSheet.create({
     alignItems:'flex-end',
     width:'100%',
     height:'10%',
+
+    padding:5,
   },
   base_buttons:{
     justifyContent:'center',
@@ -557,12 +688,14 @@ const styles = StyleSheet.create({
   base_button_carrinho:{
     justifyContent:'center',
     alignItems:'center',
-    backgroundColor:'#e8f0fe',
+    backgroundColor:'#f8fafd',
     width:"20%",
-    height:'100%', 
-    borderRadius:100,
+    aspectRatio: 1, // Adicionado para garantir que width e height sejam iguais
+    borderRadius:9999, // Modificado para um valor muito alto para garantir q sera redondo
 
-    elevation: 5,
+    elevation: 10,
+
+    shadowColor: '#E81000',
   },
   //////////////////////////////////////////////Favoritos
   favoritos:{
@@ -597,13 +730,16 @@ const styles = StyleSheet.create({
   // },
 });
 
-const mapStateToProps = ({  user, cardapio }: { user: any,cardapio})=> {
+const mapStateToProps = ({  user, cardapio,adicionar_pedido }: { user: any,cardapio:any,adicionar_pedido:any})=> {
   return {
     cardapio: cardapio.cardapio,
     onorof: cardapio.onorof,
     comments: cardapio.comments,
     isModalOpen: cardapio.modal,
     user_info: user.user_info,
+
+    adicionar_itens: adicionar_pedido.adicionar_itens,
+
       };
 };
 const mapDispatchProps = (dispatch: any) => {

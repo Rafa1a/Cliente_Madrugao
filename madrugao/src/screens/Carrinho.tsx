@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
     FlatList,
   StyleSheet,
@@ -16,6 +16,9 @@ import { Item, pedido_inter, user_on } from '../interface/inter';
 import { addItemToPedidos, setAdicionar_itens } from '../store/action/adicionar_pedido';
 import { Input, Switch } from '@rneui/themed';
 import { setUser_rua_numero } from '../store/action/user';
+
+import LottieView from 'lottie-react-native';
+//
 
 interface props_carrinho {
   navigation?:any
@@ -46,9 +49,9 @@ function Carrinho(props: props_carrinho) {
       // verificar se um lanche existe em no adicionar_itens se existir chapeiro = true
       // verificar se um lanche existe em no adicionar_itens se existir bar = true
       // verificar se um lanche existe em no adicionar_itens se existir porcoes = true
-      const newArray_chapeiro = props.adicionar_itens.filter((item)=>item.categoria === 'comidas' && item.categoria_2 === 'lanches' || item.categoria_2 === 'hotdogs' )
-      const newArray_bar = props.adicionar_itens.filter((item)=>item.categoria === 'bar' && item.categoria_2 === 'drinks' || item.categoria_2 === 'sucos' )
-      const newArray_porcoes = props.adicionar_itens.filter((item)=>item.categoria === 'comidas' && item.categoria_2 === 'porcoes' )
+      const newArray_chapeiro = props.adicionar_itens?props.adicionar_itens.filter((item)=>item.categoria === 'comidas' && item.categoria_2 === 'lanches' || item.categoria_2 === 'hotdogs' ) : []
+      const newArray_bar = props.adicionar_itens?props.adicionar_itens.filter((item)=>item.categoria === 'bar' && item.categoria_2 === 'drinks' || item.categoria_2 === 'sucos' ) : []
+      const newArray_porcoes = props.adicionar_itens?props.adicionar_itens.filter((item)=>item.categoria === 'comidas' && item.categoria_2 === 'porcoes' ) : []
       // console.log('newArray',newArray_chapeiro)
       if(newArray_chapeiro.length > 0){
         setStatus_chapeiro(true)
@@ -78,7 +81,7 @@ function Carrinho(props: props_carrinho) {
 
         const localidade_mesa: pedido_inter = {
 
-              itens:props.adicionar_itens,
+              itens:props.adicionar_itens || [],
 
               localidade:'MESA',
 
@@ -103,7 +106,7 @@ function Carrinho(props: props_carrinho) {
         //caso o status mesa seja false
         const localidade_online: pedido_inter = {
 
-              itens:props.adicionar_itens,
+              itens:props.adicionar_itens || [],
 
               localidade:'ONLINE',
 
@@ -147,60 +150,83 @@ function Carrinho(props: props_carrinho) {
       }
 
     }
+    //aniamacao
+  const animation = useRef(null);
+
     // console.log(props.user_info.status_mesa)
   return (
     <SafeAreaView style={{flex:1,width:'100%',backgroundColor:'#f8fafd'}}>
-      <ScrollView style={{flex:1}} contentContainerStyle={{flexGrow: 1}}  >
-      
-      {/* Flatlist itens */}
-        <FlatList
-            scrollEnabled={false}
-            data={props.adicionar_itens}
-            renderItem={({ item,index }) => (
-            <Flatlist_carrinho item={item} index={index}/>
-            )}
-            keyExtractor={(item,i) => i.toString()}
-            // contentContainerStyle={{flex:1,width:'100%',backgroundColor:'#f8fafd' }}
-        />
-        {/* Flatlist itens */}
-        
-        {/* inputs rua e numero caso seja online */}
-        {
-          props.user_info.status_mesa === false?
-          <View style={styles.input}>
-            <View style={{flexDirection:'row'}}>
-              <Text style={{fontFamily:'Roboto-Regular',fontSize:18,margin:25}}>Pegar no Local ?</Text>
-              <Switch value={open} onValueChange={setOpen} />
-            </View>
-            {open?null:
-              <>
-                <Input 
-                placeholder={props.user_info.rua_on?props.user_info.rua_on:'Rua'}
-                onChangeText={(text) => setInput_rua(text)}
-                value={input_rua}
-                // autoFocus={input_rua?false:true}
-                />
-                  <Input 
-                placeholder={props.user_info.numero_on?props.user_info.numero_on.toString():'Numero da casa'}
-                onChangeText={(text) => setInput_numero(text)}
-                value={input_numero}
-                />
-              </>
-              }
-           
-          </View>
-          :
-          null
-        }
-        {/* inputs rua e numero caso seja online */}
+      {props.adicionar_itens === undefined || props.adicionar_itens?.length === 0?
+      <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
+        <View >
+          <Text style={{fontFamily:'Roboto-Regular',fontSize:25,margin:25}}>Carrinho Vazio :(</Text>
+        </View>
+        <View style={{width:'100%',height:'50%'}}>
 
-        {/* button finalizar pedido */}
-       
-        {/* button finalizar pedido */}
-        </ScrollView>
-        <TouchableOpacity style={styles.container_button}  onPress={()=>{add_pedido()}}>
-              <Text>Pedir</Text>
-        </TouchableOpacity>
+          <LottieView
+            autoPlay
+            ref={animation}
+            source={require('../../assets/anim/fantasma.json')}
+          />
+          
+        </View>
+
+      </View>
+      :
+      <>
+        <ScrollView style={{flex:1}} contentContainerStyle={{flexGrow: 1}}  >
+        
+        {/* Flatlist itens */}
+          <FlatList
+              scrollEnabled={false}
+              data={props.adicionar_itens?props.adicionar_itens:[]}
+              renderItem={({ item,index }) => (
+              <Flatlist_carrinho item={item} index={index}/>
+              )}
+              keyExtractor={(item,i) => i.toString()}
+              // contentContainerStyle={{flex:1,width:'100%',backgroundColor:'#f8fafd' }}
+          />
+          {/* Flatlist itens */}
+          
+          {/* inputs rua e numero caso seja online */}
+          {
+            props.user_info.status_mesa === false?
+            <View style={styles.input}>
+              <View style={{flexDirection:'row'}}>
+                <Text style={{fontFamily:'Roboto-Regular',fontSize:18,margin:25}}>Pegar no Local ?</Text>
+                <Switch value={open} onValueChange={setOpen} />
+              </View>
+              {open?null:
+                <>
+                  <Input 
+                  placeholder={props.user_info.rua_on?props.user_info.rua_on:'Rua'}
+                  onChangeText={(text) => setInput_rua(text)}
+                  value={input_rua}
+                  // autoFocus={input_rua?false:true}
+                  />
+                    <Input 
+                  placeholder={props.user_info.numero_on?props.user_info.numero_on.toString():'Numero da casa'}
+                  onChangeText={(text) => setInput_numero(text)}
+                  value={input_numero}
+                  />
+                </>
+                }
+            
+            </View>
+            :
+            null
+          }
+          {/* inputs rua e numero caso seja online */}
+
+          {/* button finalizar pedido */}
+        
+          {/* button finalizar pedido */}
+          </ScrollView>
+          <TouchableOpacity style={styles.container_button}  onPress={()=>{add_pedido()}}>
+                <Text>Pedir</Text>
+          </TouchableOpacity>
+      </>}
+     
     </SafeAreaView>
   );
 }

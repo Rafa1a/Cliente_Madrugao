@@ -8,10 +8,11 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   TouchableHighlight,
-  FlatList
+  FlatList,
+  Modal
 
 } from 'react-native';
-import { BottomSheet, Image, Input, ListItem } from '@rneui/themed';
+import { BottomSheet, Button, Image, Input, ListItem } from '@rneui/themed';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { MaterialCommunityIcons,AntDesign } from '@expo/vector-icons';
@@ -27,6 +28,8 @@ import { comments } from '../interface/inter_cardapio';
 import { setAdicionar_itens,  } from '../store/action/adicionar_pedido';
 import { Item } from '../interface/inter';
 import Modal_adicionar_itens from './Modal_adicionar_itens';
+import { Ionicons } from '@expo/vector-icons';
+
 
  function Card(props: Principal_card) {
   // console.log(props.index)
@@ -115,6 +118,9 @@ import Modal_adicionar_itens from './Modal_adicionar_itens';
     }
   }
   //////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////Modal imagem
+  const [modalVisible, setModalVisible] = useState(false);
+  //////////////////////////////////////////////////////Modal imagem
   return (
 
   <SafeAreaView style={[styles.container,props.selectedItem === props.index && { transform: [{ scale: 1.2 }] },]}>
@@ -137,11 +143,18 @@ import Modal_adicionar_itens from './Modal_adicionar_itens';
           borderTopLeftRadius: 25,
           backgroundColor: '#f8fafd'
         }}
+        onPress={() => {
+          setModalVisible(true)
+
+        }}
         />
       </View>
       {/* TEXT */}
       <View style={styles.textContainer}>
-        <Text style={[styles.title,styles_dark0rligth.mode_theme_card_text]}>{itens.name}</Text>
+        <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'flex-start'}}>
+          <Text style={[styles.title,styles_dark0rligth.mode_theme_card_text]}>{itens.name}</Text>
+          <Text style={[styles.title,styles_dark0rligth.mode_theme_card_text,{fontSize:22,width: '30%',}]}>R$ {itens.valor}</Text>
+        </View>
         <Text numberOfLines={5} ellipsizeMode='tail' style={[styles.description,styles_dark0rligth.mode_theme_card_text,{ flexShrink: 1 }]}>
           {itens.ingredientes?itens.ingredientes.join(', '):''}
         </Text>
@@ -190,8 +203,32 @@ import Modal_adicionar_itens from './Modal_adicionar_itens';
             }}>  
 
             {curtidas?
-            <MaterialCommunityIcons name="cards-heart" size={25} color="#E81000" />
-            :<MaterialCommunityIcons name="cards-heart-outline" size={25} color="#E81000" />}
+                <Image
+                style={{width:25,height:25}}
+                source={require('../../assets/icones/coracao.png')}
+                resizeMode="contain"
+                PlaceholderContent={
+                      <ActivityIndicator size="large" color="#E81000" />
+                }
+                placeholderStyle={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  backgroundColor: '#f8fafd'
+                }}
+              />
+              :<Image
+              style={{width:25,height:25}}
+              source={require('../../assets/icones/coracao_out.png')}
+              resizeMode="contain"
+              PlaceholderContent={
+                    <ActivityIndicator size="large" color="#E81000" />
+              }
+              placeholderStyle={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: '#f8fafd'
+              }}
+              />}
 
           </TouchableOpacity>
           <Text style={{color:'#E81000',fontSize:10,fontFamily:'Roboto-Regular',textAlign:'center'}}>{itens.curtidas}</Text>
@@ -284,6 +321,45 @@ import Modal_adicionar_itens from './Modal_adicionar_itens';
     {/* MODAL itens personalizados */}
     <Modal_adicionar_itens visible={modal} setModal={setModal} itens={itens}/>
     {/* MODAL itens personalizados*/}
+    {/* MODAL imagem*/}
+    <Modal 
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+            >
+        <View style={{flex:1,backgroundColor:'#000000aa',justifyContent:'center',alignItems:'center'}}>
+           {/* Fechar */}
+           
+            {/* Fechar */}
+          <View style={{backgroundColor:'#fff',width:'100%',height:'100%',justifyContent:'center'}}>
+            <View  style={{width:'100%',flexDirection: 'row', justifyContent: 'flex-end', alignItems:'flex-start'}}>
+              <Ionicons name="md-close-circle-sharp" size={45} color="#3C4043" onPress={()=>setModalVisible(false)}/>
+            </View>
+            <View style={[styles.view_image,styles_dark0rligth.mode_theme_card_image]}>
+              <Image
+                style={styles.image}
+                source={require('../../assets/testes/imagens_treino.png')}
+                resizeMode="contain"
+                PlaceholderContent={
+                      <ActivityIndicator size="large" color="#DE6F00" />
+              }
+              placeholderStyle={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderTopRightRadius: 25,
+                borderTopLeftRadius: 25,
+                backgroundColor: '#f8fafd'
+              }}
+              onPress={() => {
+                setModalVisible(true)
+
+              }}
+              />
+            </View>
+          </View>
+        </View>
+    </Modal>
+    {/* MODAL imagem*/}
 
   </SafeAreaView>
   );
@@ -335,11 +411,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     // color: '#f8fafd',
-    marginLeft: 10,
+    // marginLeft: 10,
+    width: '65%',
     
-    fontFamily: 'OpenSans-Bold',
+    fontFamily: 'Roboto-Bold',
 
-    flexWrap: 'wrap',
+    // flexWrap: 'wrap',
   },
   description: {
     fontSize: 11,
@@ -385,6 +462,7 @@ const mapStateToProps = ({  user,cardapio,adicionar_pedido }: { user: any,cardap
     isModalOpen: cardapio.modal,
     //
     adicionar_itens: adicionar_pedido.adicionar_itens,
+    //
       };
 };
 const mapDispatchToProps = (dispatch: any) => {

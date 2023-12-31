@@ -14,6 +14,8 @@ export interface Principal {
 
     //localidade
     onUser_localidade?: (status_mesa:boolean, mesa:number, id_user:string) => void
+    //carrinho de compras
+    adicionar_itens?: Item[];
 
 
 }

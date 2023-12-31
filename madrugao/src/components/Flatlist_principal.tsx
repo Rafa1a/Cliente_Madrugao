@@ -29,7 +29,9 @@ export default (props: any) => {
   const onViewableItemsChanged = React.useCallback(({ viewableItems }) => {
     setSelectedItem(viewableItems[0].index);
   }, []);
-  
+
+
+
   return (
     <>
       <FlatList
