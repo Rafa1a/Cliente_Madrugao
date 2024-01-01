@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button } from 'react-native';
+import { Text, View, StyleSheet, Button, Linking } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import { Link } from '@react-navigation/native';
 
 export default function App() {
   const [hasPermission, setHasPermission] = useState(null);
@@ -17,7 +18,8 @@ export default function App() {
 
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
-    alert(`Código com tipo ${type} e dados ${data} foi digitalizado!`);
+    Linking.openURL(data);
+    // alert(`Código com tipo ${type} e dados ${data} foi digitalizado!`);
   };
 
   if (hasPermission === null) {
