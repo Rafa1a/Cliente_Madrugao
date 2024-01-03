@@ -121,6 +121,10 @@ import { Ionicons } from '@expo/vector-icons';
   //////////////////////////////////////////////////////Modal imagem
   const [modalVisible, setModalVisible] = useState(false);
   //////////////////////////////////////////////////////Modal imagem
+  /////////////////////////////////////////////////////Modal para quando tem pedido, nao pode adicionar mais itens
+  const [modal_pedido, setModal_pedido] = useState(false);
+  /////////////////////////////////////////////////////Modal para quando tem pedido, nao pode adicionar mais itens
+
   return (
 
   <SafeAreaView style={[styles.container,props.selectedItem === props.index && { transform: [{ scale: 1.2 }] },]}>
@@ -177,7 +181,8 @@ import { Ionicons } from '@expo/vector-icons';
 
         <TouchableOpacity
         onPress={() => {
-          add_itens()
+          console.log(props.pedido_online)
+          props.pedido_online.length > 0?setModal_pedido(true):add_itens()
           // setModal(true)
           // props.Set_add_itens()
         }}
@@ -360,7 +365,50 @@ import { Ionicons } from '@expo/vector-icons';
         </View>
     </Modal>
     {/* MODAL imagem*/}
+    {/* MODAL pedido */}
 
+    <Modal
+    animationType="fade"
+    transparent={true}
+    visible={modal_pedido}
+    >
+      <View style={{flex:1,backgroundColor:'#000000aa',justifyContent:'center',alignItems:'center'}}>
+        <View style={{backgroundColor:'#fff',width:'80%',justifyContent:'space-between',alignItems:'center',borderRadius:20}}>
+          <View style={{width:'100%',flexDirection: 'row', justifyContent: 'flex-end', alignItems:'flex-start'}}>
+            <Ionicons name="md-close-circle-sharp" size={45} color="#3C4043" onPress={()=>setModal_pedido(false)}/>
+          </View>
+          
+          <View style={{justifyContent:'center',alignItems:'center'}}>
+            <View style={{justifyContent:'center',alignItems:'center'}}>
+              <Image
+                    style={{width:100,height:100}}
+                    source={require('../../assets/logos/logo_madrugao.png')}
+                    resizeMode="contain"
+                    PlaceholderContent={
+                          <ActivityIndicator size="large" color="#DE6F00" />
+                  }
+                  placeholderStyle={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: '#f8fafd'
+                  }}
+                  />
+            </View>
+            <Text style={{fontFamily:'Roboto-Bold',fontSize:20}}>Você já tem um pedido em andamento</Text>
+            <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}>Para adicionar, excluir ou alterar itens, é necessário entrar em contato com o Madrugão Lanches :</Text>
+            <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#f4f7fc',padding:15,marginTop:30}}>
+              <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}>14 3491-1272</Text>
+            </View>
+            <Text style={{fontFamily:'Roboto-Regular',fontSize:15,margin:30}}>Informe seu user :</Text>
+            <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#f4f7fc',padding:15}}>
+              <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}>{props.user_info.name_on}</Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    </Modal>
+    {/* MODAL pedido */}
+              
   </SafeAreaView>
   );
 }

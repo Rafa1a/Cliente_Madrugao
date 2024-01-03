@@ -10,6 +10,7 @@ import Principal from "../screens/Principal";
 import Comments from "../screens/Comments";
 import Carrinho from "../screens/Carrinho";
 import Qrcode from '../screens/Qrcode'
+import Lista_itens from "../screens/Lista_itens";
 //////////////////////////////////////////////////////////////////////
 const Stack = createNativeStackNavigator();
 
@@ -31,6 +32,7 @@ const FeedStack = (props: any) => {
       <Stack.Screen name="Comments" component={Comments}  {...props} />
       
       <Stack.Screen name="Carrinho" component={Carrinho}  {...props} />
+      <Stack.Screen name="Lista_itens" component={Lista_itens}  {...props} />
       <Stack.Screen name="Qrcode" component={Qrcode}  {...props} />
     </Stack.Navigator>
   );

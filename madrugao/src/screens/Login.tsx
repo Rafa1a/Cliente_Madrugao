@@ -137,7 +137,7 @@ const LoginScreen = (props: LoginScreenProps) => {
   //verificar se o usuario ja esta logado e navegar para a tela de splash
   useEffect(() => {
     
-    console.log('boolean',props.qrcode)
+    // console.log('boolean',props.qrcode)
     const add_and_navegation = async () =>{
 
       if(props.user_on){
@@ -152,7 +152,7 @@ const LoginScreen = (props: LoginScreenProps) => {
       if(props.qrcode === false){
         await props.onAdd_User(new_user) 
 
-        console.log('user_info sendo chamado caraio')
+        // console.log('user_info sendo chamado caraio')
         await props.onUser_info(props.user_on.uid)
       }
       

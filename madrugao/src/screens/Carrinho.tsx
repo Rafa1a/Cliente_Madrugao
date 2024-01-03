@@ -71,11 +71,13 @@ function Carrinho(props: props_carrinho) {
       setInput_rua(props.user_info.rua_on?props.user_info.rua_on:input_rua)
       setInput_numero(props.user_info.numero_on?props.user_info.numero_on.toString():input_numero)
     }, [props.user_info.rua_on,props.user_info.numero_on])
+    
     function add_pedido () {
       //valor da ordem mais alta
-      const ordem_mais_alta =  props.pedidos.reduce((prev, current) => (prev.ordem > current.ordem) ? prev : current)
+      console.log(props.pedidos)
+      const ordem_mais_alta =  props.pedidos && props.pedidos.length > 0 ?props.pedidos.reduce((prev, current) => (prev.ordem > current.ordem) ? prev : current) : {ordem:0}
       let ordem = ordem_mais_alta.ordem + 1
-      // console.log('ordem_mais_alta',ordem)
+      console.log('ordem_mais_alta',ordem)
       //caso o status mesa seja true
       if(props.user_info.status_mesa){
 
@@ -190,7 +192,7 @@ function Carrinho(props: props_carrinho) {
           
           {/* inputs rua e numero caso seja online */}
           {
-            props.user_info.status_mesa === false?
+            props.user_info.status_mesa === false || props.user_info.status_mesa === undefined ?
             <View style={styles.input}>
               <View style={{flexDirection:'row'}}>
                 <Text style={{fontFamily:'Roboto-Regular',fontSize:18,margin:25}}>Pegar no Local ?</Text>

@@ -4,7 +4,6 @@ import {
   Dimensions,
     FlatList,
   StyleSheet,
-  Image,
   View,
   TouchableOpacity,
   Text,
@@ -19,7 +18,7 @@ import {Principal} from '../interface/Novas_componentes'
 import Principal_card from '../components/Principal_card';
 //
 import { useStyles } from '../styles/styles_dark_ligth';
-import { setUser_localidade, update_On_theme } from '../store/action/user';
+import { resetState, setUser_localidade, setUser_rua_numero, update_On_theme } from '../store/action/user';
 //components
 import Subcategoria_comida from '../components/Subcategoria_Comida';
 import Subcategoria_bar from '../components/Subcategoria_Bar';
@@ -39,18 +38,23 @@ import { Ionicons } from '@expo/vector-icons';
 //lotie
 import LottieView from 'lottie-react-native';
 //
-import { Divider } from '@rneui/themed';
+  
+  import { Divider, Image, Input,} from '@rneui/themed';
 //qrcode
 import { createURL, useURL,makeUrl } from 'expo-linking';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import Animated, { Easing, interpolateColor, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import { signOut } from "firebase/auth";
+import { auth } from '../store/auth';
+import { CommonActions } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 //
 function Principal_comp(props: Principal) {
 
 
   const styles_dark0rligth = useStyles(props.user_info);  
   ////////////////////////
-  const state_theme_mode = props.user_info.theme_mode;
+  const state_theme_mode = props.user_info.theme_mode || false;
   ////////////////////////////////////Filtro Cardapio
   const [filteredCardapio, setFilteredCardapio] = useState(props.cardapio);
   //
@@ -445,6 +449,63 @@ function Principal_comp(props: Principal) {
   }, [props.adicionar_itens]);
   // 
   //////////////////////////////////////////////////////animacao do button card
+  //////////////////////////////////////////////////////ver se tem itens pedido
+  const [pedido_online, setPedido_online] = useState([]);
+  const [pedido_mesa, setPedido_mesa] = useState([]);
+
+  useEffect(() => {
+    const pedido_online = props.pedidos?.filter((item)=>item.id_user === props.user_info?.id && item.status === false) || []
+    const pedido_mesa = props.pedidos?.filter((item)=>item.numero_mesa === props.user_info?.mesa && item.status === false) || []
+    setPedido_online(pedido_online)
+    setPedido_mesa(pedido_mesa)
+  }, [props.pedidos]);
+  
+  // console.log(pedido_mesa.length > 0)
+  //////////////////////////////////////////////////////ver se tem itens pedido
+  //////////////////////////////////////////////////////modal pedido
+  const [modal_pedido, setModal_pedido] = useState(false);
+  //////////////////////////////////////////////////////modal pedido
+  ////////////////////////////rua e numero
+  const [rua, setRua] = useState('');
+  const [numero, setNumero] = useState('');
+  useEffect(() => {
+    // console.log(props.user_info)
+    setRua(props.user_info.rua_on || '') 
+    setNumero(props.user_info.numero_on || '')
+  }, [props.user_info]);
+  ////////////////////////////rua e numero
+  //////////////////////////////////////////////////////
+  //logout
+  //reset app
+  async function resetApp() {
+    try {
+      // Desloga o usuário e espera a operação ser concluída
+      // await signOut(auth);
+
+      // Reseta o estado do Redux
+
+      // Agora que o usuário foi deslogado e o estado foi resetado, limpa o AsyncStorage
+      await AsyncStorage.clear();
+      props.Resetstate();
+
+      // Navega para a tela de login
+      props.navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [
+            { name: 'Login' },
+          ],
+        })
+      );
+
+      console.log("Aplicativo resetado com sucesso");
+    } catch (error) {
+      console.error("Erro ao resetar o aplicativo", error);
+    }
+  }
+  
+  //logout
+
   return (
     <SafeAreaView style={[styles.container,styles_dark0rligth.mode_theme_container]}>
       {/* /////////////////////////////////////////////////theme mode e qrcode */}
@@ -590,7 +651,7 @@ function Principal_comp(props: Principal) {
           source={require('../../assets/anim/animacao_flatlist.json')}
           style={{flex:1,alignSelf:'center',width:Dimensions.get('window').width}}
         /> :
-         <Flatlist_principal cardapio={Cardapio} />
+         <Flatlist_principal cardapio={Cardapio} pedido_online={pedido_online}/>
       }
       {/* ////////////////////////////////////////////// FLATLIST*/}
 
@@ -626,19 +687,109 @@ function Principal_comp(props: Principal) {
         </AnimatedTouchableOpacity>
         {/* Carrinho */}
 
-        {/* perfil */}
-        <TouchableOpacity style={styles.base_buttons} >
+        {/* perfil e lista */}
+        <View style={{flexDirection:'row'}}>
+          {/* lista de pedido feito */}
+          {pedido_mesa.length > 0 || pedido_online.length > 0?
+          <TouchableOpacity style={styles.base_buttons} onPress={()=>props.navigation.navigate('Lista_itens')}>
+              
+            {props.user_info.theme_mode ?
+            <FontAwesome5 name="clipboard-list" size={24} color="#f8fafd" />:
+            <FontAwesome5 name="clipboard-list" size={24} color="#202124" />}
+            
+          </TouchableOpacity>
+          :null}
           
-          {props.user_info.theme_mode ?
-          <FontAwesome name="user-circle" size={30} color="#f8fafd" />:
-          <FontAwesome name="user-circle" size={30} color="#202124" />}
+          {/* lista de pedido feito */}
           
-        </TouchableOpacity>
-        {/* perfil */}
+          {/* perfil */}
+          <TouchableOpacity style={styles.base_buttons} onPress={()=>setModal_pedido(true)}>
+            
+            {props.user_info.theme_mode ?
+            <FontAwesome name="user-circle" size={30} color="#f8fafd" />:
+            <FontAwesome name="user-circle" size={30} color="#202124" />}
+            
+          </TouchableOpacity>
+          {/* perfil */}
+
+        </View>
+        {/* perfil e lista */}
 
         
       </View>
-      
+      {/* MODAL pedido */}
+
+      <Modal
+      animationType="fade"
+      transparent={true}
+      visible={modal_pedido}
+      >
+        <View style={{flex:1,backgroundColor:'#000000aa',justifyContent:'center',alignItems:'center'}}>
+          <View style={{backgroundColor:'#fff',width:'80%',justifyContent:'space-between',alignItems:'center',borderRadius:20}}>
+            <View style={{width:'100%',flexDirection: 'row', justifyContent: 'flex-end', alignItems:'flex-start'}}>
+              <Ionicons name="md-close-circle-sharp" size={45} color="#3C4043" onPress={()=>setModal_pedido(false)}/>
+            </View>
+            
+            <View style={{width:'100%',justifyContent:'center',alignItems:'center'}}>
+              <View style={{justifyContent:'center',alignItems:'center'}}>
+                <Image
+                      style={{width:100,height:100,borderRadius:200}}
+                      source={{uri: props.user_info.image_on}}
+                      resizeMode="contain"
+                      PlaceholderContent={
+                            <ActivityIndicator size="large" color="#DE6F00" />
+                    }
+                    placeholderStyle={{
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      backgroundColor: '#f8fafd'
+                    }}
+                    />
+              </View>
+              <Text style={{fontFamily:'Roboto-Bold',fontSize:20}}>{props.user_info.name_on}</Text>
+              <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}>Cidade : Tupã - sp</Text>
+
+              <View style={{width:'100%',justifyContent:'space-between',alignItems:'flex-start',padding:10}}>
+                <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}>Rua :</Text>
+                <Input
+                  placeholder="Rua"
+                  value={rua}
+                  onChangeText={(text) => setRua(text)}
+                  style={{width:'100%'}}
+                  />
+              </View>
+              <View style={{width:'100%',justifyContent:'space-between',alignItems:'flex-start',padding:10}}>
+                <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}>Número :</Text>
+                <Input
+                  placeholder="Número"
+                  value={numero}
+                  onChangeText={(text) => setNumero(text)}
+                  style={{width:'100%'}}
+                  />
+              </View>
+              {rua !== props.user_info.rua_on || numero !== props.user_info.numero_on?
+              <TouchableOpacity style={{width:'100%',justifyContent:'center',alignItems:'center',padding:10,backgroundColor:'#DE6F00'}}
+              onPress={()=>{
+                props.onRua_numero(rua,numero,props.user_info.id)
+                setModal_pedido(false)
+              }}
+              >
+                <Text style={{fontFamily:'Roboto-Bold',fontSize:15,color:'#f8fafd'}}>Salvar</Text>
+              </TouchableOpacity>:null
+              }
+
+              {/* buttom sair logof firebase */}
+{/*               
+              <TouchableOpacity style={{width:'100%',justifyContent:'center',alignItems:'center',padding:10}}
+              onPress={resetApp}
+              >
+                <Text style={{fontFamily:'Roboto-Bold',fontSize:15}}>Sair</Text>
+              </TouchableOpacity> */}
+            </View>
+          </View>
+        </View>
+      </Modal>
+    {/* MODAL pedido */}
     </SafeAreaView>
   );
 }
@@ -681,9 +832,10 @@ const styles = StyleSheet.create({
   base_buttons:{
     justifyContent:'center',
     alignItems:'center',
-    width:"10%",
-    height:'50%', 
-    borderRadius:100
+    margin:5,
+    // width:"10%",
+    // height:'50%', 
+    // borderRadius:100
   },
   base_button_carrinho:{
     justifyContent:'center',
@@ -730,7 +882,7 @@ const styles = StyleSheet.create({
   // },
 });
 
-const mapStateToProps = ({  user, cardapio,adicionar_pedido }: { user: any,cardapio:any,adicionar_pedido:any})=> {
+const mapStateToProps = ({  user, cardapio,adicionar_pedido,pedidos }: { user: any,cardapio:any,adicionar_pedido:any,pedidos:any})=> {
   return {
     cardapio: cardapio.cardapio,
     onorof: cardapio.onorof,
@@ -740,13 +892,16 @@ const mapStateToProps = ({  user, cardapio,adicionar_pedido }: { user: any,carda
 
     adicionar_itens: adicionar_pedido.adicionar_itens,
 
+    pedidos: pedidos.pedidos,
+
       };
 };
 const mapDispatchProps = (dispatch: any) => {
   return {
     onUpdate_theme: (id:string,theme_mode:boolean) => dispatch(update_On_theme(id,theme_mode)),
     onUser_localidade: (status_mesa:boolean, mesa:number, id_user:string) => dispatch(setUser_localidade(status_mesa,mesa,id_user)),
-    
+    onRua_numero : (rua_on:string, numero_on:string, id_user:string) => dispatch(setUser_rua_numero(rua_on,numero_on,id_user)),
+    Resetstate : () => dispatch(resetState()),
   };
 };
 export default connect(mapStateToProps,mapDispatchProps)(Principal_comp);

@@ -43,6 +43,7 @@ export default (props: any) => {
             styles_dark0rligth={styles_dark0rligth}
             selectedItem={selectedItem}
             index={index}
+            pedido_online={props.pedido_online}
         />
         )}
         horizontal={true}

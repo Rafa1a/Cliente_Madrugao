@@ -1,5 +1,5 @@
 import { NavigationProp } from '@react-navigation/native';
-import { Item, user_on } from './inter';
+import { Item, pedido_inter, user_on } from './inter';
 import { cardapio,comments } from './inter_cardapio';
 
 export interface Principal {
@@ -16,6 +16,13 @@ export interface Principal {
     onUser_localidade?: (status_mesa:boolean, mesa:number, id_user:string) => void
     //carrinho de compras
     adicionar_itens?: Item[];
+
+    //verificar se tem item 
+    pedidos?: pedido_inter[];
+
+    onRua_numero?: (rua:string,numero:string,id:string) => void;
+
+    Resetstate?: () => void;
 
 
 }
@@ -36,6 +43,8 @@ export interface Principal_card{
     //adicionar itens
     adicionar_itens?: Item[];
     Set_add_itens: (itens:Item[]) => void;
+
+    pedido_online?: pedido_inter[];
 }
 export interface commentss2{
     uid: string;

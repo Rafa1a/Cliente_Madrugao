@@ -1,5 +1,5 @@
 import { user_fun } from "../../interface/inter"
-import { GET_USER, LOGIN_USER, LOGIN_USER_INFO, SET_QR_CODE } from "../action/actionTypes"
+import { GET_USER, LOGIN_USER, LOGIN_USER_INFO, RESET_STATE, SET_QR_CODE } from "../action/actionTypes"
 
 interface actions {
     type :string,
@@ -34,7 +34,10 @@ const reducer = (state = initialState, action:actions) =>{
             return {
                 ...state,
                 qrcode:action.payload
-            }   
+            } 
+        //resetar estado
+        case RESET_STATE:
+            return initialState;  
         default :
             return state
     }

@@ -14,4 +14,6 @@ export const SET_MODAL_COMMENTS = 'SET_MODAL_COMMENTS'
 export const SET_ONOROF = 'SET_ONOROF'
 export const SET_COMMENTS = 'SET_COMMENTS'
 export const SET_QR_CODE = 'SET_QR_CODE'
+export const RESET_STATE = 'RESET_STATE';
+
 //

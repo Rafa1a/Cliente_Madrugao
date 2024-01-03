@@ -19,7 +19,8 @@ import { Subcategoria } from '../interface/Novas_componentes';
 const App = (props: Subcategoria) => {
     //Estilo customizado do dark mode
     const styles_dark0rligth = useStyles(props.user_info);  
-    const theme = props.user_info.theme_mode;
+    const theme = props.user_info?props.user_info.theme_mode || false :null;
+
     // loading
     const [loading_definir,setLoading_definir] = React.useState('');
     //button component com estilos customizados

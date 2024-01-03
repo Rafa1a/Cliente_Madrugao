@@ -130,7 +130,7 @@ function Splash(props: SplashProps) {
                 <Animated.View style={[styles.box_animacao,styles_dark0rligth.mode_theme_animated, animatedStyle]} />
             </View>
             {
-            props.user_info.theme_mode?
+            props.user_info?props.user_info.theme_mode?
               <Image 
                   source={require('../../assets/estilos/desfoque.png')} 
                   style={styles.circulo}
@@ -139,7 +139,7 @@ function Splash(props: SplashProps) {
               source={require('../../assets/estilos/desfoque_black.png')} 
               style={styles.circulo}
               />
-            }
+            :null}
             
         </View>
 
