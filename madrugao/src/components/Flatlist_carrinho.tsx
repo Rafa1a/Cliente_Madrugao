@@ -10,7 +10,6 @@ import {
   TouchableOpacity,
   Modal
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 import {  Divider, Image,  } from '@rneui/themed';
 import { MaterialIcons } from '@expo/vector-icons';

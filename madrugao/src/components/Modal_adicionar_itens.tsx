@@ -4,7 +4,6 @@ import {
     Alert,
     FlatList,
     Modal,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -119,7 +118,7 @@ const Modal_adicionar_retirar = (props: Props) => {
             transparent={true}
             visible={props.visible}
         >
-            <SafeAreaView style={styles.constainer}>
+            <View style={styles.constainer}>
                 <View style={styles.modal}>
                     {/* Fechar */}
                     <View  style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
@@ -209,7 +208,7 @@ const Modal_adicionar_retirar = (props: Props) => {
                     </ScrollView>
 
                 </View>
-            </SafeAreaView>
+            </View>
         </Modal>
 
     </>

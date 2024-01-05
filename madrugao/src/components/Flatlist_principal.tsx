@@ -6,7 +6,6 @@ import {
   Text,
 
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import Principal_card from './Principal_card';
 import { useStyles } from '../styles/styles_dark_ligth';
 

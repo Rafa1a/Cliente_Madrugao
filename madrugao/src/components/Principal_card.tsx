@@ -13,7 +13,6 @@ import {
 
 } from 'react-native';
 import { BottomSheet, Button, Image, Input, ListItem } from '@rneui/themed';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { MaterialCommunityIcons,AntDesign } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
@@ -127,7 +126,7 @@ import { Ionicons } from '@expo/vector-icons';
 
   return (
 
-  <SafeAreaView style={[styles.container,props.selectedItem === props.index && { transform: [{ scale: 1.2 }] },]}>
+  <View style={[styles.container,props.selectedItem === props.index && { transform: [{ scale: 1.2 }] },]}>
 
     {/* CARD */}
     <View style={[styles.view_principal,styles_dark0rligth.mode_theme_card]}>
@@ -409,7 +408,7 @@ import { Ionicons } from '@expo/vector-icons';
     </Modal>
     {/* MODAL pedido */}
               
-  </SafeAreaView>
+  </View>
   );
 }
 

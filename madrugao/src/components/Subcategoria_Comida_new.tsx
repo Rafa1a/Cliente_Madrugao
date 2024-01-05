@@ -11,7 +11,6 @@ import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useStyles } from '../styles/styles_dark_ligth';
 import { connect } from 'react-redux';
 import { Divider } from '@rneui/themed';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Subcategoria } from '../interface/Novas_componentes';
 
 
