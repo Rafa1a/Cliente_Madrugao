@@ -162,7 +162,7 @@ import { Ionicons } from '@expo/vector-icons';
           {itens.ingredientes?itens.ingredientes.join(', '):''}
         </Text>
       </View>
-
+      {/* ICON */}
       <View style={styles.iconContainer}>
         {/* BUTTON COMENTARIO */}
         <View style={{marginLeft:10,marginTop:10,alignItems:'center',justifyContent:'center'}} >
@@ -364,8 +364,7 @@ import { Ionicons } from '@expo/vector-icons';
         </View>
     </Modal>
     {/* MODAL imagem*/}
-    {/* MODAL pedido */}
-
+    {/* MODAL pedido em andamento */}
     <Modal
     animationType="fade"
     transparent={true}
@@ -406,7 +405,7 @@ import { Ionicons } from '@expo/vector-icons';
         </View>
       </View>
     </Modal>
-    {/* MODAL pedido */}
+    {/* MODAL pedido  em andamento*/}
               
   </View>
   );

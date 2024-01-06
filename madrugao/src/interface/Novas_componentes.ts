@@ -58,3 +58,10 @@ export interface Subcategoria{
     loading_categoria?:boolean;
     loading_categoria2?:boolean;
 }
+export interface Principal_card_ultimo_pedido{
+    item: pedido_inter;
+    user_info?: user_on;
+    onSetAdicionar_itens: (itens:Item[]) => void;
+    
+    
+}

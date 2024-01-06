@@ -161,6 +161,8 @@ export interface user_on {
   //localidade
   mesa?:number;
   status_mesa?:boolean
+
+  ultimos_pedidos?:pedido_inter[]
 }
 
 // Card interfaces

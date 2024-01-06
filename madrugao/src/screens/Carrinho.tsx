@@ -15,7 +15,7 @@ import Flatlist_carrinho from '../components/Flatlist_carrinho';
 import { Item, pedido_inter, user_on } from '../interface/inter';
 import { addItemToPedidos, setAdicionar_itens } from '../store/action/adicionar_pedido';
 import { Input, Switch } from '@rneui/themed';
-import { setUser_rua_numero } from '../store/action/user';
+import { setUser_rua_numero, setUser_ultimo_pedido } from '../store/action/user';
 
 import LottieView from 'lottie-react-native';
 //
@@ -32,9 +32,15 @@ interface props_carrinho {
   onSetAdicionar_itens?: (item:Item[]) => void;
 
   onSetUser_rua_numero?: (rua:string,numero:string,id:string) => void;
+
+  onSetUser_ultimo_pedido?: (ultimo_pedido:{}, id_user:string,user_ultimos_pedidos:any) => void;
+  route?:any
 }
 
 function Carrinho(props: props_carrinho) {
+    
+    //////////////////////////////////////////////////////////////  
+    // console.log('ultimo_pedido', ultimo_pedido);
     // console.log('props.adicionar_itens',props.adicionar_itens)
     const [status_chapeiro, setStatus_chapeiro] = React.useState(false);
     const [status_bar, setStatus_bar] = React.useState(false);
@@ -71,13 +77,21 @@ function Carrinho(props: props_carrinho) {
       setInput_rua(props.user_info.rua_on?props.user_info.rua_on:input_rua)
       setInput_numero(props.user_info.numero_on?props.user_info.numero_on.toString():input_numero)
     }, [props.user_info.rua_on,props.user_info.numero_on])
-    
-    function add_pedido () {
-      //valor da ordem mais alta
-      console.log(props.pedidos)
+
+    //ordem mais alta 
+    const [ordem_mais_alta, setOrdem_mais_alta] = React.useState(0);
+    useEffect(() => {
       const ordem_mais_alta =  props.pedidos && props.pedidos.length > 0 ?props.pedidos.reduce((prev, current) => (prev.ordem > current.ordem) ? prev : current) : {ordem:0}
       let ordem = ordem_mais_alta.ordem + 1
-      console.log('ordem_mais_alta',ordem)
+      setOrdem_mais_alta(ordem)
+    }, [props.pedidos])
+    //ordem mais alta// fim
+
+    async function add_pedido  () {
+      //valor da ordem mais alta
+      console.log(props.pedidos)
+      
+      console.log('ordem_mais_alta',ordem_mais_alta)
       //caso o status mesa seja true
       if(props.user_info.status_mesa){
 
@@ -89,7 +103,7 @@ function Carrinho(props: props_carrinho) {
 
               numero_mesa:props.user_info.mesa,
 
-              ordem : ordem,
+              ordem : ordem_mais_alta,
 
               status:false,
 
@@ -101,11 +115,12 @@ function Carrinho(props: props_carrinho) {
               
             }
 
-        props.onAddItemToPedidos(localidade_mesa)
+        await props.onAddItemToPedidos(localidade_mesa)
         props.onSetAdicionar_itens([])
         props.navigation.goBack()
       }else {
         //caso o status mesa seja false
+        
         const localidade_online: pedido_inter = {
 
               itens:props.adicionar_itens || [],
@@ -120,7 +135,7 @@ function Carrinho(props: props_carrinho) {
 
               numero: (props.user_info.numero_on ? props.user_info.numero_on : input_numero).toString(),
 
-              ordem : ordem,
+              ordem : ordem_mais_alta,
 
               status:false,
 
@@ -137,14 +152,16 @@ function Carrinho(props: props_carrinho) {
         }
         if(input_numero === '' || input_rua === '' ){
           if(open){
-            props.onAddItemToPedidos(localidade_online)
+            await props.onAddItemToPedidos(localidade_online)
+            await props.onSetUser_ultimo_pedido(localidade_online,props.user_info.id,props.user_info.ultimos_pedidos || [])
             props.onSetAdicionar_itens([])
             props.navigation.goBack()
           }else {
             alert('Preencha os campos')
           }
         }else {
-          props.onAddItemToPedidos(localidade_online)
+          await props.onAddItemToPedidos(localidade_online)
+          await props.onSetUser_ultimo_pedido(localidade_online,props.user_info.id,props.user_info.ultimos_pedidos || [])
           props.onSetAdicionar_itens([])
           props.navigation.goBack()
         }
@@ -154,7 +171,7 @@ function Carrinho(props: props_carrinho) {
     }
     //aniamacao
   const animation = useRef(null);
-
+    //aniamacao
     // console.log(props.user_info.status_mesa)
   return (
     <SafeAreaView style={{flex:1,width:'100%',backgroundColor:'#f8fafd'}}>
@@ -275,6 +292,8 @@ const mapDispatchProps = (dispatch: any) => {
     onAddItemToPedidos: (item:any) => dispatch(addItemToPedidos(item)),
     onSetAdicionar_itens: (item:any) => dispatch(setAdicionar_itens(item)),
     onSetUser_rua_numero: (rua:string,numero:string,id:string) => dispatch(setUser_rua_numero(rua,numero,id)),
+    onSetUser_ultimo_pedido: (ultimo_pedido:{}, id_user:string,user_ultimos_pedidos) => dispatch(setUser_ultimo_pedido(ultimo_pedido,id_user,user_ultimos_pedidos)),
+    
     
   };
 };

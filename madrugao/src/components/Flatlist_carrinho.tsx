@@ -66,7 +66,7 @@ function Flatlist_Carrinho(props: any) {
 
   return (
     <>
-     <View style={styles.container}>
+        <View style={styles.container}>
                 <View style={[styles.view_image]}>
                     <Image
                         style={styles.image}
@@ -169,10 +169,10 @@ function Flatlist_Carrinho(props: any) {
                     {/* adicionar e retirar caso tenho */}
                     
                 </View>
-            </View>
+        </View>
 
-            {/* Modal de adicionar e retirar */}
-            <Modal_adicionar_itens visible={modal} setModal={setModal} itens={item} index={props.index} carrinho/>
+        {/* Modal de adicionar e retirar */}
+        <Modal_adicionar_itens visible={modal} setModal={setModal} itens={item} index={props.index} carrinho/>
 
     </>
   );

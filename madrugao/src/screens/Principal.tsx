@@ -27,6 +27,7 @@ import Subcategoria_comida_new from '../components/Subcategoria_Comida_new';
 import Subcategoria_bar_new from '../components/Subcategoria_Bar_new';
 
 import Flatlist_principal from '../components/Flatlist_principal';
+import Flatlist_principal_ultimos_pedidos from '../components/Flatlist_principal_ultimos_pedidos';
 //icons
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
@@ -73,10 +74,11 @@ function Principal_comp(props: Principal) {
   const [loading_mais_pedidos, setLoading_mais_pedidos] = useState(false);
 
   const [loading_categoria, setLoading_categoria] = useState(false);
-  //favoritos
+  //favoritos e ultimo pedido
   const [loading_favoritos, setLoading_favoritos] = useState(false);
   ///buton voltar
-  const [voltar, setVoltar] = useState(false);
+  const [voltar_favoritos, setVoltar_favoritos] = useState(false);
+  
   //////////////////////////////////////////////////////
   //animacao lottie
   const [lottie, setLottie] = useState(false);
@@ -344,7 +346,7 @@ function Principal_comp(props: Principal) {
 
   //////////////////////////////////////////////////////
 
-//funcao click filtro
+  //funcao click filtro
   function toggleFilter(filter) {
     setLoading_categoria(true);
     new Promise(resolve => {
@@ -394,10 +396,11 @@ function Principal_comp(props: Principal) {
       setFilteredCardapio(newFilters);
       // console.log(newFilters)
       setLoading_favoritos(false);
-      setVoltar(true);
+      setVoltar_favoritos(true);
       
     });
   }
+  
 
   //////////////////////////////////////////////////////
   // console.log(filteredCardapio[0])
@@ -503,9 +506,8 @@ function Principal_comp(props: Principal) {
       console.error("Erro ao resetar o aplicativo", error);
     }
   }
-  
   //logout
-  //////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////// Relogio controle se ele aparece ou nao opacity
 
   const [condicaoRelogio, setCondicaoRelogio] = useState(false);
 
@@ -516,6 +518,23 @@ function Principal_comp(props: Principal) {
     setCondicaoRelogio(condicao);
   }, [props.user_info, props.pedidos]); 
 
+  ////////////////////////////////////////////////////// Relogio controle se ele aparece ou nao opacity//fim
+  ////////////////////////////////////////////////////// funcao q clique em ultimo pedido definir itens cardapio
+  const [loading_ultimo_pedido, setLoading_ultimo_pedido] = useState(false);
+  const [voltar_ultimo_pedido, setVoltar_ultimo_pedido] = useState(false);
+  const [ultimo_pedido, setUltimo_pedido] = useState([]);
+  useEffect(() => {
+    const ultimo_pedido = props.user_info?.ultimos_pedidos || []
+    setUltimo_pedido(ultimo_pedido)
+  }, [props.user_info]);
+  function toggleUltimo_pedido() {
+    setLoading_ultimo_pedido(false);
+    setVoltar_ultimo_pedido(true);
+    
+  }
+
+
+  ////////////////////////////////////////////////////// funcao q clique em ultimo pedido definir itens cardapio //fim
   return (
     <SafeAreaView style={[styles.container,styles_dark0rligth.mode_theme_container]}>
       {/* /////////////////////////////////////////////////theme mode e qrcode */}
@@ -627,8 +646,8 @@ function Principal_comp(props: Principal) {
           <View style={styles.favoritos}>
             <TouchableOpacity style={{alignItems:'center'}} 
             onPress={()=>{
-                if(voltar){
-                  setVoltar(false)
+                if(voltar_favoritos){
+                  setVoltar_favoritos(false)
                   setFilters([])
                   return
                 }else{
@@ -639,16 +658,43 @@ function Principal_comp(props: Principal) {
               {
               loading_favoritos?
               <ActivityIndicator size="small" color="#3C4043" />
-              :voltar?
-              <Ionicons name="return-down-back" size={24} color="black" />:
+              :voltar_favoritos?
+              <Ionicons name="return-down-back" size={24} color="#3C4043" />:
               <MaterialCommunityIcons name="hand-heart-outline" size={24} color="#3C4043" />
               }
 
               <Text style={{color:'#3C4043',fontSize:10,fontFamily:'Roboto-Regular'}}>Favoritos</Text>
             </TouchableOpacity>
-          </View>
         {/* ////////////Favoritos /////////////////////////////*/}
+        {/* //////////// ultimos pedidos /////////////////////////////*/}
 
+             {props.user_info.ultimos_pedidos && props.user_info?.status_mesa !== true?
+             <>
+              <Divider orientation="vertical" style={{marginLeft:10,marginRight:10}}/>
+              <TouchableOpacity style={{alignItems:'center'}} 
+              onPress={()=>{
+                if(voltar_ultimo_pedido){
+                  setVoltar_ultimo_pedido(false)
+                  setFilters([])
+                  return
+                }else{
+                  toggleUltimo_pedido()
+                }
+              }}>
+                {
+                loading_ultimo_pedido?
+                <ActivityIndicator size="small" color="#3C4043" />
+                :voltar_ultimo_pedido?
+                <Ionicons name="return-down-back" size={24} color="#3C4043" />:
+                <Fontisto name="favorite" size={24} color="#3C4043" />
+                }
+                <Text style={{color:'#3C4043',fontSize:10,fontFamily:'Roboto-Regular'}}>Ultimos Pedidos</Text>
+              </TouchableOpacity> 
+              </> 
+              :null} 
+          {/* //////////// ultimos pedidos /////////////////////////////*/}
+          </View>
+          {/* ////////////Filtro /////////////////////////////*/}
       </View>
       {/* /////////////////////Categoria///////////////////////// */}
 
@@ -661,6 +707,8 @@ function Principal_comp(props: Principal) {
           source={require('../../assets/anim/animacao_flatlist.json')}
           style={{flex:1,alignSelf:'center',width:Dimensions.get('window').width}}
         /> :
+        voltar_ultimo_pedido ?
+        <Flatlist_principal_ultimos_pedidos lista_pedidos={ultimo_pedido} />:
          <Flatlist_principal cardapio={Cardapio} pedido_online={pedido_online}/>
       }
       {/* ////////////////////////////////////////////// FLATLIST*/}
@@ -857,7 +905,7 @@ const styles = StyleSheet.create({
     justifyContent:'center',
     alignItems:'center',
     backgroundColor:'#f8fafd',
-    width:"20%",
+    width:"20%", 
     aspectRatio: 1, // Adicionado para garantir que width e height sejam iguais
     borderRadius:9999, // Modificado para um valor muito alto para garantir q sera redondo
 
@@ -868,6 +916,7 @@ const styles = StyleSheet.create({
   //////////////////////////////////////////////Favoritos
   favoritos:{
     alignSelf: 'flex-end',
+    flexDirection:'row',
     marginTop:25,
     marginRight:15, 
     //stilos
@@ -909,7 +958,7 @@ const mapStateToProps = ({  user, cardapio,adicionar_pedido,pedidos }: { user: a
     adicionar_itens: adicionar_pedido.adicionar_itens,
 
     pedidos: pedidos.pedidos,
-
+ 
       };
 };
 const mapDispatchProps = (dispatch: any) => {

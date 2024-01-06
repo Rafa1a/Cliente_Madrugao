@@ -177,6 +177,34 @@ export const setUser_rua_numero = (rua_on:string, numero_on:string, id_user:stri
   }
 }
 /////////////////////////////////////
+////////////////////////////////////adicionar ultimos pedidos em ultimo_pedido dentro de user_on
+export const setUser_ultimo_pedido = (ultimo_pedido: {}, id_user: string, user_ultimos_pedidos: {}[] = []) => {
+  return async(dispatch: any) => {
+    try {
+      // Garante que user_ultimos_pedidos seja um array
+      user_ultimos_pedidos = user_ultimos_pedidos || [];
+
+      // Se já temos 3 pedidos, removemos o mais antigo
+      if (user_ultimos_pedidos.length >= 3) {
+        user_ultimos_pedidos.shift();
+      }
+
+      // Adicionamos o novo pedido
+      user_ultimos_pedidos.push(ultimo_pedido);
+
+      // Atualizamos o array inteiro no Firebase
+      await updateDoc(doc(db, "user_on", id_user), {
+        ultimos_pedidos: user_ultimos_pedidos
+      });
+    } catch (e) {
+      dispatch(setMessage({
+        title: 'Error',
+        text: 'Ocorreu um erro ao contatar o servidor dos usuarios'
+      }))
+    }
+  }
+}
+/////////////////////////////////////
 export const setUsers =  (users:user_on[]) => {
     return { 
         type:GET_USER,
