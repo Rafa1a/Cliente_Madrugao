@@ -505,6 +505,16 @@ function Principal_comp(props: Principal) {
   }
   
   //logout
+  //////////////////////////////////////////////////////
+
+  const [condicaoRelogio, setCondicaoRelogio] = useState(false);
+
+  useEffect(() => {
+    const condicao = (props.user_info.status_mesa && props.pedidos.some(item => item.numero_mesa === props.user_info.mesa  && item.itens.some(itens => itens.categoria !== 'bebidas'))) 
+    || props.pedidos.some(item => item.id_user === props.user_info.id && item.itens.some(itens => itens.categoria !== 'bebidas') );
+    
+    setCondicaoRelogio(condicao);
+  }, [props.user_info, props.pedidos]); 
 
   return (
     <SafeAreaView style={[styles.container,styles_dark0rligth.mode_theme_container]}>
@@ -657,13 +667,19 @@ function Principal_comp(props: Principal) {
 
       {/* ////////////////////////////////////////////// Base*/}
       <View style={styles.base_view_container}>
+
         {/*buttons relogio*/}
-        <TouchableOpacity style={styles.base_buttons}>
+        
+        <TouchableOpacity style={[styles.base_buttons,condicaoRelogio? {opacity:1}: {opacity:0}]} onPress={()=>{
+          condicaoRelogio?
+          props.navigation.navigate('Pedidos')
+          :null
+          }}> 
           {props.user_info.theme_mode ?
           <AntDesign name="clockcircleo" size={30} color="#f8fafd" />
           :<AntDesign name="clockcircleo" size={30} color="#202124" />}
-          
-        </TouchableOpacity>
+        </TouchableOpacity> 
+        
         {/*buttons relogio*/}
 
         {/* Carrinho */}

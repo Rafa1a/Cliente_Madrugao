@@ -12,7 +12,7 @@ import { ItemProps } from '../../interface/inter';
 export const startPedidosListener = () => {
   return (dispatch: any) => {
     try{
-      const q = query(collection(db, "pedidos"));
+      const q = query(collection(db, "pedidos",), where("status", "==", false));
       onSnapshot(q, (snapshot) => {
         const pedidos: any[] = [];
           snapshot.forEach((doc) => {
@@ -21,6 +21,7 @@ export const startPedidosListener = () => {
                 id: doc.id}) 
             }); 
         // console.log(pedidos)
+        pedidos.sort((a, b) => a.ordem - b.ordem);
         dispatch(setPedidos(pedidos));
         console.log("pedidos onsnap")
       }); 

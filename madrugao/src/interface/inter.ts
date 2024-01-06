@@ -105,6 +105,8 @@ export interface pedido_props {
   pedidos?:pedido_inter[]
   cardapio?:any[]
   onAtualizar_estoque?:(id:string,estoque:number)=>void
+  //icones
+  
 
 }
 
@@ -125,6 +127,8 @@ export interface pedido_inter {
   dinheiro?:number;
   cartao?:cartao;
   pix?:boolean;
+
+  name_outros?:string
 }
 
 // User interfaces
