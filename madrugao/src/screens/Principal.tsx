@@ -49,6 +49,7 @@ import { signOut } from "firebase/auth";
 import { auth } from '../store/auth';
 import { CommonActions } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { fetch_mesa_status_user_call } from '../store/action/mesas';
 //
 function Principal_comp(props: Principal) {
 
@@ -530,9 +531,7 @@ function Principal_comp(props: Principal) {
   function toggleUltimo_pedido() {
     setLoading_ultimo_pedido(false);
     setVoltar_ultimo_pedido(true);
-    
   }
-
 
   ////////////////////////////////////////////////////// funcao q clique em ultimo pedido definir itens cardapio //fim
   return (
@@ -708,7 +707,7 @@ function Principal_comp(props: Principal) {
           style={{flex:1,alignSelf:'center',width:Dimensions.get('window').width}}
         /> :
         voltar_ultimo_pedido ?
-        <Flatlist_principal_ultimos_pedidos lista_pedidos={ultimo_pedido} />:
+        <Flatlist_principal_ultimos_pedidos lista_pedidos={ultimo_pedido} pedido_online={pedido_online}/>:
          <Flatlist_principal cardapio={Cardapio} pedido_online={pedido_online}/>
       }
       {/* ////////////////////////////////////////////// FLATLIST*/}
@@ -733,21 +732,29 @@ function Principal_comp(props: Principal) {
         {/* Carrinho */}
         <AnimatedTouchableOpacity 
         style={[styles.base_button_carrinho,styles_dark0rligth.carrinho,style]} 
-        onPress={()=>props.navigation.navigate('Carrinho')}>
+        onPress={async()=>{
+          props.user_info?.status_mesa && (props.adicionar_itens?.length === 0 || props.adicionar_itens === undefined)?
+          await props.onMesa_status_call(props.user_info?.mesa)
+          :
+          props.navigation.navigate('Carrinho')
+          }}>
           
-          {/* <LottieView
-                autoPlay
-                ref={animation}
-              source={require('../../assets/anim/fuma.json')}
-              // style={{transform: [{scale: 1.2}]}}
-            /> */}
-          {props.adicionar_itens && props.adicionar_itens.length > 0?
-          <>
-            <Text style={{color:'#f8fafd',fontSize:12,fontFamily:'Roboto-Bold'}}>{props.adicionar_itens.length}</Text>
-            <AntDesign name="shoppingcart" size={30} color="#f8fafd" />
-          </>:
-          <AntDesign name="shoppingcart" size={30} color="#3C4043" />}
-
+          {props.user_info?.status_mesa && (props.adicionar_itens?.length === 0 || props.adicionar_itens === undefined)?
+          <LottieView
+          autoPlay
+          ref={animation}
+          source={require('../../assets/anim/acenando_maos.json')}
+          speed={0.2}
+          // style={{transform: [{scale: 1.2}]}}
+          />
+          :props.adicionar_itens && props.adicionar_itens?.length > 0?
+            <>
+              <Text style={{color:'#f8fafd',fontSize:12,fontFamily:'Roboto-Bold'}}>{props.adicionar_itens.length}</Text>
+              <AntDesign name="shoppingcart" size={30} color="#f8fafd" />
+            </>:
+            <AntDesign name="shoppingcart" size={30} color="#3C4043" />
+          }
+          
         </AnimatedTouchableOpacity>
         {/* Carrinho */}
 
@@ -967,6 +974,7 @@ const mapDispatchProps = (dispatch: any) => {
     onUser_localidade: (status_mesa:boolean, mesa:number, id_user:string) => dispatch(setUser_localidade(status_mesa,mesa,id_user)),
     onRua_numero : (rua_on:string, numero_on:string, id_user:string) => dispatch(setUser_rua_numero(rua_on,numero_on,id_user)),
     Resetstate : () => dispatch(resetState()),
+    onMesa_status_call:(mesa:number) => dispatch(fetch_mesa_status_user_call(mesa)),
   };
 };
 export default connect(mapStateToProps,mapDispatchProps)(Principal_comp);

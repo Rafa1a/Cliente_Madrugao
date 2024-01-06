@@ -24,6 +24,9 @@ export interface Principal {
 
     Resetstate?: () => void;
 
+    //status_call
+    onMesa_status_call?: (mesa:number) => void;
+
 
 }
 
@@ -62,6 +65,7 @@ export interface Principal_card_ultimo_pedido{
     item: pedido_inter;
     user_info?: user_on;
     onSetAdicionar_itens: (itens:Item[]) => void;
+    pedido_online?: pedido_inter[];
     
     
 }

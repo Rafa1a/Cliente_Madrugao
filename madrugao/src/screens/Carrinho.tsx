@@ -81,17 +81,31 @@ function Carrinho(props: props_carrinho) {
     //ordem mais alta 
     const [ordem_mais_alta, setOrdem_mais_alta] = React.useState(0);
     useEffect(() => {
-      const ordem_mais_alta =  props.pedidos && props.pedidos.length > 0 ?props.pedidos.reduce((prev, current) => (prev.ordem > current.ordem) ? prev : current) : {ordem:0}
-      let ordem = ordem_mais_alta.ordem + 1
-      setOrdem_mais_alta(ordem)
-    }, [props.pedidos])
+      // Verifica se há pedidos
+      if (props.pedidos && props.pedidos.length > 0) {
+        // Encontra o pedido com a maior "ordem"
+        const ordem_ = props.pedidos.reduce((prev, current) => {
+          return (prev.ordem > current.ordem) ? prev : current;
+        });
+        console.log(ordem_.ordem)
+        // Incrementa a maior "ordem" encontrada
+        let ordem = ordem_.ordem;
+        console.log(ordem)
+
+        // Atualiza o estado
+        setOrdem_mais_alta(ordem);
+      } else {
+        // Se não há pedidos, define a "ordem" como 1
+        setOrdem_mais_alta(1);
+      }
+    }, [props.pedidos]);
     //ordem mais alta// fim
 
     async function add_pedido  () {
       //valor da ordem mais alta
       console.log(props.pedidos)
       
-      console.log('ordem_mais_alta',ordem_mais_alta)
+      console.log('ordem_mais_alta',ordem_mais_alta + 1)
       //caso o status mesa seja true
       if(props.user_info.status_mesa){
 
@@ -103,7 +117,7 @@ function Carrinho(props: props_carrinho) {
 
               numero_mesa:props.user_info.mesa,
 
-              ordem : ordem_mais_alta,
+              ordem : ordem_mais_alta + 1,
 
               status:false,
 
@@ -135,7 +149,7 @@ function Carrinho(props: props_carrinho) {
 
               numero: (props.user_info.numero_on ? props.user_info.numero_on : input_numero).toString(),
 
-              ordem : ordem_mais_alta,
+              ordem : ordem_mais_alta + 1,
 
               status:false,
 

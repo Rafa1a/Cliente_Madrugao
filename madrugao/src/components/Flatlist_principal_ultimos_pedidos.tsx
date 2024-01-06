@@ -24,12 +24,13 @@ export default (props: any) => {
   return (
     <>
       <FlatList
-        data={props.lista_pedidos}
+        data={props.lista_pedidos.slice().reverse()}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item, index }) => (
-        <Principal_card_ultimos_pedidos
+          <Principal_card_ultimos_pedidos
             item={item}
-        />
+            pedido_online={props.pedido_online}
+          />
         )}
         horizontal={true}
         showsHorizontalScrollIndicator={false}
