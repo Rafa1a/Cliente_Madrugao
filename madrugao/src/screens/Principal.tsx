@@ -513,8 +513,8 @@ function Principal_comp(props: Principal) {
   const [condicaoRelogio, setCondicaoRelogio] = useState(false);
 
   useEffect(() => {
-    const condicao = (props.user_info.status_mesa && props.pedidos.some(item => item.numero_mesa === props.user_info.mesa  && item.itens.some(itens => itens.categoria !== 'bebidas'))) 
-    || props.pedidos.some(item => item.id_user === props.user_info.id && item.itens.some(itens => itens.categoria !== 'bebidas') );
+    const condicao = (props.user_info.status_mesa && props.pedidos.some(item => item.status === false &&  item.numero_mesa === props.user_info.mesa  && item.itens.some(itens => itens.categoria !== 'bebidas'))) 
+    || props.pedidos.some(item => item.status === false && item.id_user === props.user_info.id && item.itens.some(itens => itens.categoria !== 'bebidas') );
     
     setCondicaoRelogio(condicao);
   }, [props.user_info, props.pedidos]); 

@@ -12,7 +12,7 @@ import { ItemProps } from '../../interface/inter';
 export const startPedidosListener = () => {
   return (dispatch: any) => {
     try{
-      const q = query(collection(db, "pedidos",), where("status", "==", false));
+      const q = query(collection(db, "pedidos",));
       onSnapshot(q, (snapshot) => {
         const pedidos: any[] = [];
           snapshot.forEach((doc) => {
