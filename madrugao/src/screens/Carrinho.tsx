@@ -167,10 +167,12 @@ function Carrinho(props: props_carrinho) {
               status_porcoes:status_porcoes,
               
             }
-
+        setLoading(true);
         await props.onAddItemToPedidos(localidade_mesa)
         props.onSetAdicionar_itens([])
         props.navigation.goBack()
+        setLoading(false);
+
       }else {
         //caso o status mesa seja false
         const localidade_online: pedido_inter = {
