@@ -3,6 +3,36 @@ import { db } from '../auth';
 import { collection, doc, getDocs, onSnapshot, query, updateDoc,where } from 'firebase/firestore';
 import { setMessage } from './message';
 
+
+export const startMesas = () => {
+  return (dispatch: any) => {
+    try{
+      const q = query(collection(db, "mesas"));
+      onSnapshot(q, (snapshot) => {
+        const mesas: any[] = [];
+        snapshot.forEach((doc) => {
+            // console.log(doc.id)
+            const rawmesas = doc.data();
+            mesas.push({...rawmesas,
+              id: doc.id}) 
+          }); 
+          
+          dispatch(setMesas(mesas))
+          console.log("mesas onsnap")
+
+        });
+        
+    }catch (error) {
+        // console.error('Erro ao adicionar item ao pedido:', error);
+        dispatch(setMessage({
+            title: 'Error',
+            text: 'Ocorreu um erro o servidor do Mesas'
+          }))
+      }
+    
+  };
+};
+
 // Atualizar MESA  status_call: 
 
 export const fetch_mesa_status_user_call = (mesa:number) => {

@@ -50,6 +50,7 @@ import { auth } from '../store/auth';
 import { CommonActions } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetch_mesa_status_user_call } from '../store/action/mesas';
+import { Mesas } from '../interface/inter';
 //
 function Principal_comp(props: Principal) {
 
@@ -116,6 +117,8 @@ function Principal_comp(props: Principal) {
         clearInterval(intervalId);
       }
     };
+
+
   }, []);
  
   ////////////////// search e loading lottie do card final
@@ -148,7 +151,7 @@ function Principal_comp(props: Principal) {
       }
     }
   },[props.cardapio]);
-
+  
   //////////////////////////////////////////////////////
   useEffect(() => {
     console.log('Filtros 32:', filters);
@@ -532,8 +535,65 @@ function Principal_comp(props: Principal) {
     setLoading_ultimo_pedido(false);
     setVoltar_ultimo_pedido(true);
   }
-
   ////////////////////////////////////////////////////// funcao q clique em ultimo pedido definir itens cardapio //fim
+  ///////////////////////////////mesas estado animacao lottie
+  const[mesa, setMesa] = useState<Mesas>({} as Mesas);
+  const[loadding_mesa, setLoadding_mesa] = useState(false);
+
+  useEffect(() => {
+    if(props.user_info.status_mesa){
+      const mesa_:any=props.mesas.find(item=>item.numero_mesa === props.user_info.mesa)
+      setMesa(mesa_)
+    }
+  },[props.mesas]);
+  //componente 
+  const renderAnimation = () => {
+    if (props.user_info?.status_mesa && (props.adicionar_itens?.length === 0 || props.adicionar_itens === undefined)) {
+      
+      if (mesa.status_call) {
+        if(loadding_mesa){
+          return (
+            <ActivityIndicator size="small" color="#E81000" />
+          );
+        }else{
+        return (
+          <LottieView
+            autoPlay
+            ref={animation}
+            source={require('../../assets/anim/aguardando.json')}
+          />
+        );
+        }
+      } else {
+        if(loadding_mesa){
+          return (
+            <ActivityIndicator size="small" color="#E81000" />
+          );
+        }else{
+        return (
+          <LottieView
+            autoPlay
+            ref={animation}
+            source={require('../../assets/anim/acenando_maos.json')}
+            speed={0.2}
+          />
+        );
+        }
+      }
+    } else if (props.adicionar_itens && props.adicionar_itens?.length > 0) {
+      return (
+        <>
+          <Text style={{color:'#f8fafd',fontSize:12,fontFamily:'Roboto-Bold'}}>{props.adicionar_itens.length}</Text>
+          <AntDesign name="shoppingcart" size={30} color="#f8fafd" />
+        </>
+      );
+    } else {
+      return (
+        <AntDesign name="shoppingcart" size={30} color="#3C4043" />
+      );
+    }
+  }
+  ///////////////////////////////mesas estado
   return (
     <SafeAreaView style={[styles.container,styles_dark0rligth.mode_theme_container]}>
       {/* /////////////////////////////////////////////////theme mode e qrcode */}
@@ -646,11 +706,18 @@ function Principal_comp(props: Principal) {
             <TouchableOpacity style={{alignItems:'center'}} 
             onPress={()=>{
                 if(voltar_favoritos){
+                  
                   setVoltar_favoritos(false)
                   setFilters([])
                   return
                 }else{
-                  toggleFavoritos()
+                  if(voltar_ultimo_pedido){
+                    setVoltar_ultimo_pedido(false)
+                    toggleFavoritos()
+                    return
+                  }else{
+                    toggleFavoritos()
+                  }
                 }
             }}>
               
@@ -673,11 +740,18 @@ function Principal_comp(props: Principal) {
               <TouchableOpacity style={{alignItems:'center'}} 
               onPress={()=>{
                 if(voltar_ultimo_pedido){
+                  
                   setVoltar_ultimo_pedido(false)
                   setFilters([])
                   return
                 }else{
-                  toggleUltimo_pedido()
+                  if(voltar_favoritos){
+                    setVoltar_favoritos(false)
+                    toggleUltimo_pedido()
+                    return
+                  }else{
+                    toggleUltimo_pedido()
+                  }
                 }
               }}>
                 {
@@ -733,27 +807,16 @@ function Principal_comp(props: Principal) {
         <AnimatedTouchableOpacity 
         style={[styles.base_button_carrinho,styles_dark0rligth.carrinho,style]} 
         onPress={async()=>{
-          props.user_info?.status_mesa && (props.adicionar_itens?.length === 0 || props.adicionar_itens === undefined)?
-          await props.onMesa_status_call(props.user_info?.mesa)
-          :
-          props.navigation.navigate('Carrinho')
+          if (props.user_info?.status_mesa && (props.adicionar_itens?.length === 0 || props.adicionar_itens === undefined)) {
+            setLoadding_mesa(true);
+            await props.onMesa_status_call(props.user_info?.mesa);
+            setLoadding_mesa(false);
+          } else {
+            props.navigation.navigate('Carrinho');
+          }
           }}>
           
-          {props.user_info?.status_mesa && (props.adicionar_itens?.length === 0 || props.adicionar_itens === undefined)?
-          <LottieView
-          autoPlay
-          ref={animation}
-          source={require('../../assets/anim/acenando_maos.json')}
-          speed={0.2}
-          // style={{transform: [{scale: 1.2}]}}
-          />
-          :props.adicionar_itens && props.adicionar_itens?.length > 0?
-            <>
-              <Text style={{color:'#f8fafd',fontSize:12,fontFamily:'Roboto-Bold'}}>{props.adicionar_itens.length}</Text>
-              <AntDesign name="shoppingcart" size={30} color="#f8fafd" />
-            </>:
-            <AntDesign name="shoppingcart" size={30} color="#3C4043" />
-          }
+          {renderAnimation()}
           
         </AnimatedTouchableOpacity>
         {/* Carrinho */}
@@ -954,7 +1017,7 @@ const styles = StyleSheet.create({
   // },
 });
 
-const mapStateToProps = ({  user, cardapio,adicionar_pedido,pedidos }: { user: any,cardapio:any,adicionar_pedido:any,pedidos:any})=> {
+const mapStateToProps = ({  user, cardapio,adicionar_pedido,pedidos,mesa }: { user: any,cardapio:any,adicionar_pedido:any,pedidos:any,mesa:any})=> {
   return {
     cardapio: cardapio.cardapio,
     onorof: cardapio.onorof,
@@ -965,6 +1028,8 @@ const mapStateToProps = ({  user, cardapio,adicionar_pedido,pedidos }: { user: a
     adicionar_itens: adicionar_pedido.adicionar_itens,
 
     pedidos: pedidos.pedidos,
+
+    mesas:mesa.mesas
  
       };
 };

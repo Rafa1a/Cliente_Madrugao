@@ -23,31 +23,45 @@ function Flatlist_Carrinho(props: any) {
     //visualizacao do modal
     const [modal, setModal] = React.useState(false);
     //definir item do cardapio para passar ao modal
-    const [item, setItem] = React.useState();
+    const [item, setItem] = React.useState<any>({});
     //alterar quantidade
     const [add_retirar, setAdd_retirar] = React.useState(props.item.quantidade);
 
     useEffect(()=>{
-        const item = props.cardapio?.find((item: any) => item.id === props.item.id) || [];
-        setItem(item)
+        const item_ = props.cardapio?.find((item: any) => item.id === props.item.id) || [];
+        setItem(item_)
     },[props.item])
     // console.log('cardapio',item)
-
+    //calcular valor
+    const [valor_original, setValor_original] = React.useState(props.item.valor_p);
     //funcoes para alterar a quantidade
     useEffect(() => {
+        const valor = item.valor ;
+        console.log(valor)
+        
+        if(adicionais_valor(props.item)){
+            setValor_original(adicionais_valor(props.item) + valor) 
+        }else{
+            setValor_original(valor)
+        }   
+        // console.log(item)
+        // console.log('valor_original:',adicionais_valor(props.item))
         // Crie uma nova cópia do array
         const newItems = [...props.adicionar_itens];
 
         // Atualize a quantidade do item na cópia
         newItems[props.index].quantidade = add_retirar;
-
+        //atualizar valor do pedido 
+        // console.log('valor',props.item.valor_p )
+        newItems[props.index].valor_p = (add_retirar *  (typeof valor_original === 'string' ? parseFloat(valor_original) : valor_original)).toFixed(2);
         // Chame a função setState com a nova cópia
         props.Set_add_itens(newItems);
+
     }, [add_retirar]);
 
     function buttons_add() {
         const newQuantity = props.item.quantidade + 1;
-        console.log('add',newQuantity)
+        // console.log('add',newQuantity)
         setAdd_retirar(newQuantity)
     }
 
@@ -58,12 +72,21 @@ function Flatlist_Carrinho(props: any) {
         }
         //excluir item
         else{
-            console.log(props.index)
+            // console.log(props.index)
             const newItems = props.adicionar_itens.filter((item, index) => index !== props.index);
             props.Set_add_itens(newItems);
         }
     }
+    //calcular o valor de adicionais 
+    function adicionais_valor(item:Item){
 
+        const cardapio_find = props.cardapio?.find((item_cardapio)=>item_cardapio.id === item.id)
+
+        const valor_ = cardapio_find?.adicionais?.filter( (item_adicionais)=>item.adicionar_p?.includes(item_adicionais.name) ).map((item_adicionais)=>item_adicionais.valor)?.reduce((a,b)=>a+b,0)
+
+        // console.log(valor_)
+        return valor_
+    }
   return (
     <>
         <View style={styles.container}>
@@ -156,7 +179,7 @@ function Flatlist_Carrinho(props: any) {
                     <TouchableOpacity style={styles.view_adicionar_retirar} onPress={()=>setModal(!modal)}>
                     {props.item.adicionar_p && props.item.adicionar_p.length > 0? 
                     <>
-                        <Text style={styles.text_adicionar_retirar}>Adicionar:</Text>
+                        <Text style={styles.text_adicionar_retirar}>Adicionar:  R$:{adicionais_valor(props.item)}</Text>
                         <Text style={styles.text_itens} numberOfLines={1}>{props.item.adicionar_p.join(', ')}</Text> 
                     </>: null}
                     {props.item.retirar_p && props.item.retirar_p.length > 0?

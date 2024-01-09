@@ -107,6 +107,7 @@ import { Ionicons } from '@expo/vector-icons';
         quantidade: 1,
         valor_p : itens.valor,
       }
+      // console.log(itens_add)
       const itens_add_array = [...props.adicionar_itens||[]];
   
       itens_add_array.push(itens_add)

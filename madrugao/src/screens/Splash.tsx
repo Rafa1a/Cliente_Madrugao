@@ -13,6 +13,7 @@ import { useStyles } from '../styles/styles_dark_ligth';
 import { user_on } from '../interface/inter';
 import { setQr_code, startUser_on_info, startUsers_on } from '../store/action/user';
 import { startPedidosListener } from '../store/action/pedidos';
+import { startMesas } from '../store/action/mesas';
 
 interface SplashProps {
     navigation: any;
@@ -25,6 +26,7 @@ interface SplashProps {
     onCardapio: ()=>void;
     onUsers: ()=>void;
     onPedidos: ()=>void;
+    onMesas: ()=>void;
     setComments: (comments:string)=>void;
     setOnorof: (onorof:string)=>void;
     OnQr_code?: (qrcode:boolean) => void;
@@ -77,17 +79,26 @@ function Splash(props: SplashProps) {
     //
    useEffect(() => {
         //carregar dados backend
-        const carregarcardapio = async () => {
+        const carregarcardapio_users_pedidos = async () => {
           await props.onCardapio();
           await props.onUsers();
           await props.onPedidos();
+          
         }
-        console.log(props.qrcode)
+        const carregar_mesa = async () => {
+          await props.onMesas();
+        }
+        // console.log(props.qrcode)
         
         if(props.qrcode === false){
-          carregarcardapio();
-          props.OnQr_code(true)
+          carregarcardapio_users_pedidos();
+          props.OnQr_code(true);
         }
+        //
+        if(props.user_info?.status_mesa){
+          carregar_mesa();
+        }
+        //
     }, []);
     
     useEffect(() => { 
@@ -214,6 +225,8 @@ const mapDispatchToProps = (dispatch: any) => {
         onCardapio : () => dispatch(startCardapio()),
         onUsers : () => dispatch(startUsers_on()),
         onPedidos : () => dispatch(startPedidosListener()),
+        onMesas: () => dispatch(startMesas()),
+
         setComments : (comments:string) => dispatch(setComments(comments)),
         setOnorof : (onorof:string) => dispatch(setOnorof(onorof)),
         OnQr_code: (qrcode:boolean) => dispatch(setQr_code(qrcode)),

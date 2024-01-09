@@ -57,7 +57,7 @@ export interface Item {
   retirar_p?: string[];
   adicionar_p?: string[];
   quantidade:number;
-  valor_p : number;
+  valor_p : number ;
 }
 
 // Number and Order interfaces
@@ -118,12 +118,14 @@ export interface pedido_inter {
   id_user?: string;
   itens: Item[];
   ordem:number
+
   status_chapeiro?:boolean
   status_porcoes?:boolean
   status_bar?:boolean
   pegar_local?: boolean;
   rua?: string;
   numero?: string;
+
   dinheiro?:number;
   cartao?:cartao;
   pix?:boolean;

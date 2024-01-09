@@ -1,5 +1,5 @@
 import { NavigationProp } from '@react-navigation/native';
-import { Item, pedido_inter, user_on } from './inter';
+import { Item, Mesas, pedido_inter, user_on } from './inter';
 import { cardapio,comments } from './inter_cardapio';
 
 export interface Principal {
@@ -19,6 +19,7 @@ export interface Principal {
 
     //verificar se tem item 
     pedidos?: pedido_inter[];
+    mesas?: Mesas[];
 
     onRua_numero?: (rua:string,numero:string,id:string) => void;
 
