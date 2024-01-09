@@ -28,6 +28,8 @@ export interface Principal {
     //status_call
     onMesa_status_call?: (mesa:number) => void;
 
+    onLogout: (state_logout:boolean) => void;
+
 
 }
 

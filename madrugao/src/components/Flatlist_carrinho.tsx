@@ -37,27 +37,28 @@ function Flatlist_Carrinho(props: any) {
     //funcoes para alterar a quantidade
     useEffect(() => {
         const valor = item.valor ;
-        console.log(valor)
         
         if(adicionais_valor(props.item)){
-            setValor_original(adicionais_valor(props.item) + valor) 
+            setValor_original(Number(valor) + Number(adicionais_valor(props.item))) 
         }else{
-            setValor_original(valor)
+            
+            setValor_original(Number(valor))
         }   
-        // console.log(item)
-        // console.log('valor_original:',adicionais_valor(props.item))
-        // Crie uma nova cópia do array
-        const newItems = [...props.adicionar_itens];
+    }, [item]);
 
+    useEffect(() => {
+        // console.log('valor_original:',valor_original)
+        // Crie uma nova cópia do array
+        const newItems = props.adicionar_itens.map(item => ({...item}));
         // Atualize a quantidade do item na cópia
         newItems[props.index].quantidade = add_retirar;
         //atualizar valor do pedido 
-        // console.log('valor',props.item.valor_p )
-        newItems[props.index].valor_p = (add_retirar *  (typeof valor_original === 'string' ? parseFloat(valor_original) : valor_original)).toFixed(2);
+        newItems[props.index].valor_p = valor_original * add_retirar;
         // Chame a função setState com a nova cópia
-        props.Set_add_itens(newItems);
+        // console.log('new',newItems)
+        props.Set_add_itens(newItems); 
 
-    }, [add_retirar]);
+    }, [add_retirar,valor_original]);
 
     function buttons_add() {
         const newQuantity = props.item.quantidade + 1;
@@ -82,7 +83,7 @@ function Flatlist_Carrinho(props: any) {
 
         const cardapio_find = props.cardapio?.find((item_cardapio)=>item_cardapio.id === item.id)
 
-        const valor_ = cardapio_find?.adicionais?.filter( (item_adicionais)=>item.adicionar_p?.includes(item_adicionais.name) ).map((item_adicionais)=>item_adicionais.valor)?.reduce((a,b)=>a+b,0)
+        const valor_ = cardapio_find?.adicionais?.filter( (item_adicionais)=>item.adicionar_p?.includes(item_adicionais.name) ).map((item_adicionais)=>item_adicionais.valor)?.reduce((a,b)=>Number(a)+Number(b),0)
 
         // console.log(valor_)
         return valor_

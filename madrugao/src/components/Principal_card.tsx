@@ -181,7 +181,7 @@ import { Ionicons } from '@expo/vector-icons';
 
         <TouchableOpacity
         onPress={() => {
-          console.log(props.pedido_online)
+          // console.log(props.pedido_online)
           props.pedido_online.length > 0?setModal_pedido(true):add_itens()
           // setModal(true)
           // props.Set_add_itens()

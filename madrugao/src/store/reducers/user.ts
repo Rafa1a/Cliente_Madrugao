@@ -1,5 +1,5 @@
 import { user_fun } from "../../interface/inter"
-import { GET_USER, LOGIN_USER, LOGIN_USER_INFO, RESET_STATE, SET_QR_CODE } from "../action/actionTypes"
+import { GET_USER, LOGIN_USER, LOGIN_USER_INFO, RESET_STATE, SET_LOGOUT, SET_QR_CODE } from "../action/actionTypes"
 
 interface actions {
     type :string,
@@ -9,7 +9,8 @@ const initialState:any = {
     users:undefined,
     user:undefined,
     user_info:undefined,
-    qrcode:false
+    qrcode:false,
+    logout:false
 }
 
 
@@ -37,7 +38,16 @@ const reducer = (state = initialState, action:actions) =>{
             } 
         //resetar estado
         case RESET_STATE:
-            return initialState;  
+            return {
+                ...state,
+                user_info:undefined,
+            }
+        //logout
+        case SET_LOGOUT:
+            return {
+                ...state,
+                logout:action.payload
+            }
         default :
             return state
     }

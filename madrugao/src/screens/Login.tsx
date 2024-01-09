@@ -24,12 +24,13 @@ import { auth } from '../store/auth';
 import { FontAwesome } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
-import { add_On, setQr_code, setUser_localidade, setUser_login, startUser_on_info } from '../store/action/user';
+import { add_On, setLogout, setQr_code, setUser_localidade, setUser_login, startUser_on_info } from '../store/action/user';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withSpring, withTiming} from 'react-native-reanimated';
 import LottieView from 'lottie-react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useURL } from 'expo-linking';
 import { user_on } from '../interface/inter';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const animation = React.createRef<LottieView>();
 // updates
@@ -50,6 +51,10 @@ interface LoginScreenProps {
   OnQr_code?: (qrcode:boolean) => void;
 
   route?:any
+  
+  logout?:boolean
+
+  onLogout?: (state_logout:boolean) => void;
 }
 
 const LoginScreen = (props: LoginScreenProps) => {
@@ -75,6 +80,7 @@ const LoginScreen = (props: LoginScreenProps) => {
           // console.log('userCredential',userCredential.user)
           const user = userCredential.user;
           props.onSetUser_login(user)
+          // props.onLogout(false);
           console.log('login');
         })
         .catch(()=>{
@@ -90,13 +96,14 @@ const LoginScreen = (props: LoginScreenProps) => {
 //verificar se o usuario ja esta logado
   React.useEffect(()=>{
     // console.log("users", props.user_on)
+    
     const unsub = async () => {
       try {
         await onAuthStateChanged(auth,async (user:any) =>{
           if(user){
-            ////////////////definir user 
+            ////////////////definir user
             props.onSetUser_login(user)
-            // console.log(JSON.stringify(user,null,2))
+            // console.log(JSON.stringify(user,null,2)) 
             console.log('user logado')
           }else {
             console.log('sem user')
@@ -136,12 +143,12 @@ const LoginScreen = (props: LoginScreenProps) => {
 
   //verificar se o usuario ja esta logado e navegar para a tela de splash
   useEffect(() => {
+    console.log('user on',props.user_on) 
     
     // console.log('boolean',props.qrcode)
     const add_and_navegation = async () =>{
 
       if(props.user_on){
-      // console.log('user on',props.user_on) 
        /////////////// Add_user
        const new_user = {
         uid:props.user_on.uid,
@@ -155,7 +162,6 @@ const LoginScreen = (props: LoginScreenProps) => {
         // console.log('user_info sendo chamado caraio')
         await props.onUser_info(props.user_on.uid)
       }
-      
     }
   }
   add_and_navegation();
@@ -164,13 +170,13 @@ const LoginScreen = (props: LoginScreenProps) => {
   /////////////////////////////////////////////////////
 //user_info informacoes do user do banco de dados
   useEffect(() => {
-    // console.log(props.user_on_info);
-    if(props.user_on_info !== undefined){
+    console.log('logout',props.logout);
+    if(props.user_on_info !== undefined && props.logout === false){
       setTimeout(()=>{  
         props.navigation?.replace("Splash");
       },1000)
     }
-  }, [props.user_on_info]);
+  }, [props.user_on_info,props.logout]);
   /////////////////////////////////////////////////////
 ///////////////////////////////////////reanimated///////////////////////////
   const config = {
@@ -454,7 +460,9 @@ const mapStateProps = ({  user }: {  user: any}) => {
   return {
     user_on:user.user,
     user_on_info:user.user_info,
-    qrcode:user.qrcode
+    qrcode:user.qrcode,
+
+    logout:user.logout
   };
 };
 
@@ -467,6 +475,9 @@ const mapDispatchProps = (dispatch: any) => {
     onUser_localidade: (status_mesa:boolean, mesa:number, id_user:string) => dispatch(setUser_localidade(status_mesa,mesa,id_user)),
     
     OnQr_code: (qrcode:boolean) => dispatch(setQr_code(qrcode)),
+
+    onLogout: (state_logout:boolean) => dispatch(setLogout(state_logout)),
+
 
   };
 };

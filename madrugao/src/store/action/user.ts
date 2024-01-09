@@ -1,5 +1,5 @@
 
-import {GET_USER, LOGIN_USER, LOGIN_USER_INFO, RESET_STATE, SET_QR_CODE} from './actionTypes'
+import {GET_USER, LOGIN_USER, LOGIN_USER_INFO, RESET_STATE, SET_LOGOUT, SET_QR_CODE} from './actionTypes'
 import { user_on} from '../../interface/inter'
 import { collection, addDoc,setDoc,doc,onSnapshot,getDocs,query, where, updateDoc,arrayUnion, arrayRemove} from "firebase/firestore"; 
 import { db } from '../auth';
@@ -244,4 +244,12 @@ export const resetState = () => {
   return {
     type: RESET_STATE
   }
+}
+//logout
+export const setLogout = (state_logout:boolean) => {
+  return {
+    type: SET_LOGOUT,
+    payload: state_logout
+  }
+  
 }

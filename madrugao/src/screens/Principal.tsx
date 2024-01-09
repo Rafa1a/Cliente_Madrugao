@@ -18,7 +18,7 @@ import {Principal} from '../interface/Novas_componentes'
 import Principal_card from '../components/Principal_card';
 //
 import { useStyles } from '../styles/styles_dark_ligth';
-import { resetState, setUser_localidade, setUser_rua_numero, update_On_theme } from '../store/action/user';
+import { resetState, setLogout, setUser_localidade, setUser_rua_numero, update_On_theme } from '../store/action/user';
 //components
 import Subcategoria_comida from '../components/Subcategoria_Comida';
 import Subcategoria_bar from '../components/Subcategoria_Bar';
@@ -470,6 +470,7 @@ function Principal_comp(props: Principal) {
   // console.log(pedido_mesa.length > 0)
   //////////////////////////////////////////////////////ver se tem itens pedido
   //////////////////////////////////////////////////////modal pedido
+  const [modal_perfil, setModal_perfil] = useState(false);
   const [modal_pedido, setModal_pedido] = useState(false);
   //////////////////////////////////////////////////////modal pedido
   ////////////////////////////rua e numero
@@ -486,14 +487,16 @@ function Principal_comp(props: Principal) {
   //reset app
   async function resetApp() {
     try {
+      
+
+      // Reseta o estado do Redux
+      props.onLogout(true);
+      // Agora que o usuário foi deslogado e o estado foi resetado, limpa o AsyncStorage
+      await AsyncStorage.clear();
       // Desloga o usuário e espera a operação ser concluída
       // await signOut(auth);
 
-      // Reseta o estado do Redux
-
-      // Agora que o usuário foi deslogado e o estado foi resetado, limpa o AsyncStorage
-      await AsyncStorage.clear();
-      props.Resetstate();
+      // props.Resetstate();
 
       // Navega para a tela de login
       props.navigation.dispatch(
@@ -611,10 +614,11 @@ function Principal_comp(props: Principal) {
         <TouchableOpacity 
          style={{flexDirection:'row',backgroundColor:'#fff',borderRadius:10, elevation:5,justifyContent:'center',alignItems:'center',padding:5}}
          onPress={()=>{
+          pedido_online.length > 0 ?
+          setModal_pedido(true):
           props.user_info.status_mesa?
           props.onUser_localidade(false,0,props.user_info.id):
-          props.navigation.navigate('Qrcode') 
-          
+          props.navigation.navigate('Qrcode')
         }}
         >
           {props.user_info.status_mesa?
@@ -837,7 +841,7 @@ function Principal_comp(props: Principal) {
           {/* lista de pedido feito */}
           
           {/* perfil */}
-          <TouchableOpacity style={styles.base_buttons} onPress={()=>setModal_pedido(true)}>
+          <TouchableOpacity style={styles.base_buttons} onPress={()=>setModal_perfil(true)}>
             
             {props.user_info.theme_mode ?
             <FontAwesome name="user-circle" size={30} color="#f8fafd" />:
@@ -851,17 +855,16 @@ function Principal_comp(props: Principal) {
 
         
       </View>
-      {/* MODAL pedido */}
-
+      {/* MODAL perfil */}
       <Modal
       animationType="fade"
       transparent={true}
-      visible={modal_pedido}
+      visible={modal_perfil}
       >
         <View style={{flex:1,backgroundColor:'#000000aa',justifyContent:'center',alignItems:'center'}}>
           <View style={{backgroundColor:'#fff',width:'80%',justifyContent:'space-between',alignItems:'center',borderRadius:20}}>
             <View style={{width:'100%',flexDirection: 'row', justifyContent: 'flex-end', alignItems:'flex-start'}}>
-              <Ionicons name="md-close-circle-sharp" size={45} color="#3C4043" onPress={()=>setModal_pedido(false)}/>
+              <Ionicons name="md-close-circle-sharp" size={45} color="#3C4043" onPress={()=>setModal_perfil(false)}/>
             </View>
             
             <View style={{width:'100%',justifyContent:'center',alignItems:'center'}}>
@@ -905,7 +908,7 @@ function Principal_comp(props: Principal) {
               <TouchableOpacity style={{width:'100%',justifyContent:'center',alignItems:'center',padding:10,backgroundColor:'#DE6F00'}}
               onPress={()=>{
                 props.onRua_numero(rua,numero,props.user_info.id)
-                setModal_pedido(false)
+                setModal_perfil(false)
               }}
               >
                 <Text style={{fontFamily:'Roboto-Bold',fontSize:15,color:'#f8fafd'}}>Salvar</Text>
@@ -913,17 +916,60 @@ function Principal_comp(props: Principal) {
               }
 
               {/* buttom sair logof firebase */}
-{/*               
-              <TouchableOpacity style={{width:'100%',justifyContent:'center',alignItems:'center',padding:10}}
+               
+              {/* <TouchableOpacity style={{width:'100%',justifyContent:'center',alignItems:'center',padding:10}}
               onPress={resetApp}
               >
                 <Text style={{fontFamily:'Roboto-Bold',fontSize:15}}>Sair</Text>
-              </TouchableOpacity> */}
+              </TouchableOpacity>  */}
             </View>
           </View>
         </View>
       </Modal>
-    {/* MODAL pedido */}
+    {/* MODAL perfil */}
+
+    {/* MODAL pedido em andamento */}
+    <Modal
+    animationType="fade"
+    transparent={true}
+    visible={modal_pedido}
+    >
+      <View style={{flex:1,backgroundColor:'#000000aa',justifyContent:'center',alignItems:'center'}}>
+        <View style={{backgroundColor:'#fff',width:'80%',justifyContent:'space-between',alignItems:'center',borderRadius:20}}>
+          <View style={{width:'100%',flexDirection: 'row', justifyContent: 'flex-end', alignItems:'flex-start'}}>
+            <Ionicons name="md-close-circle-sharp" size={45} color="#3C4043" onPress={()=>setModal_pedido(false)}/>
+          </View>
+          
+          <View style={{justifyContent:'center',alignItems:'center'}}>
+            <View style={{justifyContent:'center',alignItems:'center'}}>
+              <Image
+                    style={{width:100,height:100}}
+                    source={require('../../assets/logos/logo_madrugao.png')}
+                    resizeMode="contain"
+                    PlaceholderContent={
+                          <ActivityIndicator size="large" color="#DE6F00" />
+                  }
+                  placeholderStyle={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: '#f8fafd'
+                  }}
+                  />
+            </View>
+            <Text style={{fontFamily:'Roboto-Bold',fontSize:20}}>Você já tem um pedido em andamento</Text>
+            <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}>Para adicionar, excluir ou alterar itens, é necessário entrar em contato com o Madrugão Lanches :</Text>
+            <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#f4f7fc',padding:15,marginTop:30}}>
+              <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}>14 3491-1272</Text>
+            </View>
+            <Text style={{fontFamily:'Roboto-Regular',fontSize:15,margin:30}}>Informe seu user :</Text>
+            <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#f4f7fc',padding:15}}>
+              <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}>{props.user_info.name_on}</Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    </Modal>
+    {/* MODAL pedido  em andamento*/}
     </SafeAreaView>
   );
 }
@@ -1040,6 +1086,8 @@ const mapDispatchProps = (dispatch: any) => {
     onRua_numero : (rua_on:string, numero_on:string, id_user:string) => dispatch(setUser_rua_numero(rua_on,numero_on,id_user)),
     Resetstate : () => dispatch(resetState()),
     onMesa_status_call:(mesa:number) => dispatch(fetch_mesa_status_user_call(mesa)),
+
+    onLogout: (state_logout:boolean) => dispatch(setLogout(state_logout)),
   };
 };
 export default connect(mapStateToProps,mapDispatchProps)(Principal_comp);

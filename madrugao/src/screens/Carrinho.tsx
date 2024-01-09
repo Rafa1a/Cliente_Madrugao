@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   Text,
   View,
-  ScrollView
+  ScrollView,
+  ActivityIndicator
   
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -67,6 +68,8 @@ function Carrinho(props: props_carrinho) {
       visa:false,
       mastercard:false,
     });
+    //loading do pedido
+    const [loading, setLoading] = React.useState(false);
     //cartao atualizar objeto
     useEffect(() => {
       setCartao_objeto({
@@ -141,7 +144,7 @@ function Carrinho(props: props_carrinho) {
       //valor da ordem mais alta
       // console.log(props.pedidos)
       
-      console.log('ordem_mais_alta',ordem_mais_alta )
+      // console.log('ordem_mais_alta',ordem_mais_alta )
       //caso o status mesa seja true
       if(props.user_info.status_mesa){
 
@@ -170,7 +173,6 @@ function Carrinho(props: props_carrinho) {
         props.navigation.goBack()
       }else {
         //caso o status mesa seja false
-        
         const localidade_online: pedido_inter = {
 
               itens:props.adicionar_itens || [],
@@ -201,28 +203,78 @@ function Carrinho(props: props_carrinho) {
 
               cartao:cartao_objeto,
             }
-
         if((props.user_info.rua_on === undefined || props.user_info.numero_on === undefined ) || (input_rua !== props.user_info.rua_on || input_numero !== props.user_info.numero_on)){
           props.onSetUser_rua_numero(input_rua,input_numero,props.user_info.id)
         }
+        // const para o processo de pedido
+        const processOrder = async () => {
+          setLoading(true);
+          await props.onAddItemToPedidos(localidade_online);
+          await props.onSetUser_ultimo_pedido(localidade_online, props.user_info.id, props.user_info.ultimos_pedidos || []);
+          props.onSetAdicionar_itens([]);
+          props.navigation.goBack();
+          setLoading(false);
+        };
+        //verificar se input rua e numero estao vazios
         if(input_numero === '' || input_rua === '' ){
+          //pegar local estiver on
           if(open){
-            await props.onAddItemToPedidos(localidade_online)
-            await props.onSetUser_ultimo_pedido(localidade_online,props.user_info.id,props.user_info.ultimos_pedidos || [])
-            props.onSetAdicionar_itens([])
-            props.navigation.goBack()
+            //se dinheiro estiver on
+            if(dinheiro_bolean){
+              //se dinheiro input estiver vazio
+              if(dinheiro_input === ''){
+                alert('Preencha o valor do troco para continuar')
+              }else if(Number(dinheiro_input)< Number(calcular_total())){
+                alert('Valor do troco menor que o valor total')
+
+              }else{
+                processOrder()
+              }
+            }else if(cartao){
+              //se cartao estiver on
+              //se alguma bandeira estiver on
+              if(elo || visa || mastercard){
+                processOrder()
+              }else {
+                alert('Selecione a bandeira do cartão')
+              }
+            }else if(pix){
+              //se pix estiver on
+              processOrder()
+            }else{
+              alert('Selecione a forma de pagamento')
+            }
+
           }else {
             alert('Preencha os campos')
           }
         }else {
-          await props.onAddItemToPedidos(localidade_online)
-          await props.onSetUser_ultimo_pedido(localidade_online,props.user_info.id,props.user_info.ultimos_pedidos || [])
-          props.onSetAdicionar_itens([])
-          props.navigation.goBack()
+          if(dinheiro_bolean){
+            //se dinheiro input estiver vazio
+            if(dinheiro_input === ''){
+              alert('Preencha o valor do troco para continuar')
+            }else if(Number(dinheiro_input)< Number(calcular_total())){
+              alert('Valor do troco menor que o valor total')
+
+            }else{
+              processOrder()
+            }
+          }else if(cartao){
+            //se cartao estiver on
+            //se alguma bandeira estiver on
+            if(elo || visa || mastercard){
+              processOrder()
+            }else {
+              alert('Selecione a bandeira do cartão')
+            }
+          }else if(pix){
+            //se pix estiver on
+            processOrder()
+          }else{
+            alert('Selecione a forma de pagamento')
+          }
         }
-
       }
-
     }
     //aniamacao
   const animation = useRef(null);
@@ -269,9 +321,10 @@ function Carrinho(props: props_carrinho) {
           />
           {/* Flatlist itens */}
           {/* total  */}
-          <View style={styles.container_total}  >
-                <Text style={styles.text_Total}>Total</Text>
+          <View style={styles.container_total}>
 
+                <Text style={styles.text_Total}>Total</Text>
+                
                 <View style={{flexDirection:'row',alignItems:'flex-end'}}>
                   <Text style={[styles.text_valor,{fontSize:25}]}>R$: </Text>
                   <Text style={styles.text_valor}>{calcular_total()}</Text>
@@ -388,7 +441,9 @@ function Carrinho(props: props_carrinho) {
           {/* button finalizar pedido */}
           </ScrollView>
           <TouchableOpacity style={styles.container_button}  onPress={()=>{add_pedido()}}>
-                <Text style={{fontFamily:'Roboto-Bold',color:'#f8fafd',fontSize:25}}>Pedir</Text>
+                {loading?<ActivityIndicator size="large" color="#f8fafd" />
+                :<Text style={{fontFamily:'Roboto-Bold',color:'#f8fafd',fontSize:25}}>Pedir</Text>}
+                
           </TouchableOpacity>
           {/* button finalizar pedido */}
 
@@ -445,8 +500,6 @@ const styles = StyleSheet.create({
     backgroundColor:'#f8fafd',
 
     flexDirection:'row',
-
-    elevation: 4,
 
   },
   text_Total:{
