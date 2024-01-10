@@ -44,7 +44,7 @@ function Flatlist_Carrinho(props: any) {
             
             setValor_original(Number(valor))
         }   
-    }, [item]);
+    }, [item,props.adicionar_itens]);
 
     useEffect(() => {
         // console.log('valor_original:',valor_original)
@@ -87,7 +87,13 @@ function Flatlist_Carrinho(props: any) {
 
         // console.log(valor_)
         return valor_
-    }
+    } 
+    useEffect(()=>{
+        // console.log('add_retirar',add_retirar)
+    console.log(props.item.valor_p)
+    console.log(props.adicionar_itens)
+
+    },[props.adicionar_itens])
   return (
     <>
         <View style={styles.container}>

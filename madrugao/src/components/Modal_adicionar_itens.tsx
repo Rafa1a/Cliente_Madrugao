@@ -99,7 +99,7 @@ const Modal_adicionar_retirar = (props: Props) => {
            // Se o item não foi encontrado, retorne
         if (index === -1) return;
          // Crie uma cópia do array
-        const newItems = [...props.adicionar_itens];
+        const newItems = props.adicionar_itens.map(item => ({...item}));
 
         // Atualize o item na cópia
         newItems[index] = itens;

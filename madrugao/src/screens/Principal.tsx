@@ -440,12 +440,12 @@ function Principal_comp(props: Principal) {
   function toggleButton() {
     // console.log(props.adicionar_itens)
     if(props.adicionar_itens && props.adicionar_itens.length > 0){
-      console.log('entrou')
+      // console.log('entrou')
       randomWidth.value = withSpring(1.2, config_2);
       progress.value = withTiming(1, { duration: 1000 });
     }
     else { 
-      console.log('saiu') 
+      // console.log('saiu') 
       randomWidth.value =   withSpring(1, config_2);
       progress.value = withTiming(0, { duration: 1000 });
     }
@@ -600,8 +600,8 @@ function Principal_comp(props: Principal) {
   return (
     <SafeAreaView style={[styles.container,styles_dark0rligth.mode_theme_container]}>
       {/* /////////////////////////////////////////////////theme mode e qrcode */}
-      <View style={{width:'100%', flexDirection:'row',justifyContent:'space-between',marginBottom:5}}>
-        <TouchableOpacity 
+      <View style={{width:'100%', flexDirection:'row',justifyContent:'center',marginBottom:10}}>
+        {/* <TouchableOpacity 
         onPress={()=>props.onUpdate_theme(props.user_info.id,!state_theme_mode)} 
         >
           
@@ -609,10 +609,10 @@ function Principal_comp(props: Principal) {
             style={{margin:10,width:25,height:25,borderRadius:50}}
           />
 
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         {/* qr code */}
         <TouchableOpacity 
-         style={{flexDirection:'row',backgroundColor:'#fff',borderRadius:10, elevation:5,justifyContent:'center',alignItems:'center',padding:5}}
+         style={{flexDirection:'row',width:'50%',backgroundColor:'#DE6F00',borderRadius:10, elevation:2,justifyContent:'center',alignItems:'center',padding:5}}
          onPress={()=>{
           pedido_online.length > 0 ?
           setModal_pedido(true):
@@ -622,10 +622,10 @@ function Principal_comp(props: Principal) {
         }}
         >
           {props.user_info.status_mesa?
-          <Text style={{fontSize:14,fontFamily:'Roboto-Bold',color:'#3C4043'}}> Sair da Mesa !</Text>:
+          <Text style={{fontSize:14,fontFamily:'Roboto-Bold',color:'#ffffff'}}> Sair da Mesa N:{props.user_info.mesa} !</Text>:
           <>
-            <AntDesign name="qrcode" size={20} color="#3C4043" />
-            <Text style={{fontSize:14,fontFamily:'Roboto-Bold',color:'#3C4043'}}> Estou na Mesa !</Text>
+            <AntDesign name="qrcode" size={20} color="#ffffff" />
+            <Text style={{fontSize:14,fontFamily:'Roboto-Bold',color:'#ffffff'}}> Estou na Mesa !</Text>
           </>
           }
          
