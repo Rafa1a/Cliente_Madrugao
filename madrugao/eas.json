@@ -1,6 +1,7 @@
 {
   "cli": {
-    "version": ">= 5.9.1"
+    "version": ">= 5.9.1",
+    "appVersionSource": "remote"
   },
   "build": {
     "development": {
@@ -9,7 +10,8 @@
       "channel": "development"
     },
     "preview": {
-      "channel": "preview"
+      "channel": "preview",
+      "autoIncrement": true
     },
     "production": {
       "channel": "production",
