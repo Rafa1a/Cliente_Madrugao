@@ -19,6 +19,8 @@ import { Input, Switch } from '@rneui/themed';
 import { setUser_rua_numero, setUser_ultimo_pedido } from '../store/action/user';
 
 import LottieView from 'lottie-react-native';
+import { fetchatualizar_cardapio_pedidos_quantidade } from '../store/action/cardapio';
+import { cardapio } from '../interface/inter_cardapio';
 //
 
 interface props_carrinho {
@@ -27,10 +29,12 @@ interface props_carrinho {
   adicionar_itens?:Item[]
 
   pedidos?:pedido_inter[]
-
+  cardapio:cardapio[]
   onAddItemToPedidos?: (item:pedido_inter) => void;
 
   onSetAdicionar_itens?: (item:Item[]) => void;
+
+  onPedidos_quantidades: (id:string,number:number) => void;
 
   onSetUser_rua_numero?: (rua:string,numero:string,id:string) => void;
 
@@ -146,6 +150,18 @@ function Carrinho(props: props_carrinho) {
       
       // console.log('ordem_mais_alta',ordem_mais_alta )
       //caso o status mesa seja true
+
+      // const para o processo de pedido
+      const pedidos_quantidades = async () => {
+        props.adicionar_itens.forEach(async(item:any) => {
+          props.cardapio.forEach(async(item2:any) => {
+            if(item.id === item2.id){
+              const pedidos_quantidade = Number(item2.pedidos_quantidade||0) + item.quantidade
+              await props.onPedidos_quantidades(item.id,pedidos_quantidade)
+            }
+          })
+        });
+      }
       if(props.user_info.status_mesa){
 
         const localidade_mesa: pedido_inter = {
@@ -167,12 +183,14 @@ function Carrinho(props: props_carrinho) {
               status_porcoes:status_porcoes,
               
             }
+        
         setLoading(true);
+        pedidos_quantidades()
         await props.onAddItemToPedidos(localidade_mesa)
         props.onSetAdicionar_itens([])
         props.navigation.goBack()
         setLoading(false);
-
+            
       }else {
         //caso o status mesa seja false
         const localidade_online: pedido_inter = {
@@ -211,6 +229,7 @@ function Carrinho(props: props_carrinho) {
         // const para o processo de pedido
         const processOrder = async () => {
           setLoading(true);
+          pedidos_quantidades()
           await props.onAddItemToPedidos(localidade_online);
           await props.onSetUser_ultimo_pedido(localidade_online, props.user_info.id, props.user_info.ultimos_pedidos || []);
           props.onSetAdicionar_itens([]);
@@ -516,12 +535,15 @@ const styles = StyleSheet.create({
     color:'#3C4043'
   },
 });
-const mapStateToProps = ({  adicionar_pedido,user,pedidos }: { adicionar_pedido:any,user:any,pedidos:any})=> {
+const mapStateToProps = ({  adicionar_pedido,user,pedidos,cardapio }: { adicionar_pedido:any,user:any,pedidos:any,cardapio:any})=> {
     return {
       adicionar_itens: adicionar_pedido.adicionar_itens,
       user_info: user.user_info,
 
       pedidos: pedidos.pedidos,
+
+      cardapio:cardapio.cardapio,
+
         };
   };
 const mapDispatchProps = (dispatch: any) => {
@@ -530,7 +552,7 @@ const mapDispatchProps = (dispatch: any) => {
     onSetAdicionar_itens: (item:any) => dispatch(setAdicionar_itens(item)),
     onSetUser_rua_numero: (rua:string,numero:string,id:string) => dispatch(setUser_rua_numero(rua,numero,id)),
     onSetUser_ultimo_pedido: (ultimo_pedido:{}, id_user:string,user_ultimos_pedidos) => dispatch(setUser_ultimo_pedido(ultimo_pedido,id_user,user_ultimos_pedidos)),
-    
+    onPedidos_quantidades: (id:string,number:number) => dispatch(fetchatualizar_cardapio_pedidos_quantidade(id,number)),
     
   };
 };
