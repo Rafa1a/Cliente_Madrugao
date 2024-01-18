@@ -205,7 +205,41 @@ export const setUser_ultimo_pedido = (ultimo_pedido: {}, id_user: string, user_u
   }
 }
 ///////////////////////////////////// 
-
+export const setUser_tutorial_inicial = ( id_user: string) => {
+  return async(dispatch: any) => {
+    try {
+      await updateDoc(doc(db, "user_on", id_user), {
+        tutorial:[{
+          status: false,
+          value: 'perfil'
+        },{
+          status: false,
+          value: 'carrinho'
+        }]
+      });
+    } catch (e) {
+      dispatch(setMessage({
+        title: 'Error',
+        text: 'Ocorreu um erro ao contatar o servidor dos usuarios'
+      }))
+    }
+  }
+}
+/////////////////////////////////////adicionar tutorial em useron
+export const setUser_tutorial = (tutorials:any[], id_user: string) => {
+  return async(dispatch: any) => {
+    try {
+      await updateDoc(doc(db, "user_on", id_user), {
+        tutorial: tutorials
+      });
+    } catch (e) {
+      dispatch(setMessage({
+        title: 'Error',
+        text: 'Ocorreu um erro ao contatar o servidor dos usuarios'
+      }))
+    }
+  }
+}
 
 export const setUsers =  (users:user_on[]) => {
     return { 

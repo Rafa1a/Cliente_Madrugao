@@ -1,28 +1,21 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import type {PropsWithChildren} from 'react';
 import {
   Dimensions,
-    FlatList,
   StyleSheet,
   View,
   TouchableOpacity,
   Text,
   ActivityIndicator,
-  Button,
   Modal
 
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 import {Principal} from '../interface/Novas_componentes'
-import Principal_card from '../components/Principal_card';
 //
 import { useStyles } from '../styles/styles_dark_ligth';
-import { resetState, setLogout, setUser_localidade, setUser_rua_numero, update_On_theme } from '../store/action/user';
+import { resetState, setLogout, setUser_localidade, setUser_rua_numero, setUser_tutorial, setUser_tutorial_inicial, update_On_theme } from '../store/action/user';
 //components
-import Subcategoria_comida from '../components/Subcategoria_Comida';
-import Subcategoria_bar from '../components/Subcategoria_Bar';
-
 import Subcategoria_comida_new from '../components/Subcategoria_Comida_new';
 import Subcategoria_bar_new from '../components/Subcategoria_Bar_new';
 
@@ -42,16 +35,15 @@ import LottieView from 'lottie-react-native';
   
   import { Divider, Image, Input,} from '@rneui/themed';
 //qrcode
-import { createURL, useURL,makeUrl } from 'expo-linking';
-import { BarCodeScanner } from 'expo-barcode-scanner';
 import Animated, { Easing, interpolateColor, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
-import { signOut } from "firebase/auth";
-import { auth } from '../store/auth';
 import { CommonActions } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetch_mesa_status_user_call } from '../store/action/mesas';
 import { Mesas } from '../interface/inter';
-//
+//tutorial
+import ControlledTooltip_1 from '../components/Tooptip/ControlledTooltip_1';
+import ControlledTooltip_2 from '../components/Tooptip/ControlledTooltip_2';
+
 function Principal_comp(props: Principal) {
 
 
@@ -597,6 +589,26 @@ function Principal_comp(props: Principal) {
     }
   }
   ///////////////////////////////mesas estado
+  const [tooltip_1, setTooltip_1] = useState(false);
+  const [tooltip_2, setTooltip_2] = useState(false);
+  useEffect(() => {
+    const tutorials = props.user_info.tutorial || [];
+    console.log(tutorials);
+    if(tutorials.length === 0){
+      props.onTutorial_inicial(props.user_info.id);
+    }
+    tutorials.some((item) => {
+      if (item.value === 'perfil' && item.status === false) {
+        setTooltip_1(true);
+        return true;
+      } else if (item.value === 'carrinho' && item.status === false) {
+        setTooltip_2(true);
+        return true;
+      }
+      return false; 
+    });
+  }, [props.user_info]);
+  //////////////////////////////////////////////////////
   return (
     <SafeAreaView style={[styles.container,styles_dark0rligth.mode_theme_container]}>
       {/* /////////////////////////////////////////////////theme mode e qrcode */}
@@ -706,90 +718,110 @@ function Principal_comp(props: Principal) {
           
         </View>
         {/* ////////////Favoritos /////////////////////////////*/}
-          <View style={styles.favoritos}>
-            <TouchableOpacity style={{alignItems:'center'}} 
-            onPress={()=>{
-                if(voltar_favoritos){
-                  
-                  setVoltar_favoritos(false)
-                  setFilters([])
+        <View style={styles.favoritos}>
+       
+          <TouchableOpacity style={{alignItems:'center'}} 
+          onPress={()=>{
+              if(voltar_favoritos){
+                
+                setVoltar_favoritos(false)
+                setFilters([])
+                return
+              }else{
+                if(voltar_ultimo_pedido){
+                  setVoltar_ultimo_pedido(false)
+                  toggleFavoritos()
                   return
                 }else{
-                  if(voltar_ultimo_pedido){
-                    setVoltar_ultimo_pedido(false)
-                    toggleFavoritos()
-                    return
-                  }else{
-                    toggleFavoritos()
-                  }
+                  toggleFavoritos()
                 }
+              }
+          }}>
+            
+            {
+            loading_favoritos?
+            <ActivityIndicator size="small" color="#3C4043" />
+            :voltar_favoritos?
+            <Ionicons name="return-down-back" size={24} color="#3C4043" />:
+            <MaterialCommunityIcons name="hand-heart-outline" size={24} color="#3C4043" />
+            }
+
+            <Text style={{color:'#3C4043',fontSize:10,fontFamily:'Roboto-Regular'}}>Favoritos</Text>
+          </TouchableOpacity>
+          
+      {/* ////////////Favoritos /////////////////////////////*/}
+      {/* //////////// ultimos pedidos /////////////////////////////*/}
+      
+            {props.user_info.ultimos_pedidos && props.user_info?.status_mesa !== true?
+            <>
+            
+            <Divider orientation="vertical" style={{marginLeft:10,marginRight:10}}/>
+            
+            <TouchableOpacity style={{alignItems:'center'}} 
+            onPress={()=>{
+              if(voltar_ultimo_pedido){
+                
+                setVoltar_ultimo_pedido(false)
+                setFilters([])
+                return
+              }else{
+                if(voltar_favoritos){
+                  setVoltar_favoritos(false)
+                  toggleUltimo_pedido()
+                  return
+                }else{
+                  toggleUltimo_pedido()
+                }
+              }
             }}>
               
               {
-              loading_favoritos?
+              loading_ultimo_pedido?
               <ActivityIndicator size="small" color="#3C4043" />
-              :voltar_favoritos?
+              :voltar_ultimo_pedido?
               <Ionicons name="return-down-back" size={24} color="#3C4043" />:
-              <MaterialCommunityIcons name="hand-heart-outline" size={24} color="#3C4043" />
+              <Fontisto name="favorite" size={24} color="#3C4043" />
               }
-
-              <Text style={{color:'#3C4043',fontSize:10,fontFamily:'Roboto-Regular'}}>Favoritos</Text>
-            </TouchableOpacity>
-        {/* ////////////Favoritos /////////////////////////////*/}
+              <Text style={{color:'#3C4043',fontSize:10,fontFamily:'Roboto-Regular'}}>Ultimos Pedidos</Text>
+              
+            </TouchableOpacity> 
+            </> 
+            :null} 
+            
         {/* //////////// ultimos pedidos /////////////////////////////*/}
-
-             {props.user_info.ultimos_pedidos && props.user_info?.status_mesa !== true?
-             <>
-              <Divider orientation="vertical" style={{marginLeft:10,marginRight:10}}/>
-              <TouchableOpacity style={{alignItems:'center'}} 
-              onPress={()=>{
-                if(voltar_ultimo_pedido){
-                  
-                  setVoltar_ultimo_pedido(false)
-                  setFilters([])
-                  return
-                }else{
-                  if(voltar_favoritos){
-                    setVoltar_favoritos(false)
-                    toggleUltimo_pedido()
-                    return
-                  }else{
-                    toggleUltimo_pedido()
-                  }
-                }
-              }}>
-                {
-                loading_ultimo_pedido?
-                <ActivityIndicator size="small" color="#3C4043" />
-                :voltar_ultimo_pedido?
-                <Ionicons name="return-down-back" size={24} color="#3C4043" />:
-                <Fontisto name="favorite" size={24} color="#3C4043" />
-                }
-                <Text style={{color:'#3C4043',fontSize:10,fontFamily:'Roboto-Regular'}}>Ultimos Pedidos</Text>
-              </TouchableOpacity> 
-              </> 
-              :null} 
-          {/* //////////// ultimos pedidos /////////////////////////////*/}
-          </View>
+        </View>
+          
           {/* ////////////Filtro /////////////////////////////*/}
       </View>
       {/* /////////////////////Categoria///////////////////////// */}
 
       {/* ////////////////////////////////////////////// FLATLIST*/}
-      {
-      lottie ?
-        <LottieView
-          autoPlay
-          ref={animation}
-          source={require('../../assets/anim/animacao_flatlist.json')}
-          style={{flex:1,alignSelf:'center',width:Dimensions.get('window').width}}
-        /> :
-        voltar_ultimo_pedido ?
-        <Flatlist_principal_ultimos_pedidos lista_pedidos={ultimo_pedido} pedido_online={pedido_online}/>:
-         <Flatlist_principal cardapio={Cardapio} pedido_online={pedido_online}/>
-      }
+      
+      <View style={{
+        flex: 1,
+        // backgroundColor: '#003ffd',
+        justifyContent: 'center',
+        alignItems: 'center',
+        //
+      }}>
+        
+        {
+        lottie ?
+          <LottieView
+            autoPlay
+            ref={animation}
+            source={require('../../assets/anim/animacao_flatlist.json')}
+            style={{width:'100%'}}
+          /> :
+          voltar_ultimo_pedido ?
+          <Flatlist_principal_ultimos_pedidos lista_pedidos={ultimo_pedido} pedido_online={pedido_online}/>:
+          <Flatlist_principal cardapio={Cardapio} pedido_online={pedido_online} />
+        }
+        
+      </View>
+      
       {/* ////////////////////////////////////////////// FLATLIST*/}
-
+      
       {/* ////////////////////////////////////////////// Base*/}
       <View style={styles.base_view_container}>
 
@@ -808,6 +840,13 @@ function Principal_comp(props: Principal) {
         {/*buttons relogio*/}
 
         {/* Carrinho */}
+        <View style={{width:'20%'}}>
+        <ControlledTooltip_2
+              popover={<Text>rafa2</Text>}
+              withPointer={true}
+              backgroundColor={'#DE6F00'}
+              open={tooltip_2}
+              />
         <AnimatedTouchableOpacity 
         style={[styles.base_button_carrinho,styles_dark0rligth.carrinho,style]} 
         onPress={async()=>{
@@ -823,30 +862,43 @@ function Principal_comp(props: Principal) {
           {renderAnimation()}
           
         </AnimatedTouchableOpacity>
+        </View>
         {/* Carrinho */}
 
         {/* perfil e lista */}
         <View style={{flexDirection:'row'}}>
           {/* lista de pedido feito */}
           {pedido_mesa.length > 0 || pedido_online.length > 0?
-          <TouchableOpacity style={styles.base_buttons} onPress={()=>props.navigation.navigate('Lista_itens')}>
+            
+            <TouchableOpacity style={styles.base_buttons} onPress={()=>{props.navigation.navigate('Lista_itens')}}>
               
             {props.user_info.theme_mode ?
             <FontAwesome5 name="clipboard-list" size={24} color="#f8fafd" />:
             <FontAwesome5 name="clipboard-list" size={24} color="#202124" />}
-            
+
           </TouchableOpacity>
           :null}
           
           {/* lista de pedido feito */}
           
           {/* perfil */}
-          <TouchableOpacity style={styles.base_buttons} onPress={()=>setModal_perfil(true)}>
-            
-            {props.user_info.theme_mode ?
-            <FontAwesome name="user-circle" size={30} color="#f8fafd" />:
-            <FontAwesome name="user-circle" size={30} color="#202124" />}
-            
+          
+          <TouchableOpacity style={styles.base_buttons} onPress={()=>{
+            setModal_perfil(true)
+            }}>
+             <ControlledTooltip_1
+              popover={<Text>rafa</Text>}
+              withPointer={true}
+              backgroundColor={'#DE6F00'}
+              open={tooltip_1}
+              id_user={props.user_info.id}
+              tutorials={props.user_info.tutorial}
+              />
+            <FontAwesome name="user-circle" size={30} color="#202124" />
+              {/* {props.user_info.theme_mode ?
+              <FontAwesome name="user-circle" size={30} color="#f8fafd" />:
+              <FontAwesome name="user-circle" size={30} color="#202124" />} */}
+
           </TouchableOpacity>
           {/* perfil */}
 
@@ -1021,7 +1073,7 @@ const styles = StyleSheet.create({
     justifyContent:'center',
     alignItems:'center',
     backgroundColor:'#f8fafd',
-    width:"20%", 
+    width:"100%", 
     aspectRatio: 1, // Adicionado para garantir que width e height sejam iguais
     borderRadius:9999, // Modificado para um valor muito alto para garantir q sera redondo
 
@@ -1088,6 +1140,10 @@ const mapDispatchProps = (dispatch: any) => {
     onMesa_status_call:(mesa:number) => dispatch(fetch_mesa_status_user_call(mesa)),
 
     onLogout: (state_logout:boolean) => dispatch(setLogout(state_logout)),
+  //tutorials tudo sobre
+    onTutorial_inicial : (id_user:string) => dispatch(setUser_tutorial_inicial(id_user)),
+    // onTutorial : (value:string,status: boolean, id_user: string) => dispatch(setUser_tutorial(value,status,id_user)),
+
   };
-};
+}; 
 export default connect(mapStateToProps,mapDispatchProps)(Principal_comp);

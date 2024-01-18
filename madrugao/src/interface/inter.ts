@@ -165,8 +165,13 @@ export interface user_on {
   status_mesa?:boolean
 
   ultimos_pedidos?:pedido_inter[]
+  //tutorials
+  tutorial?:tutorial[]
 }
-
+interface tutorial {
+  value:string
+  status:boolean
+}
 // Card interfaces
 export interface cartao {
   visa:boolean;

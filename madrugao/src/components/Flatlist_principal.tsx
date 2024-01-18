@@ -33,6 +33,7 @@ export default (props: any) => {
 
   return (
     <>
+    
       <FlatList
         data={props.cardapio}
         keyExtractor={(item, index) => index.toString()}

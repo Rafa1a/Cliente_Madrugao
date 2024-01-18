@@ -29,7 +29,9 @@ export interface Principal {
     onMesa_status_call?: (mesa:number) => void;
 
     onLogout: (state_logout:boolean) => void;
-
+    //tutorials
+    onTutorial_inicial?: (id:string) => void;
+    onTutorial : (value:string,status: boolean, id_user: string) => void;
 
 }
 
