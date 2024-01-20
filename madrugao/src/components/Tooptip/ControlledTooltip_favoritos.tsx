@@ -1,31 +1,31 @@
 import React, { useEffect } from 'react';
 import { Tooltip, TooltipProps } from '@rneui/themed';
+import { setUser_tutorial } from '../../store/action/user';
 import { connect } from 'react-redux';
-import { setUser_tutorial, setUser_tutorial_inicial } from '../../store/action/user';
 
 
-const ControlledTooltip_1: React.FC<any> = (props) => {
+const ControlledTooltip_favoritos: React.FC<any> = (props) => {
   const [open, setOpen] = React.useState(false);
   useEffect(() => {
     setOpen(props.open);
     // console.log(open)
-    }, [props.open]); 
-    const [updatedTutorials, setUpdatedTutorials] = React.useState(props.tutorials);
+    }, [props.open]);
+  //atualizar o tutorial
+  const [updatedTutorials, setUpdatedTutorials] = React.useState(props.tutorials);
   useEffect(() => {
     const updatedTutorials = props.tutorials?.map((tutorial:any) => {
-      if (tutorial.value === 'perfil') {
+      if (tutorial.value === 'favoritos') {
         return { ...tutorial, status: true };
       }
       return tutorial;
     });
     setUpdatedTutorials(updatedTutorials);
     // console.log('a',updatedTutorials)
-  }, [props.tutorials]);
+  }, [props.tutorials]); 
   return (
     <Tooltip
       visible={open}
       onOpen={() => {
-        setOpen(true);
       }}
       onClose={async() => {
         await props.onTutorial(updatedTutorials, props.id_user);
@@ -35,11 +35,10 @@ const ControlledTooltip_1: React.FC<any> = (props) => {
     />
   );
 };
+
 const mapDispatchProps = (dispatch: any) => {
   return {
-    onTutorial_inicial : (id_user:string) => dispatch(setUser_tutorial_inicial(id_user)),
     onTutorial : (tutorials:any[], id_user: string) => dispatch(setUser_tutorial(tutorials,id_user)),
-
   };
 };
-export default connect(null,mapDispatchProps)(ControlledTooltip_1);
+export default connect(null, mapDispatchProps)(ControlledTooltip_favoritos);

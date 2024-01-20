@@ -167,6 +167,7 @@ export interface user_on {
   ultimos_pedidos?:pedido_inter[]
   //tutorials
   tutorial?:tutorial[]
+  status_tutorial?:boolean
 }
 interface tutorial {
   value:string

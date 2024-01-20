@@ -205,17 +205,13 @@ export const setUser_ultimo_pedido = (ultimo_pedido: {}, id_user: string, user_u
   }
 }
 ///////////////////////////////////// 
-export const setUser_tutorial_inicial = ( id_user: string) => {
+/////////////////////////////////////adicionar tutorial em useron
+//status_tutorial
+export const setUser_tutorial_status = (status:boolean, id_user: string) => {
   return async(dispatch: any) => {
     try {
       await updateDoc(doc(db, "user_on", id_user), {
-        tutorial:[{
-          status: false,
-          value: 'perfil'
-        },{
-          status: false,
-          value: 'carrinho'
-        }]
+        status_tutorial: status
       });
     } catch (e) {
       dispatch(setMessage({
@@ -225,7 +221,58 @@ export const setUser_tutorial_inicial = ( id_user: string) => {
     }
   }
 }
-/////////////////////////////////////adicionar tutorial em useron
+//
+export const setUser_tutorial_inicial = ( id_user: string) => {
+  return async(dispatch: any) => {
+    try {
+      await updateDoc(doc(db, "user_on", id_user), {
+        tutorial:[{
+          status: false,
+          value: 'perfil'
+        },
+        {
+          status: false,
+          value: 'carrinho'
+        },
+        {
+          status: false,
+          value: 'favoritos'
+        },
+        {
+          status: false,
+          value: 'categorias'
+        },
+        {
+          status: false,
+          value: 'ordem'
+        },
+        {
+          status: false,
+          value: 'qrcode'
+        },
+        {
+          status: false,
+          value: 'lista_itens'
+        },
+        {
+          status: false,
+          value: 'ultimos_pedidos'
+        },
+        {
+          status: false,
+          value: 'relogio'
+        },
+      ]
+      });
+    } catch (e) {
+      dispatch(setMessage({
+        title: 'Error',
+        text: 'Ocorreu um erro ao contatar o servidor dos usuarios'
+      }))
+    }
+  }
+}
+//
 export const setUser_tutorial = (tutorials:any[], id_user: string) => {
   return async(dispatch: any) => {
     try {
@@ -240,7 +287,7 @@ export const setUser_tutorial = (tutorials:any[], id_user: string) => {
     }
   }
 }
-
+/////////////////////////////////////adicionar tutorial em useron
 export const setUsers =  (users:user_on[]) => {
     return { 
         type:GET_USER,
