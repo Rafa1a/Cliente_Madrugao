@@ -41,7 +41,6 @@ function Flatlist_Carrinho(props: any) {
         if(adicionais_valor(props.item)){
             setValor_original(Number(valor) + Number(adicionais_valor(props.item))) 
         }else{
-            
             setValor_original(Number(valor))
         }   
     }, [item,props.adicionar_itens]);
@@ -88,8 +87,17 @@ function Flatlist_Carrinho(props: any) {
         // console.log(valor_)
         return valor_
     } 
+    //nao permitir adicionar mais do q tem no estoque
     useEffect(()=>{
-        // console.log('add_retirar',add_retirar)
+        // console.log('estoque:',item.estoque) 
+        if(add_retirar > item.estoque){
+            // console.log('estoque 222 :',item.estoque)
+            setAdd_retirar(Number(item.estoque))
+        }
+    },[add_retirar])
+
+    useEffect(()=>{
+    console.log('add_retirar',add_retirar)
     console.log(props.item.valor_p)
     console.log(props.adicionar_itens)
 
@@ -180,7 +188,11 @@ function Flatlist_Carrinho(props: any) {
 
                     </View>
                     {/* valores e quantidades */}
-
+                     {add_retirar > item.estoque||0? 
+                     <View>
+                        <Text style={{fontSize:12,color:'red',fontFamily:'Roboto-Regular'}}>Quantidade indisponivel</Text>
+                    </View>
+                     :null}               
                     {/* adicionar e retirar caso tenho */}
                     {props.item.adicionar_p?.length > 0 || props.item.retirar_p?.length > 0?
                     <TouchableOpacity style={styles.view_adicionar_retirar} onPress={()=>setModal(!modal)}>

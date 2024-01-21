@@ -9,7 +9,8 @@ import {
   ActivityIndicator,
   TouchableHighlight,
   FlatList,
-  Modal
+  Modal,
+  Linking
 
 } from 'react-native';
 import { BottomSheet, Button, Image, Input, ListItem } from '@rneui/themed';
@@ -124,7 +125,15 @@ import { Ionicons } from '@expo/vector-icons';
   /////////////////////////////////////////////////////Modal para quando tem pedido, nao pode adicionar mais itens
   const [modal_pedido, setModal_pedido] = useState(false);
   /////////////////////////////////////////////////////Modal para quando tem pedido, nao pode adicionar mais itens
+  /// abrir telefone :
 
+  const redirecionarParaLigacao = (numero) => {
+    const numeroFormatado = `tel:${numero}`;
+    console.log(numeroFormatado)
+    Linking.openURL(numeroFormatado)
+      .catch((err) => console.error('Erro ao tentar abrir a ligação', err));
+  };
+  //////////////////////////////////////////////////////
   return (
 
   <View style={[styles.container,props.selectedItem === props.index && { transform: [{ scale: 1.2 }] },]}>
@@ -182,7 +191,7 @@ import { Ionicons } from '@expo/vector-icons';
         <TouchableOpacity
         onPress={() => {
           // console.log(props.pedido_online)
-          props.pedido_online.length > 0?setModal_pedido(true):add_itens()
+          props.pedido_online?.length > 0 && (props.user_info?.status_mesa === false || props.user_info?.status_mesa === undefined) ?setModal_pedido(true):add_itens()
           // setModal(true)
           // props.Set_add_itens()
         }}
@@ -396,7 +405,9 @@ import { Ionicons } from '@expo/vector-icons';
             <Text style={{fontFamily:'Roboto-Bold',fontSize:20}}>Você já tem um pedido em andamento</Text>
             <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}>Para adicionar, excluir ou alterar itens, é necessário entrar em contato com o Madrugão Lanches :</Text>
             <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#f4f7fc',padding:15,marginTop:30}}>
-              <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}>14 3491-1272</Text>
+              <TouchableOpacity onPress={()=>redirecionarParaLigacao(34911272)}>
+                <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}>14 3491-1272</Text>
+              </TouchableOpacity>
             </View>
             <Text style={{fontFamily:'Roboto-Regular',fontSize:15,margin:30}}>Informe seu user :</Text>
             <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#f4f7fc',padding:15}}>

@@ -50,6 +50,7 @@ import ControlledTooltip_lista_itens from '../components/Tooptip/ControlledToolt
 import ControlledTooltip_qrcode from '../components/Tooptip/ControlledTooltip_qrcode';
 import ControlledTooltip_ultimos_pedidos from '../components/Tooptip/ControlledTooltip_ultimos_pedidos';
 import ControlledTooltip_relogio from '../components/Tooptip/ControlledTooltip_relogio';
+import { Linking } from 'react-native';
 
 function Principal_comp(props: Principal) {
 
@@ -688,6 +689,21 @@ function Principal_comp(props: Principal) {
   ////////////////////////////////////////////////////// 
   /////////////////////////////TUTORIAL/////////////////////////////
   //////////////////////////////////////////////////////
+  /// abrir telefone :
+
+  const redirecionarParaLigacao = (numero) => {
+    const numeroFormatado = `tel:${numero}`;
+    console.log(numeroFormatado)
+    Linking.openURL(numeroFormatado)
+      .catch((err) => console.error('Erro ao tentar abrir a ligação', err));
+  };
+  //////////////////////////////////////////////////////
+  ///mensagem quando chamar o garcom 
+  const [visible_garcom, setVisible_garcom] = useState(false);
+  const toggleDialog1 = () => {
+    setVisible_garcom(!visible_garcom);
+  };
+  console.log( pedido_online.length > 0 && (props.user_info?.status_mesa === false || props.user_info?.status_mesa === undefined))
   return (
     <SafeAreaView style={[styles.container,styles_dark0rligth.mode_theme_container]}>
     {/* /////////////////////////////////////////////////theme mode e qrcode */}
@@ -696,7 +712,7 @@ function Principal_comp(props: Principal) {
       <TouchableOpacity 
         style={{flexDirection:'row',width:'50%',backgroundColor:'#DE6F00',borderRadius:10, elevation:2,justifyContent:'center',alignItems:'center',padding:5}}
         onPress={()=>{
-        pedido_online.length > 0 ?
+        pedido_online.length > 0 && (props.user_info?.status_mesa === false || props.user_info?.status_mesa === undefined)?
         setModal_pedido(true):
         props.user_info.status_mesa?
         props.onUser_localidade(false,0,props.user_info.id):
@@ -1142,6 +1158,7 @@ function Principal_comp(props: Principal) {
           if (props.user_info?.status_mesa && (props.adicionar_itens?.length === 0 || props.adicionar_itens === undefined)) {
             setLoadding_mesa(true);
             await props.onMesa_status_call(props.user_info?.mesa);
+            toggleDialog1();
             setLoadding_mesa(false);
           } else {
             props.navigation.navigate('Carrinho');
@@ -1408,7 +1425,9 @@ function Principal_comp(props: Principal) {
             <Text style={{fontFamily:'Roboto-Bold',fontSize:20}}>Você já tem um pedido em andamento</Text>
             <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}>Para adicionar, excluir ou alterar itens, é necessário entrar em contato com o Madrugão Lanches :</Text>
             <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#f4f7fc',padding:15,marginTop:30}}>
-              <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}>14 3491-1272</Text>
+              <TouchableOpacity onPress={()=>redirecionarParaLigacao(34911272)}>
+                <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}>14 3491-1272</Text>
+              </TouchableOpacity>
             </View>
             <Text style={{fontFamily:'Roboto-Regular',fontSize:15,margin:30}}>Informe seu user :</Text>
             <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#f4f7fc',padding:15}}>
@@ -1419,7 +1438,18 @@ function Principal_comp(props: Principal) {
       </View>
     </Modal>
     {/* MODAL pedido  em andamento*/}
-
+    {/* Dialog aviso de garcom */}
+    <Dialog
+      isVisible={visible_garcom}
+      onBackdropPress={toggleDialog1}
+      style={{borderRadius:20}}
+      >
+      <Dialog.Title title="Aviso" titleStyle={{fontFamily:'Roboto-Bold',fontSize:18}}/>
+      <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}>
+        Você Chamou o Garçom, logo ele irá te atender. {'\n'}
+      </Text>
+    </Dialog>
+    {/* Dialog aviso de garcom */}
     </SafeAreaView>
   );
 }
