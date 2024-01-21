@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "madrugao",
+    "name": "Madrugão Lanches",
     "slug": "madrugao",
     "version": "2.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets//logos/madrugao_logo_branco.png",
     "userInterfaceStyle": "light",
     "plugins": [
       [
@@ -15,9 +15,9 @@
       ]
     ],
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets//logos/madrugao_logo_branco.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#3C4043"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -28,8 +28,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets//logos/madrugao_logo_branco.png",
+        "backgroundColor": "#3C4043"
       },
       "package": "com.madrugao.madrugao"
     },
