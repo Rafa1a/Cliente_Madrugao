@@ -18,7 +18,6 @@ import { useStyles } from '../styles/styles_dark_ligth';
 import {  Principal_card_ultimo_pedido, } from '../interface/Novas_componentes';
 
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
 import { setAdicionar_itens } from '../store/action/adicionar_pedido';
 
 

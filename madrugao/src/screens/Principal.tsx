@@ -703,7 +703,7 @@ function Principal_comp(props: Principal) {
   const toggleDialog1 = () => {
     setVisible_garcom(!visible_garcom);
   };
-  console.log( pedido_online.length > 0 && (props.user_info?.status_mesa === false || props.user_info?.status_mesa === undefined))
+  // console.log( pedido_online.length > 0 && (props.user_info?.status_mesa === false || props.user_info?.status_mesa === undefined))
   return (
     <SafeAreaView style={[styles.container,styles_dark0rligth.mode_theme_container]}>
     {/* /////////////////////////////////////////////////theme mode e qrcode */}

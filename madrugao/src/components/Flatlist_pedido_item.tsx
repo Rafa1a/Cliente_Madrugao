@@ -49,7 +49,7 @@ const Pedido = (props: pedido_props) => {
             {username}
           </View>
           {icon_lanche}
-          {props.styles ? <View
+          {/* {props.styles ? <View
             style={{
               position: 'absolute',
               top: 56,
@@ -60,7 +60,7 @@ const Pedido = (props: pedido_props) => {
               width: 50,
               height: 15,
             }}
-          /> : null}
+          /> : null} */}
         </View>
     </View>
   );

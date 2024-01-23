@@ -79,6 +79,7 @@ import { Ionicons } from '@expo/vector-icons';
   //funcao para procurar user em users
   const find_user = (uid:string) => {
     const user = props.users.find((item:any) => item.uid === uid);
+    // console.log(user)
     return user;
   }
   //////////////////////////////////////////////////////////////
@@ -129,7 +130,7 @@ import { Ionicons } from '@expo/vector-icons';
 
   const redirecionarParaLigacao = (numero) => {
     const numeroFormatado = `tel:${numero}`;
-    console.log(numeroFormatado)
+    // console.log(numeroFormatado)
     Linking.openURL(numeroFormatado)
       .catch((err) => console.error('Erro ao tentar abrir a ligação', err));
   };
@@ -307,7 +308,7 @@ import { Ionicons } from '@expo/vector-icons';
               size={40}
               rounded
               source={{
-                uri: find_user(item.uid).image_on,
+                uri: find_user(item.uid)?.image_on? find_user(item.uid).image_on :  null,
               }}
               />
             <ListItem.Content>
@@ -315,7 +316,7 @@ import { Ionicons } from '@expo/vector-icons';
               <ListItem.Title style={{backgroundColor:'#f4f7fc',padding:10,borderRadius:10,color:'#202124',fontFamily:'OpenSans-Regular'}}>
                 
                 <Text style={{fontFamily:'OpenSans-Bold'}}>
-                  {find_user(item.uid).name_on}
+                  {find_user(item.uid)?.name_on?find_user(item.uid).name_on : 'Anônimo'}
                 </Text>
                 {"\n"}
                 {"  "}
