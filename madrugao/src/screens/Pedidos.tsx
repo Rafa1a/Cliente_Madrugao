@@ -21,9 +21,9 @@ const Pedidos = ({ pedidos ,users,navigation,user_info }:Props) => {
   const [pedidos_bar, setPedidos_bar] = React.useState<pedido_inter[]>([]);
   const [pedidos_cozinha, setPedidos_cozinha] = React.useState<pedido_inter[]>([]);//porcoes
   useEffect(() => {
-    const pedidos_chapeiro = pedidos.filter(pedido => pedido.status ===false && pedido.status_chapeiro && pedido.itens.some(item => item.categoria === 'comidas' && (item.categoria_2 === 'lanches' || item.categoria_2 === 'hotdogs')));
-    const pedidos_cozinha = pedidos.filter(pedido => pedido.status ===false && pedido.status_porcoes && pedido.itens.some(item => item.categoria === 'comidas' && item.categoria_2 === 'porcoes'));
-    const pedidos_bar = pedidos.filter(pedido => pedido.status ===false && pedido.status_bar && pedido.itens.some(item => item.categoria === 'bar'));
+    const pedidos_chapeiro = pedidos.filter(pedido =>  pedido.status_chapeiro && pedido.itens.some(item => item.categoria === 'comidas' && (item.categoria_2 === 'lanches' || item.categoria_2 === 'hotdogs')));
+    const pedidos_cozinha = pedidos.filter(pedido =>  pedido.status_porcoes && pedido.itens.some(item => item.categoria === 'comidas' && item.categoria_2 === 'porcoes'));
+    const pedidos_bar = pedidos.filter(pedido =>  pedido.status_bar && pedido.itens.some(item => item.categoria === 'bar'));
     
     setPedidos_chapeiro(pedidos_chapeiro);
     setPedidos_bar(pedidos_bar);
