@@ -120,12 +120,12 @@ import { setAdicionar_itens } from '../store/action/adicionar_pedido';
             </View>
             <Text style={{fontFamily:'Roboto-Bold',fontSize:20}}>Você já tem um pedido em andamento</Text>
             <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}>Para adicionar, excluir ou alterar itens, é necessário entrar em contato com o Madrugão Lanches :</Text>
-            <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#f4f7fc',padding:15,marginTop:30}}>
+            <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#fff',padding:15,margin:20,borderRadius:10,borderWidth:1,borderColor:'#E81000',shadowColor:'#E81000',elevation:5}}>
               <TouchableOpacity onPress={()=>redirecionarParaLigacao(34911272)}>
                 <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}>14 3491-1272</Text>
               </TouchableOpacity>
             </View>
-            <Text style={{fontFamily:'Roboto-Regular',fontSize:15,margin:30}}>Informe seu user :</Text>
+            <Text style={{fontFamily:'Roboto-Regular',fontSize:15,margin:20}}>Informe seu user :</Text>
             <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#f4f7fc',padding:15}}>
               <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}>{props.user_info.name_on}</Text>
             </View>

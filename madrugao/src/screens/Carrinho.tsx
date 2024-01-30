@@ -152,12 +152,12 @@ function Carrinho(props: props_carrinho) {
       //caso o status mesa seja true
 
       // const para o processo de pedido
-      const pedidos_quantidades = async () => {
-        props.adicionar_itens.forEach(async(item:any) => {
-          props.cardapio.forEach(async(item2:any) => {
+      const pedidos_quantidades =  () => {
+        props.adicionar_itens.forEach((item:any) => {
+          props.cardapio.forEach((item2:any) => {
             if(item.id === item2.id){
               const pedidos_quantidade = Number(item2.pedidos_quantidade||0) + item.quantidade
-              await props.onPedidos_quantidades(item.id,pedidos_quantidade)
+               props.onPedidos_quantidades(item.id,pedidos_quantidade)
             }
           })
         });
@@ -222,6 +222,8 @@ function Carrinho(props: props_carrinho) {
               dinheiro:Number(dinheiro_input) || 0,
 
               cartao:cartao_objeto,
+
+              date  : Date.now()
             }
         if((props.user_info.rua_on === undefined || props.user_info.numero_on === undefined ) || (input_rua !== props.user_info.rua_on || input_numero !== props.user_info.numero_on)){
           props.onSetUser_rua_numero(input_rua,input_numero,props.user_info.id)
@@ -231,7 +233,7 @@ function Carrinho(props: props_carrinho) {
           setLoading(true);
           pedidos_quantidades()
           await props.onAddItemToPedidos(localidade_online);
-          await props.onSetUser_ultimo_pedido(localidade_online, props.user_info.id, props.user_info.ultimos_pedidos || []);
+          props.onSetUser_ultimo_pedido(localidade_online, props.user_info.id, props.user_info.ultimos_pedidos || []);
           props.onSetAdicionar_itens([]);
           props.navigation.goBack();
           setLoading(false);

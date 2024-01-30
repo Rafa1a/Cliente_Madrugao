@@ -143,25 +143,47 @@ import { Ionicons } from '@expo/vector-icons';
     <View style={[styles.view_principal,styles_dark0rligth.mode_theme_card]}>
       {/* IMAGE */}
       <View style={[styles.view_image,styles_dark0rligth.mode_theme_card_image]}>
+        {itens.image? 
+        <Image
+          style={styles.image}
+          source={{uri:itens.image}}
+          resizeMode="contain"
+          PlaceholderContent={
+                <ActivityIndicator size="large" color="#DE6F00" />
+          }
+          placeholderStyle={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderTopRightRadius: 25,
+            borderTopLeftRadius: 25,
+            backgroundColor: '#f8fafd'
+          }}
+          onPress={() => {
+            setModalVisible(true)
+
+          }}
+        />: 
         <Image
           style={styles.image}
           source={require('../../assets/testes/imagens_treino.png')}
           resizeMode="contain"
           PlaceholderContent={
                 <ActivityIndicator size="large" color="#DE6F00" />
-        }
-        placeholderStyle={{
-          justifyContent: 'center',
-          alignItems: 'center',
-          borderTopRightRadius: 25,
-          borderTopLeftRadius: 25,
-          backgroundColor: '#f8fafd'
-        }}
-        onPress={() => {
-          setModalVisible(true)
+          }
+          placeholderStyle={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderTopRightRadius: 25,
+            borderTopLeftRadius: 25,
+            backgroundColor: '#f8fafd'
+          }}
+          onPress={() => {
+            setModalVisible(true)
 
-        }}
+          }}
         />
+        }
+       
       </View>
       {/* TEXT */}
       <View style={styles.textContainer}>
@@ -196,7 +218,7 @@ import { Ionicons } from '@expo/vector-icons';
           // setModal(true)
           // props.Set_add_itens()
         }}
-        style={{ width: '50%', height: '50%', alignItems: 'center', justifyContent: 'center',}}
+        style={{ width: '45%', height: '45%', alignItems: 'center', justifyContent: 'center',}}
         >
           <View style={styles.Button}>
             <FontAwesome name="cart-plus" size={35} color="#252A32" /> 
@@ -405,12 +427,12 @@ import { Ionicons } from '@expo/vector-icons';
             </View>
             <Text style={{fontFamily:'Roboto-Bold',fontSize:20}}>Você já tem um pedido em andamento</Text>
             <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}>Para adicionar, excluir ou alterar itens, é necessário entrar em contato com o Madrugão Lanches :</Text>
-            <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#f4f7fc',padding:15,marginTop:30}}>
+            <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#fff',padding:15,margin:20,borderRadius:10,borderWidth:1,borderColor:'#E81000',shadowColor:'#E81000',elevation:5}}>
               <TouchableOpacity onPress={()=>redirecionarParaLigacao(34911272)}>
                 <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}>14 3491-1272</Text>
               </TouchableOpacity>
             </View>
-            <Text style={{fontFamily:'Roboto-Regular',fontSize:15,margin:30}}>Informe seu user :</Text>
+            <Text style={{fontFamily:'Roboto-Regular',fontSize:15,margin:20}}>Informe seu user :</Text>
             <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#f4f7fc',padding:15}}>
               <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}>{props.user_info.name_on}</Text>
             </View>

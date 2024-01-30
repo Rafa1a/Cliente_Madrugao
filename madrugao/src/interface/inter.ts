@@ -131,6 +131,8 @@ export interface pedido_inter {
   pix?:boolean;
 
   name_outros?:string
+
+  date?:number
 }
 
 // User interfaces

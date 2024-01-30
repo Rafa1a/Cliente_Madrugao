@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import {
     ActivityIndicator,
+    Dimensions,
     ScrollView,
     StyleSheet,
     Text,
@@ -20,23 +21,21 @@ const App = (props: Subcategoria) => {
 
     const styles_dark0rligth = useStyles(props.user_info);  
     const theme = props.user_info?props.user_info.theme_mode || false :null;
-
     const [loading_definir,setLoading_definir] = React.useState('');
-
+    //tamanho responsivo dos icones
+    const windowWidth = Dimensions.get('window').width;
+    const iconSize = windowWidth * 0.06; 
     // console.log(props.filters.includes('refri'));
     const Button = ({ icon, text, IconComponent, funcao_string }) => (
         <TouchableOpacity 
         style={[styles.buttons_subcategoria,
             props.filters.includes(funcao_string)?
-            theme?{elevation:5,shadowColor:'#fff',backgroundColor:'#2D2F31'}
-            :{elevation:5,backgroundColor:'#ffff'}
+            {elevation:5,shadowColor:'#E81000',backgroundColor:'#fff',borderWidth:1,borderColor:'#E81000'}
             :{}]} 
             
         onPress={()=>{props.toggleFilter(funcao_string),setLoading_definir(funcao_string)}}>
 
-            {theme?
-            <IconComponent name={icon} size={17} color="#f8fafd" />
-            :<IconComponent name={icon} size={17} color="#202124" />}
+            <IconComponent name={icon} size={iconSize} color="#202124" />
 
             <Text 
             style={[styles.text_sub,styles_dark0rligth.text_sub_categoria]}>
@@ -103,7 +102,7 @@ const styles = StyleSheet.create({
         alignItems:'center',
     },
     text_sub: {
-        fontSize: 9,
+        fontSize: 10,
         color: '#fff',
         fontFamily: 'Roboto-Regular',
     },

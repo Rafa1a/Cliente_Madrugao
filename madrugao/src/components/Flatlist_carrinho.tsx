@@ -100,12 +100,28 @@ function Flatlist_Carrinho(props: any) {
     console.log('add_retirar',add_retirar)
     console.log(props.item.valor_p)
     console.log(props.adicionar_itens)
+    console.log('/////////////////////////////////////////////')
+    console.log('/////////////////////////////////////////////')
 
     },[props.adicionar_itens])
   return (
     <>
         <View style={styles.container}>
                 <View style={[styles.view_image]}>
+                    {item.image?
+                    <Image
+                        style={styles.image}
+                        source={{uri:item.image}}
+                        resizeMode="contain"
+                        PlaceholderContent={
+                            <ActivityIndicator size="large" color="#DE6F00" />
+                        }
+                        placeholderStyle={{
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            backgroundColor: '#f8fafd'
+                        }}
+                    />:
                     <Image
                         style={styles.image}
                         source={require('../../assets/testes/imagens_treino.png')}
@@ -119,6 +135,8 @@ function Flatlist_Carrinho(props: any) {
                             backgroundColor: '#f8fafd'
                         }}
                     />
+                    }
+                    
                 </View>
                 <View style={styles.container_card_texts}>
                     {/* title */}

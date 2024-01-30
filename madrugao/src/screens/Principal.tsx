@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   Text,
   ActivityIndicator,
-  Modal
+  Modal,
+  ScrollView
 
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -703,7 +704,57 @@ function Principal_comp(props: Principal) {
   const toggleDialog1 = () => {
     setVisible_garcom(!visible_garcom);
   };
+  ////////////////////////////////////////////////////// algoritmo q irá verificar os pedidos ativos q possuem o id do usuario e se existir um pedido que tenha o status===true iremos pegar o date do pedido e verificar com a hora atual do dispositivo se a diferença for entre 0 a 3 horas iremos mostrar uma mensagem que o pedido esta sendo entregue .
+  const [visible_entrega, setVisible_entrega] = useState(false);
+  const toggleDialog2 = () => {
+    setVisible_entrega(!visible_entrega);
+  };
+  useEffect(() => {
+    const pedido_online_finalizados = props.pedidos?.filter((item) => item.id_user === props.user_info?.id && item.status === true) || [];
+
+    if (pedido_online_finalizados.length > 0) {
+      const pedido_ativo = pedido_online_finalizados.reduce((prev, current) => {
+        return (new Date(prev.date?prev.date:0) > new Date(current.date?current.date:0)) ? prev : current;
+      });
+    
+      if(pedido_ativo && pedido_ativo.date){
+        
+        const date = new Date(pedido_ativo.date)
+        //////////////////////  verificacao de data
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1; // Os meses começam do 0 em JavaScript
+        const day = date.getDate();
+        const hours = date.getHours(); 
+        const minutes = date.getMinutes();
+        const seconds = date.getSeconds();  
+        //////////////////////  
+        // console.log('getime',day)
+
+        const date_now = new Date()
+        //////////////////////  verificacao de data
+        const hours_now = date_now.getHours();
+        const minutes_now = date_now.getMinutes();
+        /////////////////////
+        const diff = date_now.getTime() - date.getTime()
+        //////////////////////  verificacao de data
+        // console.log('hours',hours)
+        // console.log('minutes',minutes)
+        // console.log('hours_now',hours_now)
+        // console.log('minutes_now',minutes_now)
+
+        const diff_horas = diff / (1000 * 60 * 60)
+        console.log('getime',diff_horas)
+        if(diff_horas < 3){ 
+          toggleDialog2()
+        }
+      }
+    }
+  }, [props.pedidos]);
   // console.log( pedido_online.length > 0 && (props.user_info?.status_mesa === false || props.user_info?.status_mesa === undefined))
+  //tamanho responsivo dos icones
+  const windowWidth = Dimensions.get('window').width;
+  const iconSize = windowWidth * 0.06; 
+  
   return (
     <SafeAreaView style={[styles.container,styles_dark0rligth.mode_theme_container]}>
     {/* /////////////////////////////////////////////////theme mode e qrcode */}
@@ -780,7 +831,7 @@ function Principal_comp(props: Principal) {
           <Subcategoria_comida styles_mode={styles_dark0rligth}/>
         :null} */}
       {/* ////////////Categoria /////////////////////////////*/}
-        <View style={{width:'40%'}}>
+        <View style={{width:'50%'}}>
           <Subcategoria_bar_new toggleFilter={toggleFilter} filters={filters} loading_categoria={loading_categoria}/>
           <Divider/>
           <Subcategoria_comida_new toggleFilter={toggleFilter} filters={filters} loading_categoria={loading_categoria}/>
@@ -818,6 +869,8 @@ function Principal_comp(props: Principal) {
           />
         </View>
         {/* ////////////Categoria /////////////////////////////*/}
+
+        {/* ////////////////lottie///////////////////////////// */}
         <View style={{flex: 1}}  pointerEvents="none">
           <LottieView
             loop={false}
@@ -827,11 +880,13 @@ function Principal_comp(props: Principal) {
             
           />
         </View>
+        {/* ////////////////lottie///////////////////////////// */}
+
         {/* ////////////Filtro /////////////////////////////*/}
         <View style={{width:'15%'}}>
 
           <View style={styles.container_filtro}>
-            <TouchableOpacity style={styles.buttons_filtro} onPress={()=>{
+            <TouchableOpacity style={[styles.buttons_filtro,mais_curtidas? {borderWidth:1,borderColor:'#E81000',borderRadius:10} :null]} onPress={()=>{
               setMais_curtidas(true)
               setMais_pedidos(false)
               }
@@ -839,12 +894,12 @@ function Principal_comp(props: Principal) {
               {/* <IconComponent name={icon} size={25} color="#fff" /> */}
               {loading_mais_curtidas?
               <ActivityIndicator size="small" color="#3C4043" />
-              :<FontAwesome5 name="heartbeat" size={17} color="#3C4043" />}
+              :<FontAwesome5 name="heartbeat" size={iconSize} color="#3C4043" />}
               
               <Text style={styles.text_filtro}>+curtidos</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.buttons_filtro} onPress={()=>{
+            <TouchableOpacity style={[styles.buttons_filtro,mais_pedidos? {borderWidth:1,borderColor:'#E81000',borderRadius:10} :null]} onPress={()=>{
               setMais_pedidos(true)
               setMais_curtidas(false) 
               }
@@ -852,7 +907,7 @@ function Principal_comp(props: Principal) {
               {/* <IconComponent name={icon} size={25} color="#fff" /> */}
               {loading_mais_pedidos?
               <ActivityIndicator size="small" color="#3C4043" />
-              :<Fontisto name="smiling" size={24} color="#3C4043" />}
+              :<Fontisto name="smiling" size={iconSize} color="#3C4043" />}
               
               <Text style={styles.text_filtro} >+pedidos</Text>
             </TouchableOpacity>
@@ -1424,12 +1479,12 @@ function Principal_comp(props: Principal) {
             </View>
             <Text style={{fontFamily:'Roboto-Bold',fontSize:20}}>Você já tem um pedido em andamento</Text>
             <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}>Para adicionar, excluir ou alterar itens, é necessário entrar em contato com o Madrugão Lanches :</Text>
-            <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#f4f7fc',padding:15,marginTop:30}}>
+            <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#fff',padding:15,margin:20,borderRadius:10,borderWidth:1,borderColor:'#E81000',shadowColor:'#E81000',elevation:5}}>
               <TouchableOpacity onPress={()=>redirecionarParaLigacao(34911272)}>
                 <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}>14 3491-1272</Text>
               </TouchableOpacity>
             </View>
-            <Text style={{fontFamily:'Roboto-Regular',fontSize:15,margin:30}}>Informe seu user :</Text>
+            <Text style={{fontFamily:'Roboto-Regular',fontSize:15,margin:20}}>Informe seu user :</Text>
             <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#f4f7fc',padding:15}}>
               <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}>{props.user_info.name_on}</Text>
             </View>
@@ -1450,6 +1505,55 @@ function Principal_comp(props: Principal) {
       </Text>
     </Dialog>
     {/* Dialog aviso de garcom */}
+    {/* modal para notificar q o pedido esta a caminho */}
+    <Modal
+    animationType="fade"
+    transparent={true}
+    visible={visible_entrega}
+    >
+      <View style={{flex:1,backgroundColor:'#000000aa',justifyContent:'center',alignItems:'center'}}>
+        <View style={{backgroundColor:'#fff',width:'80%',justifyContent:'space-between',alignItems:'center',borderRadius:20}}>
+          <View style={{width:'100%',flexDirection: 'row', justifyContent: 'flex-end', alignItems:'flex-start'}}>
+            <Ionicons name="md-close-circle-sharp" size={45} color="#3C4043" onPress={()=>setVisible_entrega(false)}/>
+          </View>
+          <ScrollView>
+            <View style={{justifyContent:'center',alignItems:'center'}}>
+              <View style={{justifyContent:'center',alignItems:'center'}}>
+                <Image
+                      style={{width:100,height:100}}
+                      source={require('../../assets/logos/logo_madrugao.png')}
+                      resizeMode="contain"
+                      PlaceholderContent={
+                            <ActivityIndicator size="large" color="#DE6F00" /> 
+                    }
+                    placeholderStyle={{
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      backgroundColor: '#f8fafd'
+                    }}
+                    />
+              </View>
+              <Text style={{fontFamily:'Roboto-Bold',fontSize:20,padding:5}}>Seu pedido está a caminho</Text>
+              <LottieView
+                autoPlay
+                ref={animation}
+                source={require('../../assets/anim/entrega.json')}
+                style={{width:'100%',marginBottom:10,marginTop:10}}
+              />
+              <Text style={{fontFamily:'Roboto-Regular',fontSize:15,padding:5}}>Agradecemos a preferência, e esperamos que goste do seu pedido.{'\n'}</Text>
+              <Text style={{fontFamily:'Roboto-Regular',fontSize:17,padding:5}}>Caso tenha algum problema ou seu pedido esta demorando muito entre em contato:</Text>
+              <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#fff',padding:15,margin:30,borderRadius:10,borderWidth:1,borderColor:'#E81000',shadowColor:'#E81000',elevation:5}}> 
+                <TouchableOpacity onPress={()=>redirecionarParaLigacao(34911272)} >
+                    <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}> 14 3491-1272</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </ScrollView> 
+        </View>
+      </View>
+    </Modal>
+    {/* modal para notificar q o pedido esta a caminho */}
+
     </SafeAreaView>
   );
 }
@@ -1475,7 +1579,7 @@ const styles = StyleSheet.create({
 
   },
   text_filtro: {
-    fontSize: 9,
+    fontSize: 10,
     color: '#3C4043',
     fontFamily: 'Roboto-Regular',
   },
@@ -1572,7 +1676,6 @@ const mapDispatchProps = (dispatch: any) => {
     onTutorial_inicial : (id_user:string) => dispatch(setUser_tutorial_inicial(id_user)),
     onTutorial_status : (status:boolean,id_user:string) => dispatch(setUser_tutorial_status(status,id_user)),
     // onTutorial : (value:string,status: boolean, id_user: string) => dispatch(setUser_tutorial(value,status,id_user)),
-
   };
 }; 
 export default connect(mapStateToProps,mapDispatchProps)(Principal_comp);

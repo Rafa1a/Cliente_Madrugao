@@ -74,6 +74,7 @@ export const fetchatualizar_cardapio_pedidos_quantidade = (id:string,number:numb
     
   }
 }
+
 //atuazlizar o cardapio
 // export const updateAllCardapio = async () => {
 //   const cardapioSnapshot = await getDocs(collection(db, "cardapio"));
