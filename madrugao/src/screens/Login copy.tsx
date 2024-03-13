@@ -20,7 +20,7 @@ import { auth } from '../store/auth';
 import { FontAwesome } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
-import { add_Func, setUser_login } from '../store/action/user';
+import { setUser_login } from '../store/action/user';
 // updates
 // import * as Updates from 'expo-updates';
 
@@ -228,7 +228,6 @@ const mapStateProps = ({  user }: {  user: any}) => {
 
 const mapDispatchProps = (dispatch: any) => {
   return {
-    onAdd_User: (user:any) => dispatch(add_Func(user)),
     onSetUser_login: (user:any) => dispatch(setUser_login(user)),
 
   };
