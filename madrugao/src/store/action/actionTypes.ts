@@ -18,4 +18,6 @@ export const RESET_STATE = 'RESET_STATE';
 
 export const SET_LOGOUT = 'SET_LOGOUT'
 
+export const SET_CARRINHO_AVISO = 'SET_CARRINHO_AVISO'
+
 //

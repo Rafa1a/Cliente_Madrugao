@@ -33,6 +33,9 @@ export interface Principal {
     onTutorial_inicial?: (id:string) => void;
     onTutorial : (value:string,status: boolean, id_user: string) => void;
     onTutorial_status : (status:boolean,id_user:string) => void;
+    //carrinho pedido para controle dos modais
+    alerta?: boolean;
+    onSet_carrinho_aviso: (alerta:boolean) => void;
 
 }
 

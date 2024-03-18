@@ -52,6 +52,7 @@ import ControlledTooltip_qrcode from '../components/Tooptip/ControlledTooltip_qr
 import ControlledTooltip_ultimos_pedidos from '../components/Tooptip/ControlledTooltip_ultimos_pedidos';
 import ControlledTooltip_relogio from '../components/Tooptip/ControlledTooltip_relogio';
 import { Linking } from 'react-native';
+import { set_carrinho_aviso_tutorialeentrega } from '../store/action/adicionar_pedido';
 
 function Principal_comp(props: Principal) {
 
@@ -613,103 +614,228 @@ function Principal_comp(props: Principal) {
   const [tooltip_lista_itens, setTooltip_lista_itens] = useState(false);
   const [tooltip_ultimos_pedidos, setTooltip_ultimos_pedidos] = useState(false);
   const [tooltip_relogio, setTooltip_relogio] = useState(false);
-  useEffect(() => {
-    const tutorials = props.user_info.tutorial || [];
-    // console.log(tutorials);
-
-    if(props.user_info?.status_tutorial === true){
-      if(tutorials.length === 0){
-        props.onTutorial_inicial(props.user_info.id);
+  //////////////////////////////////////// Primeira renderizacao, Bug do ios, aparecer modal após a renderizacao delay de 1700
+  const [primeira_renderizacao, setPrimeira_renderizacao] = useState(false);
+  
+  const action_timeout = (set) => {
+    if(primeira_renderizacao === false){
+      console.log('primeira renderizacao');
+      if(props.alerta === true){
+        setTimeout(() => {
+          set(true);
+          setPrimeira_renderizacao(true);
+          props.onSet_carrinho_aviso(false);
+        }, 6000);
+      }else {
+        setTimeout(() => {
+          set(true);
+          setPrimeira_renderizacao(true);
+        }, 1700);
       }
-      tutorials.some((item) => {
-        if (item.value === 'perfil' && item.status === false) {
-          setVisible1(false)
-          setTooltip_perfil(true);
-          return true;
-        } 
-        else if (item.value === 'carrinho' && item.status === false) {
-          setTooltip_perfil(false);
-          setTooltip_carrinho(true);
-          return true;
-        }
-        else if (item.value === 'favoritos' && item.status === false) {
-          setTooltip_perfil(false);
-          setTooltip_carrinho(false);
-          setTooltip_favoritos(true);
-          return true;
-        }
-        else if (item.value === 'categorias' && item.status === false) {
-          setTooltip_perfil(false);
-          setTooltip_carrinho(false);
-          setTooltip_favoritos(false);
-          setTooltip_categoria(true);
-          return true;
-        }
-        else if (item.value === 'ordem' && item.status === false) {
-          setTooltip_perfil(false);
-          setTooltip_carrinho(false);
-          setTooltip_favoritos(false);
-          setTooltip_categoria(false);
-          setTooltip_ordem(true);
-          return true;
-        }
-        else if (item.value === 'qrcode' && item.status === false) {
-          setTooltip_perfil(false);
-          setTooltip_carrinho(false);
-          setTooltip_favoritos(false);
-          setTooltip_categoria(false);
-          setTooltip_ordem(false);
-          setTooltip_qrcode(true);
-          return true;
-        }
-        else if (item.value === 'lista_itens' && item.status === false && (pedido_mesa.length > 0 || pedido_online.length > 0)) {
-          setTooltip_qrcode(false);
-          setTooltip_lista_itens(true);
-          return true;
-        }
-        else if (item.value === 'ultimos_pedidos' && item.status === false && (props.user_info.ultimos_pedidos?.length > 0 && props.user_info?.status_mesa !== true)) {
-          // console.log('entrou')
-          setTooltip_lista_itens(false);
-          setTooltip_ultimos_pedidos(false);
-          setTooltip_ultimos_pedidos(true);
-          return true;
-        }
-        else if (item.value === 'relogio' && item.status === false && (condicaoRelogio)) {
-          setTooltip_lista_itens(false);
-          setTooltip_ultimos_pedidos(false);
-          setTooltip_relogio(true);
-          return true;
-        }
-        return false; 
-      });
-    }else if(props.user_info?.status_tutorial === undefined){
-      setVisible1(true);
+    } else {
+      console.log('segunda renderizacao');
+      if(props.alerta === true){
+        setTimeout(() => {
+          set(true);
+          props.onSet_carrinho_aviso(false);
+        }, 6000);
+      }else {
+          set(true);
+      }
     }
- 
-  }, [props.user_info,pedido_mesa,pedido_online]);
-  ////////////////////////////////////////////////////// 
-  /////////////////////////////TUTORIAL/////////////////////////////
-  //////////////////////////////////////////////////////
-  /// abrir telefone :
+  }
+  const func_tutorial = () =>{
+    const tutorials = props.user_info.tutorial || [];
+      // console.log(tutorials);
 
-  const redirecionarParaLigacao = (numero) => {
-    const numeroFormatado = `tel:${numero}`;
-    console.log(numeroFormatado)
-    Linking.openURL(numeroFormatado)
-      .catch((err) => console.error('Erro ao tentar abrir a ligação', err));
-  };
-  //////////////////////////////////////////////////////
-  ///mensagem quando chamar o garcom 
-  const [visible_garcom, setVisible_garcom] = useState(false);
-  const toggleDialog1 = () => {
-    setVisible_garcom(!visible_garcom);
-  };
+      if(props.user_info?.status_tutorial === true){
+        if(tutorials.length === 0){
+          props.onTutorial_inicial(props.user_info.id);
+        }
+        tutorials.some((item) => {
+          if (item.value === 'perfil' && item.status === false) {
+            setVisible1(false)
+            action_timeout(setTooltip_perfil);
+            // setTooltip_perfil(true);
+            return true;
+          } 
+          else if (item.value === 'carrinho' && item.status === false) {
+            setTooltip_perfil(false);
+            action_timeout(setTooltip_carrinho);
+            // setTooltip_carrinho(true);
+            return true;
+          }
+          else if (item.value === 'favoritos' && item.status === false) {
+            setTooltip_perfil(false);
+            setTooltip_carrinho(false);
+            action_timeout(setTooltip_favoritos);
+            // setTooltip_favoritos(true);
+            return true;
+          }
+          else if (item.value === 'categorias' && item.status === false) {
+            setTooltip_perfil(false);
+            setTooltip_carrinho(false);
+            setTooltip_favoritos(false);
+            action_timeout(setTooltip_categoria);
+            // setTooltip_categoria(true);
+            return true;
+          }
+          else if (item.value === 'ordem' && item.status === false) {
+            setTooltip_perfil(false);
+            setTooltip_carrinho(false);
+            setTooltip_favoritos(false);
+            setTooltip_categoria(false);
+            action_timeout(setTooltip_ordem);
+            // setTooltip_ordem(true);
+            return true;
+          }
+          else if (item.value === 'qrcode' && item.status === false) {
+            setTooltip_perfil(false);
+            setTooltip_carrinho(false);
+            setTooltip_favoritos(false);
+            setTooltip_categoria(false);
+            setTooltip_ordem(false);
+            action_timeout(setTooltip_qrcode);
+            //setTooltip_qrcode(true);
+            return true;
+          }
+          else if (item.value === 'lista_itens' && item.status === false && (pedido_mesa.length > 0 || pedido_online.length > 0)) {
+            setTooltip_qrcode(false);
+            action_timeout(setTooltip_lista_itens);
+            //setTooltip_lista_itens(true);
+            return true;
+          }
+          else if (item.value === 'ultimos_pedidos' && item.status === false && (props.user_info.ultimos_pedidos?.length > 0 && props.user_info?.status_mesa !== true)) {
+            // console.log('entrou')
+            setTooltip_lista_itens(false);
+            setTooltip_ultimos_pedidos(false);
+            action_timeout(setTooltip_ultimos_pedidos);
+            //setTooltip_ultimos_pedidos(true);
+            return true;
+          }
+          else if (item.value === 'relogio' && item.status === false && (condicaoRelogio)) {
+            setTooltip_lista_itens(false);
+            setTooltip_ultimos_pedidos(false);
+            action_timeout(setTooltip_relogio);
+            //setTooltip_relogio(true);
+            return true;
+          }
+          return false; 
+        });
+      }else if(props.user_info?.status_tutorial === undefined){
+        setTimeout(() => {
+          setVisible1(true);
+          setPrimeira_renderizacao(true);
+        }, 1500);
+      }
+  }
+  ///em desuso
+  // useEffect(() => {
+  //   // const tutorials = props.user_info.tutorial || [];
+  //   // // console.log(tutorials);
+
+  //   // if(props.user_info?.status_tutorial === true){
+  //   //   if(tutorials.length === 0){
+  //   //     props.onTutorial_inicial(props.user_info.id);
+  //   //   }
+  //   //   tutorials.some((item) => {
+  //   //     if (item.value === 'perfil' && item.status === false) {
+  //   //       setVisible1(false)
+  //   //       action_timeout(setTooltip_perfil);
+  //   //       // setTooltip_perfil(true);
+  //   //       return true;
+  //   //     } 
+  //   //     else if (item.value === 'carrinho' && item.status === false) {
+  //   //       setTooltip_perfil(false);
+  //   //       action_timeout(setTooltip_carrinho);
+  //   //       // setTooltip_carrinho(true);
+  //   //       return true;
+  //   //     }
+  //   //     else if (item.value === 'favoritos' && item.status === false) {
+  //   //       setTooltip_perfil(false);
+  //   //       setTooltip_carrinho(false);
+  //   //       action_timeout(setTooltip_favoritos);
+  //   //       // setTooltip_favoritos(true);
+  //   //       return true;
+  //   //     }
+  //   //     else if (item.value === 'categorias' && item.status === false) {
+  //   //       setTooltip_perfil(false);
+  //   //       setTooltip_carrinho(false);
+  //   //       setTooltip_favoritos(false);
+  //   //       action_timeout(setTooltip_categoria);
+  //   //       // setTooltip_categoria(true);
+  //   //       return true;
+  //   //     }
+  //   //     else if (item.value === 'ordem' && item.status === false) {
+  //   //       setTooltip_perfil(false);
+  //   //       setTooltip_carrinho(false);
+  //   //       setTooltip_favoritos(false);
+  //   //       setTooltip_categoria(false);
+  //   //       action_timeout(setTooltip_ordem);
+  //   //       // setTooltip_ordem(true);
+  //   //       return true;
+  //   //     }
+  //   //     else if (item.value === 'qrcode' && item.status === false) {
+  //   //       setTooltip_perfil(false);
+  //   //       setTooltip_carrinho(false);
+  //   //       setTooltip_favoritos(false);
+  //   //       setTooltip_categoria(false);
+  //   //       setTooltip_ordem(false);
+  //   //       action_timeout(setTooltip_qrcode);
+  //   //       //setTooltip_qrcode(true);
+  //   //       return true;
+  //   //     }
+  //   //     else if (item.value === 'lista_itens' && item.status === false && (pedido_mesa.length > 0 || pedido_online.length > 0)) {
+  //   //       setTooltip_qrcode(false);
+  //   //       action_timeout(setTooltip_lista_itens);
+  //   //       //setTooltip_lista_itens(true);
+  //   //       return true;
+  //   //     }
+  //   //     else if (item.value === 'ultimos_pedidos' && item.status === false && (props.user_info.ultimos_pedidos?.length > 0 && props.user_info?.status_mesa !== true)) {
+  //   //       // console.log('entrou')
+  //   //       setTooltip_lista_itens(false);
+  //   //       setTooltip_ultimos_pedidos(false);
+  //   //       action_timeout(setTooltip_ultimos_pedidos);
+  //   //       //setTooltip_ultimos_pedidos(true);
+  //   //       return true;
+  //   //     }
+  //   //     else if (item.value === 'relogio' && item.status === false && (condicaoRelogio)) {
+  //   //       setTooltip_lista_itens(false);
+  //   //       setTooltip_ultimos_pedidos(false);
+  //   //       action_timeout(setTooltip_relogio);
+  //   //       //setTooltip_relogio(true);
+  //   //       return true;
+  //   //     }
+  //   //     return false; 
+  //   //   });
+  //   // }else if(props.user_info?.status_tutorial === undefined){
+  //   //   setTimeout(() => {
+  //   //     setVisible1(true);
+  //   //     setPrimeira_renderizacao(true);
+  //   //   }, 1500);
+  //   // }
+ 
+  // }, [props.user_info,pedido_mesa,pedido_online]);
+
   ////////////////////////////////////////////////////// algoritmo q irá verificar os pedidos ativos q possuem o id do usuario e se existir um pedido que tenha o status===true iremos pegar o date do pedido e verificar com a hora atual do dispositivo se a diferença for entre 0 a 3 horas iremos mostrar uma mensagem que o pedido esta sendo entregue .
   const [visible_entrega, setVisible_entrega] = useState(false);
   const toggleDialog2 = () => {
-    setVisible_entrega(!visible_entrega);
+    if(props.alerta === true){
+      // console.log('entrou')
+      setTimeout(() => {
+        setVisible_entrega(!visible_entrega);
+        props.onSet_carrinho_aviso(false);
+      }, 6000);
+    }else {
+      // console.log('entrou 2 ')
+      setTimeout(() => {
+        setVisible_entrega(!visible_entrega);
+      }, 1700);
+    }
   };
   useEffect(() => {
+
+    ////////////////////////Entrega
     const pedido_online_finalizados = props.pedidos?.filter((item) => item.id_user === props.user_info?.id && item.status === true) || [];
 
     if (pedido_online_finalizados.length > 0) {
@@ -746,10 +872,31 @@ function Principal_comp(props: Principal) {
         console.log('getime',diff_horas)
         if(diff_horas < 3){ 
           toggleDialog2()
+        }else {
+          func_tutorial();
         }
       }
+    }else {
+      func_tutorial();
     }
-  }, [props.pedidos]);
+    /////////////////////////////////Tutorial
+  }, [props.pedidos,props.user_info,pedido_mesa,pedido_online]);
+  
+  /// abrir telefone :
+  const redirecionarParaLigacao = (numero) => {
+    const numeroFormatado = `tel:${numero}`;
+    console.log(numeroFormatado)
+    Linking.openURL(numeroFormatado)
+      .catch((err) => console.error('Erro ao tentar abrir a ligação', err));
+  };
+
+  //////////////////////////////////////////////////////
+  ///mensagem quando chamar o garcom 
+  const [visible_garcom, setVisible_garcom] = useState(false);
+  const toggleDialog1 = () => {
+    setVisible_garcom(!visible_garcom);
+  };
+
   // console.log( pedido_online.length > 0 && (props.user_info?.status_mesa === false || props.user_info?.status_mesa === undefined))
   //tamanho responsivo dos icones
   const windowWidth = Dimensions.get('window').width;
@@ -1659,8 +1806,9 @@ const mapStateToProps = ({  user, cardapio,adicionar_pedido,pedidos,mesa }: { us
 
     pedidos: pedidos.pedidos,
 
-    mesas:mesa.mesas
- 
+    mesas:mesa.mesas,
+    
+    alerta: adicionar_pedido.alerta,
       };
 };
 const mapDispatchProps = (dispatch: any) => {
@@ -1676,6 +1824,8 @@ const mapDispatchProps = (dispatch: any) => {
     onTutorial_inicial : (id_user:string) => dispatch(setUser_tutorial_inicial(id_user)),
     onTutorial_status : (status:boolean,id_user:string) => dispatch(setUser_tutorial_status(status,id_user)),
     // onTutorial : (value:string,status: boolean, id_user: string) => dispatch(setUser_tutorial(value,status,id_user)),
+    onSet_carrinho_aviso: (alerta:boolean) => dispatch(set_carrinho_aviso_tutorialeentrega(alerta))
+ 
   };
 }; 
 export default connect(mapStateToProps,mapDispatchProps)(Principal_comp);

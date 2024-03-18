@@ -14,7 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 import Flatlist_carrinho from '../components/Flatlist_carrinho';
 import { Item, pedido_inter, user_on } from '../interface/inter';
-import { addItemToPedidos, setAdicionar_itens } from '../store/action/adicionar_pedido';
+import { addItemToPedidos, setAdicionar_itens, set_carrinho_aviso_tutorialeentrega } from '../store/action/adicionar_pedido';
 import { Input, Switch } from '@rneui/themed';
 import { setUser_rua_numero, setUser_ultimo_pedido } from '../store/action/user';
 
@@ -40,6 +40,8 @@ interface props_carrinho {
 
   onSetUser_ultimo_pedido?: (ultimo_pedido:{}, id_user:string,user_ultimos_pedidos:any) => void;
   route?:any
+
+  onSet_carrinho_aviso?: (alerta:boolean) => void
 }
 
 function Carrinho(props: props_carrinho) {
@@ -183,7 +185,7 @@ function Carrinho(props: props_carrinho) {
               status_porcoes:status_porcoes,
               
             }
-        
+        props.onSet_carrinho_aviso(true);
         setLoading(true);
         pedidos_quantidades()
         await props.onAddItemToPedidos(localidade_mesa)
@@ -230,6 +232,7 @@ function Carrinho(props: props_carrinho) {
         }
         // const para o processo de pedido
         const processOrder = async () => {
+          props.onSet_carrinho_aviso(true);
           setLoading(true);
           pedidos_quantidades()
           await props.onAddItemToPedidos(localidade_online);
@@ -546,6 +549,7 @@ const mapStateToProps = ({  adicionar_pedido,user,pedidos,cardapio }: { adiciona
 
       cardapio:cardapio.cardapio,
 
+
         };
   };
 const mapDispatchProps = (dispatch: any) => {
@@ -555,7 +559,7 @@ const mapDispatchProps = (dispatch: any) => {
     onSetUser_rua_numero: (rua:string,numero:string,id:string) => dispatch(setUser_rua_numero(rua,numero,id)),
     onSetUser_ultimo_pedido: (ultimo_pedido:{}, id_user:string,user_ultimos_pedidos) => dispatch(setUser_ultimo_pedido(ultimo_pedido,id_user,user_ultimos_pedidos)),
     onPedidos_quantidades: (id:string,number:number) => dispatch(fetchatualizar_cardapio_pedidos_quantidade(id,number)),
-    
+    onSet_carrinho_aviso: (alerta:boolean) => dispatch(set_carrinho_aviso_tutorialeentrega(alerta))
   };
 };
 export default connect(mapStateToProps, mapDispatchProps)(Carrinho)

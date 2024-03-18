@@ -1,4 +1,4 @@
-import {  SET_ADICIONAR_PEDIDO_ITENS,  } from './actionTypes';
+import {  SET_ADICIONAR_PEDIDO_ITENS, SET_CARRINHO_AVISO,  } from './actionTypes';
 import { db } from '../auth';
 
 import { addDoc, collection,} from 'firebase/firestore';
@@ -31,6 +31,12 @@ export const setAdicionar_itens= (pedido:Item[]) => {
     return {
         type: SET_ADICIONAR_PEDIDO_ITENS,
         payload: pedido
+    }
+}
+export const set_carrinho_aviso_tutorialeentrega= (alerta:boolean) => {
+    return {
+        type: SET_CARRINHO_AVISO,
+        payload: alerta
     }
 }
 // export const setAdicionar_pedido_state_mesa = (pedido:any) => {
