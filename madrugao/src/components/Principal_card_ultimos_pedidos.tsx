@@ -19,6 +19,7 @@ import {  Principal_card_ultimo_pedido, } from '../interface/Novas_componentes';
 
 import { Ionicons } from '@expo/vector-icons';
 import { setAdicionar_itens } from '../store/action/adicionar_pedido';
+import { setModal_Fechado_aberto } from '../store/action/message';
 
 
  function Card(props: Principal_card_ultimo_pedido) {
@@ -80,7 +81,8 @@ import { setAdicionar_itens } from '../store/action/adicionar_pedido';
           onPress={()=>{
             props.pedido_online.length > 0 && (props.user_info?.status_mesa === false || props.user_info?.status_mesa === undefined)?
             setModal_pedido(true):
-            props.onSetAdicionar_itens(pedido.itens)
+            props.fechado_aberto === 'fechado' || props.fechado_aberto === 'fechadodata'? props.SetModal_fechado_aberto(true) : props.onSetAdicionar_itens(pedido.itens)
+            
             
           }}
         >
@@ -183,14 +185,18 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = ({  user }: { user: any})=> {
+const mapStateToProps = ({  user,message }: { user: any,message:any})=> {
   return {
     user_info: user.user_info,
+    fechado_aberto: message.fechado_aberto,
+
       };
 };
 const mapDispatchToProps = (dispatch: any) => {
   return {
     onSetAdicionar_itens: (item:any) => dispatch(setAdicionar_itens(item)),
+    SetModal_fechado_aberto: (modal:boolean) => dispatch(setModal_Fechado_aberto(modal)),
+
   };
 }
 export default connect(mapStateToProps,mapDispatchToProps)(React.memo(Card));

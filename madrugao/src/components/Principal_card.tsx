@@ -29,9 +29,10 @@ import { setAdicionar_itens,  } from '../store/action/adicionar_pedido';
 import { Item } from '../interface/inter';
 import Modal_adicionar_itens from './Modal_adicionar_itens';
 import { Ionicons } from '@expo/vector-icons';
+import { setModal_Fechado_aberto } from '../store/action/message';
 
 
- function Card(props: Principal_card) {
+ function Card(props : Principal_card) {
   // console.log(props.index)
   const styles_dark0rligth = useStyles(props.user_info);  
 
@@ -214,7 +215,7 @@ import { Ionicons } from '@expo/vector-icons';
         <TouchableOpacity
         onPress={() => {
           // console.log(props.pedido_online)
-          props.pedido_online?.length > 0 && (props.user_info?.status_mesa === false || props.user_info?.status_mesa === undefined) ?setModal_pedido(true):add_itens()
+          props.pedido_online?.length > 0 && (props.user_info?.status_mesa === false || props.user_info?.status_mesa === undefined) ?setModal_pedido(true):props.fechado_aberto === 'fechado' || props.fechado_aberto === 'fechadodata'? props.SetModal_fechado_aberto(true) : add_itens()
           // setModal(true)
           // props.Set_add_itens()
         }}
@@ -536,7 +537,7 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = ({  user,cardapio,adicionar_pedido }: { user: any,cardapio:any,adicionar_pedido:any})=> {
+const mapStateToProps = ({  user,cardapio,adicionar_pedido,message }: { user: any,cardapio:any,adicionar_pedido:any, message:any})=> {
   return {
     user_info: user.user_info,
     users: user.users,
@@ -544,6 +545,8 @@ const mapStateToProps = ({  user,cardapio,adicionar_pedido }: { user: any,cardap
     //
     adicionar_itens: adicionar_pedido.adicionar_itens,
     //
+    fechado_aberto: message.fechado_aberto,
+
       };
 };
 const mapDispatchToProps = (dispatch: any) => {
@@ -552,6 +555,8 @@ const mapDispatchToProps = (dispatch: any) => {
     Update_curtidas_user: (id:string,curtidas: string,curtidas_array:string[]) => dispatch(update_On_curtidas_user(id,curtidas,curtidas_array)),
     AddComment: (id:string,comments: commentss2) => dispatch(addComment(id,comments)),
     Setmodal: (boolean:boolean) => dispatch(setModal_comments(boolean)),
+    
+    SetModal_fechado_aberto: (modal:boolean) => dispatch(setModal_Fechado_aberto(modal)),
 
     Set_add_itens: (itens:Item[]) => dispatch(setAdicionar_itens(itens)),
   };

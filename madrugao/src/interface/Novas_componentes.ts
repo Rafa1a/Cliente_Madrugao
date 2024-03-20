@@ -21,6 +21,7 @@ export interface Principal {
     pedidos?: pedido_inter[];
     mesas?: Mesas[];
 
+
     onRua_numero?: (rua:string,numero:string,id:string) => void;
 
     Resetstate?: () => void;
@@ -37,6 +38,10 @@ export interface Principal {
     alerta?: boolean;
     onSet_carrinho_aviso: (alerta:boolean) => void;
 
+    modal_fechado_aberto?: boolean;
+    SetModal_fechado_aberto?: (modal:boolean) => void;
+    data_fechado_aberto?: number;
+    fechado_aberto?: string;
 }
 
 export interface Principal_card{
@@ -47,11 +52,14 @@ export interface Principal_card{
     index?:number
     styles_dark0rligth?: any;
     isModalOpen: boolean;
+    fechado_aberto?: string;
 
     Update_curtidas: (id:string,curtidas: number) => void;
     Update_curtidas_user: (id:string,curtidas: string,curtidas_array:string[]) => void;
     AddComment: (id:string,comments: commentss2) => void;
     Setmodal: (boolean:boolean) => void;
+
+    SetModal_fechado_aberto?: (modal:boolean) => void;
     //adicionar itens
     adicionar_itens?: Item[];
     Set_add_itens: (itens:Item[]) => void;
@@ -75,6 +83,9 @@ export interface Principal_card_ultimo_pedido{
     user_info?: user_on;
     onSetAdicionar_itens: (itens:Item[]) => void;
     pedido_online?: pedido_inter[];
+
+    SetModal_fechado_aberto?: (modal:boolean) => void;
+    fechado_aberto?: string;
     
     
 }

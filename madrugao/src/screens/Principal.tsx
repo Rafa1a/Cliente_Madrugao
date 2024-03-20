@@ -53,6 +53,7 @@ import ControlledTooltip_ultimos_pedidos from '../components/Tooptip/ControlledT
 import ControlledTooltip_relogio from '../components/Tooptip/ControlledTooltip_relogio';
 import { Linking } from 'react-native';
 import { set_carrinho_aviso_tutorialeentrega } from '../store/action/adicionar_pedido';
+import { setModal_Fechado_aberto } from '../store/action/message';
 
 function Principal_comp(props: Principal) {
 
@@ -819,6 +820,8 @@ function Principal_comp(props: Principal) {
 
   ////////////////////////////////////////////////////// algoritmo q irá verificar os pedidos ativos q possuem o id do usuario e se existir um pedido que tenha o status===true iremos pegar o date do pedido e verificar com a hora atual do dispositivo se a diferença for entre 0 a 3 horas iremos mostrar uma mensagem que o pedido esta sendo entregue .
   const [visible_entrega, setVisible_entrega] = useState(false);
+  
+
   const toggleDialog2 = () => {
     if(props.alerta === true){
       // console.log('entrou')
@@ -881,7 +884,51 @@ function Principal_comp(props: Principal) {
     }
     /////////////////////////////////Tutorial
   }, [props.pedidos,props.user_info,pedido_mesa,pedido_online]);
+  /////////////////////////////////Tutorial
+
+  /////////////////////////////////Aberto Fechado
+  // const [visible_fechado_aberto, setVisible_fechado_aberto] = useState(false);
+  const [fechado_aberto, setFechado_aberto] = useState(''); 
+  const [data_fechado_aberto, setData_fechado_aberto] = useState(new Date());
+  const data_hoje = new Date()
   
+  useEffect(() => {
+    // setVisible_fechado_aberto(props.modal_fechado_aberto);
+    console.log(props.modal_fechado_aberto)
+    console.log('data', data_fechado_aberto.getTime());
+
+    setFechado_aberto(props.fechado_aberto);
+    setData_fechado_aberto(new Date(props.data_fechado_aberto));
+    
+  }, [props.modal_fechado_aberto,props.fechado_aberto,props.data_fechado_aberto ]);
+
+  const redirecionarParaRedeSocial = (redeSocial: string) => {
+    let url;
+  
+    switch (redeSocial) {
+      case 'facebook':
+        url = 'https://www.facebook.com/MadrugaolanchesTupa';
+        break;
+      // Add more cases here for other social networks
+      case 'instagram':
+        url = 'https://www.instagram.com/madrugaolanchestupa/';
+        break;
+      default:
+        url = 'https://www.facebook.com';
+    }
+  
+    // Open the URL in the default web browser
+    Linking.canOpenURL(url).then(supported => {
+      if (supported) {
+        Linking.openURL(url);
+      } else {
+        console.log(`Don't know how to open URL: ${url}`);
+      }
+    });
+  };
+  /////////////////////////////////Aberto Fechado
+
+  /////////////////////////////////////////////DIALOG
   /// abrir telefone :
   const redirecionarParaLigacao = (numero) => {
     const numeroFormatado = `tel:${numero}`;
@@ -1093,8 +1140,29 @@ function Principal_comp(props: Principal) {
         
       </View>
       {/* ////////////Favoritos /////////////////////////////*/}
-      <View style={styles.favoritos}>
       
+      <View style={styles.favoritos}>
+        {/*fechado ou fechadodata  */}
+        {fechado_aberto === 'fechado'?
+        <View style={{ alignItems: 'center',width: '50%'}}>
+          <Text style={{ color: 'red', fontSize: 17 }}>FECHADO</Text>
+          <Text style={{ fontSize: 10 }}>Sem privisão para abrir</Text>
+        </View>
+        :null}
+        {fechado_aberto === 'fechadodata'?
+        <View style={{ alignItems: 'center',width: '50%'}}>
+          <Text style={{ color: 'red', fontSize: 17 }}>FECHADO</Text>
+          <Text style={{ fontSize: 10 }}>
+          Iremos abrir {
+                      data_fechado_aberto.getDate() === data_hoje.getDate() && data_fechado_aberto.getMonth() === data_hoje.getMonth()
+                        ? `hoje às ${data_fechado_aberto.getHours().toString().padStart(2, '0')}:${data_fechado_aberto.getMinutes().toString().padStart(2, '0')}`
+                        : `no dia ${data_fechado_aberto.getDate()}/${data_fechado_aberto.getMonth() + 1} às ${data_fechado_aberto.getHours().toString().padStart(2, '0')}:${data_fechado_aberto.getMinutes().toString().padStart(2, '0')}`
+                    }
+          </Text>
+        </View>
+        :null}
+        {/*fechado ou fechadodata  */}
+
         <TouchableOpacity style={{alignItems:'center'}} 
         onPress={()=>{
             if(voltar_favoritos){
@@ -1298,7 +1366,9 @@ function Principal_comp(props: Principal) {
       </TouchableOpacity> 
       
       {/*buttons relogio*/}
-
+      {/* notificao de fechado ou aberto */}
+      
+      {/* notificao de fechado ou aberto */}
       {/* Carrinho */}
       <View style={{width:'20%'}}>
         <ControlledTooltip_carrinho
@@ -1701,6 +1771,91 @@ function Principal_comp(props: Principal) {
     </Modal>
     {/* modal para notificar q o pedido esta a caminho */}
 
+    {/* modal para notificar se a loja ta aberta ou fechada */}
+    <Modal
+    animationType="fade"
+    transparent={true}
+    visible={props.modal_fechado_aberto}
+    >
+      <View style={{flex:1,backgroundColor:'#000000aa',justifyContent:'center',alignItems:'center'}}>
+        <View style={{backgroundColor:'#fff',width:'80%',justifyContent:'space-between',alignItems:'center',borderRadius:20}}>
+          <View style={{width:'100%',flexDirection: 'row', justifyContent: 'flex-end', alignItems:'flex-start'}}>
+            <Ionicons name="md-close-circle-sharp" size={45} color="#3C4043" onPress={()=>props.SetModal_fechado_aberto(false)}/>
+          </View>
+          <ScrollView> 
+            <View style={{justifyContent:'center',alignItems:'center'}}>
+              <View style={{justifyContent:'center',alignItems:'center'}}>
+                <Image
+                      style={{width:100,height:100}}
+                      source={require('../../assets/logos/logo_madrugao.png')}
+                      resizeMode="contain"
+                      PlaceholderContent={
+                            <ActivityIndicator size="large" color="#DE6F00" /> 
+                    }
+                    placeholderStyle={{
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      backgroundColor: '#f8fafd'
+                    }}
+                    />
+              </View>
+              <Text style={{fontFamily:'Roboto-Bold',fontSize:20,padding:5}}>Estamos Fechados</Text>
+              <LottieView
+                autoPlay
+                ref={animation}
+                source={require('../../assets/anim/calendario.json')}
+                style={{width:'100%',marginBottom:10,marginTop:10}}
+              />
+              {fechado_aberto === 'fechado'?
+                <>
+                    <Text style={{fontFamily:'Roboto-Regular',fontSize:17,padding:5}}>Atualmente estamos fechados e ainda não temos uma previsão para reabertura.{'\n'}</Text>
+                    <Text style={{fontFamily:'Roboto-Regular',fontSize:15,padding:5}}>Acompanhe nossas redes sociais para receber atualizações e mais informações : </Text>
+
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width:'50%'}}>
+                      <TouchableOpacity onPress={() => redirecionarParaRedeSocial('instagram')}>
+                        <Image
+                          style={{width: 30, height: 30}}
+                          source={require('../../assets/icones/instagram.png')}
+                          resizeMode="contain"
+                        />
+                      </TouchableOpacity>
+                      {/* onPress={() => redirecionarParaRedeSocial('facebook')} */}
+                      <TouchableOpacity onPress={() => redirecionarParaRedeSocial('facebook')}>
+                        <Image
+                          style={{width: 30, height: 30}}
+                          source={require('../../assets/icones/facebook.png')}
+                          resizeMode="contain"
+                        />
+                      </TouchableOpacity>
+                    </View>
+                </>
+              :null}
+              {fechado_aberto === 'fechadodata'?
+                <>
+                  <Text style={{fontFamily:'Roboto-Regular',fontSize:17,padding:5}}>Atualmente, estamos fechados.{'\n'}</Text>
+                  <Text style={{fontFamily:'Roboto-Regular',fontSize:15,padding:5}}>
+                  Iremos abrir {
+                      data_fechado_aberto.getDate() === data_hoje.getDate() && data_fechado_aberto.getMonth() === data_hoje.getMonth()
+                        ? `hoje às ${data_fechado_aberto.getHours().toString().padStart(2, '0')}:${data_fechado_aberto.getMinutes().toString().padStart(2, '0')}`
+                        : `no dia ${data_fechado_aberto.getDate()}/${data_fechado_aberto.getMonth() + 1} às ${data_fechado_aberto.getHours().toString().padStart(2, '0')}:${data_fechado_aberto.getMinutes().toString().padStart(2, '0')}`
+                    }
+                  </Text>
+                </>
+              :null}
+              <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#fff',padding:15,margin:30,borderRadius:10,borderWidth:1,borderColor:'#E81000',shadowColor:'#E81000',elevation:5}}> 
+                <TouchableOpacity onPress={()=>redirecionarParaLigacao(998881272)} >
+                    <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}> WhatsApp : {'\n'}</Text>
+
+                    <Text style={{fontFamily:'Roboto-Regular',fontSize:15}}> 14 99888-1272</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </ScrollView> 
+        </View>
+      </View>
+    </Modal>
+    {/* modal para notificar se a loja ta aberta ou fechada */}
+
     </SafeAreaView>
   );
 }
@@ -1794,7 +1949,7 @@ const styles = StyleSheet.create({
   // },
 });
 
-const mapStateToProps = ({  user, cardapio,adicionar_pedido,pedidos,mesa }: { user: any,cardapio:any,adicionar_pedido:any,pedidos:any,mesa:any})=> {
+const mapStateToProps = ({  user, cardapio,adicionar_pedido,pedidos,mesa, message }: { user: any,cardapio:any,adicionar_pedido:any,pedidos:any,mesa:any, message:any})=> {
   return {
     cardapio: cardapio.cardapio,
     onorof: cardapio.onorof,
@@ -1809,6 +1964,10 @@ const mapStateToProps = ({  user, cardapio,adicionar_pedido,pedidos,mesa }: { us
     mesas:mesa.mesas,
     
     alerta: adicionar_pedido.alerta,
+
+    modal_fechado_aberto: message.modal_fechado_aberto,
+    data_fechado_aberto: message.data_fechado_aberto,
+    fechado_aberto: message.fechado_aberto,
       };
 };
 const mapDispatchProps = (dispatch: any) => {
@@ -1824,8 +1983,10 @@ const mapDispatchProps = (dispatch: any) => {
     onTutorial_inicial : (id_user:string) => dispatch(setUser_tutorial_inicial(id_user)),
     onTutorial_status : (status:boolean,id_user:string) => dispatch(setUser_tutorial_status(status,id_user)),
     // onTutorial : (value:string,status: boolean, id_user: string) => dispatch(setUser_tutorial(value,status,id_user)),
-    onSet_carrinho_aviso: (alerta:boolean) => dispatch(set_carrinho_aviso_tutorialeentrega(alerta))
- 
+    onSet_carrinho_aviso: (alerta:boolean) => dispatch(set_carrinho_aviso_tutorialeentrega(alerta)),
+    
+    SetModal_fechado_aberto: (modal:boolean) => dispatch(setModal_Fechado_aberto(modal)),
+    
   };
 }; 
 export default connect(mapStateToProps,mapDispatchProps)(Principal_comp);

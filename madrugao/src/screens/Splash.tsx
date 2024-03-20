@@ -14,6 +14,7 @@ import { user_on } from '../interface/inter';
 import { setQr_code, startUser_on_info, startUsers_on } from '../store/action/user';
 import { startPedidosListener } from '../store/action/pedidos';
 import { startMesas } from '../store/action/mesas';
+import { startfechado_aberto } from '../store/action/message';
 
 interface SplashProps {
     navigation: any;
@@ -30,6 +31,7 @@ interface SplashProps {
     setComments: (comments:string)=>void;
     setOnorof: (onorof:string)=>void;
     OnQr_code?: (qrcode:boolean) => void;
+    onFechado_Aberto?: ()=>void;
 
 }
 function Splash(props: SplashProps) {
@@ -83,6 +85,7 @@ function Splash(props: SplashProps) {
           await props.onCardapio();
           await props.onUsers();
           await props.onPedidos();
+          await props.onFechado_Aberto();
           
         }
         const carregar_mesa = async () => {
@@ -226,6 +229,7 @@ const mapDispatchToProps = (dispatch: any) => {
         onUsers : () => dispatch(startUsers_on()),
         onPedidos : () => dispatch(startPedidosListener()),
         onMesas: () => dispatch(startMesas()),
+        onFechado_Aberto: () => dispatch(startfechado_aberto()),
 
         setComments : (comments:string) => dispatch(setComments(comments)),
         setOnorof : (onorof:string) => dispatch(setOnorof(onorof)),

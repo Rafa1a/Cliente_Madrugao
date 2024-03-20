@@ -549,6 +549,8 @@ const mapStateToProps = ({  adicionar_pedido,user,pedidos,cardapio }: { adiciona
 
       cardapio:cardapio.cardapio,
 
+      
+
 
         };
   };
