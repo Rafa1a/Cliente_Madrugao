@@ -64,6 +64,8 @@ const LoginScreen = (props: LoginScreenProps) => {
     iosClientId:"132031674201-44oejofs8ccmgcg9gom6ocitnfui8gce.apps.googleusercontent.com",
     androidClientId:"132031674201-ae8m649m1hu7dgm64qgpdug6b2bu2h2u.apps.googleusercontent.com"
   })
+  //animacao de login
+  const [Login_anim,setLogin_anim] = React.useState(false);
 // caso nao esteja logado essa funcao cria ou loga o usuario
   React.useEffect(()=>{
     const fetch_all = async () =>{
@@ -75,16 +77,18 @@ const LoginScreen = (props: LoginScreenProps) => {
         const credential = GoogleAuthProvider.credential(id_token);
         // console.log(credential)
         //login do user 
+        setLogin_anim(true);
         await signInWithCredential(auth,credential)
         .then((userCredential)=>{
           // console.log('userCredential',userCredential.user)
           const user = userCredential.user;
           props.onSetUser_login(user)
           // props.onLogout(false);
-          console.log('login');
+          // console.log('login');
         })
         .catch(()=>{
           Alert.alert('Error ao fazer o Login, Contate o suporte')
+          setLogin_anim(false);
         });
         ///////////////////////////
       }
@@ -104,13 +108,17 @@ const LoginScreen = (props: LoginScreenProps) => {
             ////////////////definir user
             props.onSetUser_login(user)
             // console.log(JSON.stringify(user,null,2)) 
-            console.log('user logado')
+            // console.log('user logado')
+            setLogin_anim(true);
           }else {
-            console.log('sem user')
+            setLogin_anim(false);
+            // console.log('sem user')
           }
         })
       } catch (error) {
         Alert.alert('Error ao averiguar users, contate o suport')
+        setLogin_anim(false);
+
       }finally{
       }
      }
@@ -239,9 +247,13 @@ const LoginScreen = (props: LoginScreenProps) => {
                   }}
                   
                   >
-                  
-            <Text style={styles.buttonText_logar}>Login</Text>
-
+            {Login_anim ? 
+            <>
+              <ActivityIndicator size="small" color="#f4f7fc" />
+              <Text style={styles.buttonText_logar}>Aguarde</Text>
+            </>
+            
+            :<Text style={styles.buttonText_logar}>Login</Text>}
           </TouchableOpacity>
                                  	
         </View>
@@ -258,7 +270,12 @@ const LoginScreen = (props: LoginScreenProps) => {
             },200)
             
             }}>
-            <Text style={styles.buttonText_logar}>Registrar</Text>
+            {Login_anim ?  
+            <>
+              <ActivityIndicator size="small" color="#f4f7fc" />
+              <Text style={styles.buttonText_logar}>Aguarde</Text>
+            </>
+            :<Text style={styles.buttonText_logar}>Registrar</Text>}
           </TouchableOpacity>
         </View>
       </View>
@@ -268,7 +285,7 @@ const LoginScreen = (props: LoginScreenProps) => {
       <View style={styles.contentContainer_buttons}>
 
         <View style={styles.container_width_buttons}>
-          {login ?
+          {login ? 
             <>
               <Text style={styles.text}  numberOfLines={1} ellipsizeMode='tail'>Login</Text>
 
@@ -292,8 +309,7 @@ const LoginScreen = (props: LoginScreenProps) => {
                   style={{margin:1,width:30,height:30}}
                   
                   />
-                  <Text style={styles.buttonText}>Facebook</Text>
-
+                 <Text style={styles.buttonText}>Facebook</Text>
                 </TouchableOpacity>
               </View>
             </>                       

@@ -132,10 +132,10 @@ function Carrinho(props: props_carrinho) {
       if (props.pedidos && props.pedidos.length > 0) {
         // Encontra o pedido com a maior "ordem"
         const ordem_ = Math.max(...props.pedidos.map(pedido => pedido.ordem));
-        console.log(ordem_)
+        // console.log(ordem_)
         // Incrementa a maior "ordem" encontrada
         let ordem = ordem_ + 1;
-        console.log(ordem)
+        // console.log(ordem)
 
         // Atualiza o estado
         setOrdem_mais_alta(ordem);
@@ -465,13 +465,13 @@ function Carrinho(props: props_carrinho) {
           {/* inputs rua e numero caso seja online */}
 
           {/* button finalizar pedido */}
-          </ScrollView>
-          <TouchableOpacity style={styles.container_button}  onPress={()=>{add_pedido()}}>
-                {loading?<ActivityIndicator size="large" color="#f8fafd" />
-                :<Text style={{fontFamily:'Roboto-Bold',color:'#f8fafd',fontSize:25}}>Pedir</Text>}
-                
-          </TouchableOpacity>
-          {/* button finalizar pedido */}
+        </ScrollView>
+        <TouchableOpacity style={styles.container_button}  onPress={()=>{add_pedido()}}>
+              {loading?<ActivityIndicator size="large" color="#f8fafd" />
+              :<Text style={{fontFamily:'Roboto-Bold',color:'#f8fafd',fontSize:25}}>Pedir</Text>}
+              
+        </TouchableOpacity> 
+        {/* button finalizar pedido */}
 
       </>}
                

@@ -40,6 +40,10 @@ import { setModal_Fechado_aberto } from '../store/action/message';
   // console.log(itens.ingredientes?itens.ingredientes.join(', '):'')
   //deifinir curtidas 
   const [curtidas, setCurtidas] = React.useState(false);
+  const [displayCurtidas, setDisplayCurtidas] = useState(itens.curtidas);
+  useEffect(() => {
+    setDisplayCurtidas(itens.curtidas);
+  }, [itens.curtidas])
 
   useEffect(() => {
     const curtidas = props.user_info.curtidas || [];
@@ -230,10 +234,14 @@ import { setModal_Fechado_aberto } from '../store/action/message';
         <View style={{marginRight:10,marginTop:10,alignItems:'center',justifyContent:'center'}} >
           <TouchableOpacity onPress={async()=>{
               if(curtidas){
+                setDisplayCurtidas(displayCurtidas);
+
                 await setCurtidas(false)
                 await props.Update_curtidas_user(props.user_info.id,itens.id,props.user_info.curtidas)
                 return
               }else{
+                setDisplayCurtidas(displayCurtidas + 1);
+
                 await setCurtidas(true)
                 await props.Update_curtidas(itens.id,itens.curtidas+1)
                 await props.Update_curtidas_user(props.user_info.id,itens.id,props.user_info.curtidas||[])
@@ -269,7 +277,9 @@ import { setModal_Fechado_aberto } from '../store/action/message';
               />}
 
           </TouchableOpacity>
-          <Text style={{color:'#E81000',fontSize:10,fontFamily:'Roboto-Regular',textAlign:'center'}}>{itens.curtidas}</Text>
+          
+           <Text style={{color:'#E81000',fontSize:10,fontFamily:'Roboto-Regular',textAlign:'center'}}>{displayCurtidas}</Text>
+         
         </View>
         
       </View>
@@ -374,25 +384,46 @@ import { setModal_Fechado_aberto } from '../store/action/message';
               <Ionicons name="md-close-circle-sharp" size={45} color="#3C4043" onPress={()=>setModalVisible(false)}/>
             </View>
             <View style={[styles.view_image,styles_dark0rligth.mode_theme_card_image]}>
+            {itens.image? 
+              <Image
+                style={styles.image}
+                source={{uri:itens.image}}
+                resizeMode="contain"
+                PlaceholderContent={
+                      <ActivityIndicator size="large" color="#DE6F00" />
+                }
+                placeholderStyle={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderTopRightRadius: 25,
+                  borderTopLeftRadius: 25,
+                  backgroundColor: '#f8fafd'
+                }}
+                onPress={() => {
+                  setModalVisible(true)
+
+                }}
+              />: 
               <Image
                 style={styles.image}
                 source={require('../../assets/testes/imagens_treino.png')}
                 resizeMode="contain"
                 PlaceholderContent={
                       <ActivityIndicator size="large" color="#DE6F00" />
-              }
-              placeholderStyle={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderTopRightRadius: 25,
-                borderTopLeftRadius: 25,
-                backgroundColor: '#f8fafd'
-              }}
-              onPress={() => {
-                setModalVisible(true)
+                }
+                placeholderStyle={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderTopRightRadius: 25,
+                  borderTopLeftRadius: 25,
+                  backgroundColor: '#f8fafd'
+                }}
+                onPress={() => {
+                  setModalVisible(true)
 
-              }}
+                }}
               />
+            }
             </View>
           </View>
         </View>
@@ -456,6 +487,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     //
     marginBottom: `15%`,
+    // backgroundColor:'#de6f0024',
+
   },
   view_principal: {
     height: '90%',
@@ -467,6 +500,7 @@ const styles = StyleSheet.create({
 
     justifyContent: 'space-between',
     alignItems: 'center',
+    
   },
 
   //////////////////////////////////////////////// Image

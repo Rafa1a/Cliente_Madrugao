@@ -4,6 +4,7 @@ import {
     FlatList,
   StyleSheet,
   Text,
+  View,
 
 } from 'react-native';
 import Principal_card from './Principal_card';
@@ -35,6 +36,7 @@ export default (props: any) => {
     <>
     
       <FlatList
+        style={{backgroundColor:'#de6f0011', width:'100%'}}
         data={props.cardapio}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item, index }) => (

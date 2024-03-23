@@ -40,7 +40,8 @@ export default (props: any) => {
 
   return (
 // navegacao stack 
-    <SafeAreaView style={{ flex:1 }}>
+      
+    <SafeAreaView style={{ flex:1, }}>
       <NavigationContainer linking={linking}>
         
          <Stacks {...props} />
